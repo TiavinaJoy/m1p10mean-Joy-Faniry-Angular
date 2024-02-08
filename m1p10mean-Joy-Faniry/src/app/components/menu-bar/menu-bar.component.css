@@ -1,0 +1,23 @@
+/* .ui-button {.add-button{
+    background-color: aqua !important;
+}}
+
+::ng-deep p-button 
+{
+  .ui-button.add-button
+  {
+    background-color: orange
+  }
+}
+
+/* :host {
+    ::ng-deep .add-button {
+        background-color: #fff;
+    }    
+} */
+
+/* .ui-button.p-button { */
+    /* background-color: red !important; */
+    /* color: white !important; */
+  /* }  */
+
