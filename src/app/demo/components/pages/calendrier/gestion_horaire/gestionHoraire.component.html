@@ -1,0 +1,50 @@
+<div class="card">
+	<div class="col-12">
+        <h5>Gestion des horaires du personnel</h5>
+		<full-calendar [options]="calendarOptions"></full-calendar>
+
+		<!--Ajout des jours libre du personnel-->
+		<p-dialog [(visible)]="afficherAjoutModal"  header="Ajout des heures libres de l'employé" [modal]="true" class="p-fluid" >
+            <ng-template pTemplate="content">
+
+                <div class="field">
+                    <label for="dateDebut">Date début</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut"> </p-calendar>
+                </div>
+                <div class="field">
+                    <label for="dateFin">Date fin</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateFin"> </p-calendar>
+                </div>
+
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerAjoutModal()"></button>
+                <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-text" (click)="ajoutLibre()"></button>
+            </ng-template>
+        </p-dialog>
+		<!--Fin de l'ajout des jours libre du personnel-->
+
+        <!--Affichage fiche rdv-->
+        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des heures libres" [modal]="true" class="p-fluid" >
+            <ng-template pTemplate="content">
+
+                <div class="field">
+                    <label for="dateDebut">Date début</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut"> </p-calendar>
+                </div>
+                <div class="field">
+                    <label for="dateFin">Date fin</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateFin"> </p-calendar>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerFicheModal()"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-text" (click)="modifierLibre()"></button>
+            </ng-template>
+            
+        </p-dialog>
+        <!--Fin affichage fiche rdv-->
+	</div>
+</div>
