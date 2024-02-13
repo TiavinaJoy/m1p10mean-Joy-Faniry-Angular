@@ -9,7 +9,7 @@ $gutter: 1rem; //for primeflex grid system
 @import "../node_modules/primeicons/primeicons.css";
 
 /*Import personnel pour les prime style et le dark theme: Fainry*/
-//@import "primeng/resources/themes/viva-dark/theme.css";
+@import "primeng/resources/themes/viva-dark/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeflex/primeflex.css";
 
@@ -49,4 +49,20 @@ body {
     /* box-shadow: 1px 2px 3px 2px rgba(0, 0, 0, 0.4); */
     border-radius: 5px;
     overflow: hidden;
+}
+
+.loadSpinner{
+    display: flex;
+    justify-content: space-between;
+}
+
+@media (max-width: 767.98px) {
+    .fc .fc-toolbar.fc-header-toolbar {
+        display: block;
+        text-align: center;
+    }
+
+    .fc-header-toolbar .fc-toolbar-chunk {
+        display: block;
+    }
 }

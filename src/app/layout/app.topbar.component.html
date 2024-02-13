@@ -13,12 +13,18 @@
     </button>
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-bell mr-4 p-text-secondary" pBadge style="font-size: 2rem" value="2"></i>
-        </button>
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-user"></i>
+        <i class="pi pi-bell mr-4 p-text-secondary" pBadge style="font-size: 1.5rem" value="2"></i>
+        <a [routerLink]="['/']">
+            <span>
+                <i class="pi pi-sign-out" style="font-size: 1.5rem"></i>
+                <!--Déconnexion-->
+            </span>
+            
+        </a>
+        <!--<i class="pi pi-user" style="font-size: 1.5rem"></i>-->
+        <!--<button class="p-link layout-topbar-button">
+            
             <span>Profile</span>
-        </button>
+        </button>--> 
     </div>
 </div>

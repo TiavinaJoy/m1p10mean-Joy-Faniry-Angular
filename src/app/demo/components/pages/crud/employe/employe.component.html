@@ -95,7 +95,7 @@
             </p-table>
         </div>
 
-        <p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid">
+        <p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
             <ng-template pTemplate="content">
                 <img [src]="'assets/demo/images/product/' + product.image" [alt]="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="product.image">
                 <div class="field">
@@ -143,11 +143,11 @@
                 <div class="formgrid grid">
                     <div class="field col">
                         <label for="debutContrat">Date début de contrat</label>
-                        <p-calendar name="debutContrat" id="debutContrat" dateFormat="dd.mm.y"></p-calendar>
+                        <p-calendar name="debutContrat" id="debutContrat" dateFormat="dd.mm.y" ></p-calendar>
                     </div>
                     <div class="field col">
                         <label for="finContrat">Date fin de contrat</label>
-                        <p-calendar name="finContrat" id="finContrat" dateFormat="dd.mm.y"></p-calendar>
+                        <p-calendar name="finContrat" id="finContrat" dateFormat="dd.mm.y" ></p-calendar>
                     </div>
                 </div>
             </ng-template>

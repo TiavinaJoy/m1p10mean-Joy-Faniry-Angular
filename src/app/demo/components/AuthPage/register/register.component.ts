@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder,  FormGroup,  Validators } from '@angular/forms';
-//import { RegisterService } from '../../services/registerService/register.service';
-import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import {  FormBuilder, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-//import { Client } from '../../interfaces/client';
-//import {LocalStorageService} from 'ngx-webstorage';
+import { Client } from 'src/app/demo/interfaces/client';
+import { LocalStorageService } from 'ngx-webstorage';
+import { RegisterService } from 'src/app/demo/service/register/register.service';
 
 @Component({
   selector: 'app-register',
@@ -19,30 +19,25 @@ export class RegisterComponent {
       confirmPassword: ['', Validators.required],
       nom: ['', Validators.required] ,
       prenom: ['', Validators.required]
-    },
-    {
-      validators: this.passwordMatchValidator,
     }
   )
+  
+  load: Boolean = false;
+  mailError: string;
+  mdpError: string;
+  nomError: string;
+  prenomError: string;
+  registerError: string;
 
-  passwordMatchValidator(control: AbstractControl) {
-    return control.get('password')?.value === control.get("confirmPassword")?.value ? null : { mismatch : true};
-  }
-
-  mailError: string = '';
-  passwordError: string = '';
-  nomError: string = 'Veuillez inserer votre nom.';
-  prenomError: string = 'Veuillez inserer votre prénom.';
-
-  /*client: Client = {
+  client: Client = {
     id: '',
     mail: '',
     mdp: '',
     nom: '',
     prenom: ''
-  };*/
+  };
 
-  constructor(private fb:FormBuilder,private route: Router/*, private registerService: RegisterService,  private localStorage:LocalStorageService*/) {}
+  constructor(private fb:FormBuilder,private route: Router, private registerService: RegisterService,  private localStorage:LocalStorageService) {}
 
   get email() {
     return this.registerForm.controls['email'];
@@ -59,13 +54,14 @@ export class RegisterComponent {
   }
 
   public register(): void{
-    this.route.navigate(['pages/vitrine']);
-    /*const data = this.registerForm.value;
+    const data = this.registerForm.value;
 
     this.client.mail = data.email ?? '';
     this.client.mdp = data.password ?? '';
     this.client.nom = data.nom ?? '';
     this.client.prenom = data.prenom ?? '';
+
+    this.load = true;
 
     this.registerService.inscription(this.client).subscribe(
 
@@ -73,19 +69,30 @@ export class RegisterComponent {
         if(response.status === 201) {
 
           localStorage.setItem('token', response.data.token);
-          localStorage.setItem('type', 'client');
+          localStorage.setItem('type', response.data.type);
 
-          this.route.navigate(['/vitrine']);
+          this.route.navigate(['pages/dashboard']);
 
-        }else{
-          console.log("ELSE ",response.message);
         }
-
       },
       (error: HttpErrorResponse) => {
-        console.log(error.error.message);
+        
+        if(error.error.message.mail) {
+          this.mailError = error.error.message.mail;
+        }
+        if(error.error.message.mdp) {
+          this.mdpError = error.error.message.mdp;
+        }
+        if(error.error.message.nom) {
+          this.nomError = error.error.message.nom;
+        }
+        if(error.error.message.prenom) {
+          this.prenomError = error.error.message.prenom;
+        }
       }
 
-    )*/
+    ).add(() => {
+      this.load = false;
+    })
   }
 }

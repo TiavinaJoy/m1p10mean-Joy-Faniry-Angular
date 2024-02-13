@@ -31,7 +31,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { FileUploadModule } from 'primeng/fileupload';
-import { TableModule } from 'primeng/table';
+import { ResizableColumn, TableModule } from 'primeng/table';
 import { EmployeComponent } from './demo/components/pages/crud/employe/employe.component';
 import { ServiceComponent } from './demo/components/pages/crud/service/service.component';
 import { ChartModule } from 'primeng/chart';
@@ -47,6 +47,8 @@ import { VitrineComponent } from './demo/components/pages/vitrine/vitrine.compon
 import { RdvEmpComponent } from './demo/components/pages/calendrier/liste_rdv/rdv-emp.component';
 import {  ListboxModule } from 'primeng/listbox';
 import { ListeRdvClientComponent } from './demo/components/pages/calendrier/liste-rdv-client/liste-rdv-client.component';
+import { LocalStorageService, NgxWebstorageModule } from 'ngx-webstorage';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 
 @NgModule({
     declarations: [
@@ -100,7 +102,10 @@ import { ListeRdvClientComponent } from './demo/components/pages/calendrier/list
 		GalleriaModule,
 		CarouselModule,
         ListboxModule,
-        InputNumberModule
+        InputNumberModule,
+        NgxWebstorageModule.forRoot({}),
+        /*Login */
+        ProgressSpinnerModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },
@@ -111,6 +116,7 @@ import { ListeRdvClientComponent } from './demo/components/pages/calendrier/list
         NodeService,
         PhotoService,
         ProductService,
+        LocalStorageService
     ],
     bootstrap: [AppComponent],
 })

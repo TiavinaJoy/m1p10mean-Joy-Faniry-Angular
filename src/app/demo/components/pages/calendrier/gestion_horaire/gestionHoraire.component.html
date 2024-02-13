@@ -4,16 +4,16 @@
 		<full-calendar [options]="calendarOptions"></full-calendar>
 
 		<!--Ajout des jours libre du personnel-->
-		<p-dialog [(visible)]="afficherAjoutModal"  header="Ajout des heures libres de l'employé" [modal]="true" class="p-fluid" >
+		<p-dialog [(visible)]="afficherAjoutModal"  header="Ajout des heures libres de l'employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
             <ng-template pTemplate="content">
 
                 <div class="field">
                     <label for="dateDebut">Date début</label>
-					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut"> </p-calendar>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
                 </div>
                 <div class="field">
                     <label for="dateFin">Date fin</label>
-					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateFin"> </p-calendar>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateFin" > </p-calendar>
                 </div>
 
             </ng-template>
@@ -26,16 +26,16 @@
 		<!--Fin de l'ajout des jours libre du personnel-->
 
         <!--Affichage fiche rdv-->
-        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des heures libres" [modal]="true" class="p-fluid" >
+        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des heures libres" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
             <ng-template pTemplate="content">
 
                 <div class="field">
                     <label for="dateDebut">Date début</label>
-					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut"> </p-calendar>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
                 </div>
                 <div class="field">
                     <label for="dateFin">Date fin</label>
-					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateFin"> </p-calendar>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateFin" > </p-calendar>
                 </div>
 
             </ng-template>

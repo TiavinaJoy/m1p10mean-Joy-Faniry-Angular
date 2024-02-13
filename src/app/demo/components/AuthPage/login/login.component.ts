@@ -1,10 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, Validators  } from '@angular/forms';
-//import { Client } from '../../interfaces/client';
 import { Router } from '@angular/router';
-//import { LocalStorageService } from 'ngx-webstorage';
-//import { LoginService } from '../../services/loginService/login.service';
-//import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { LocalStorageService } from 'ngx-webstorage';
+import { Client } from 'src/app/demo/interfaces/client';
+import { LoginService } from 'src/app/demo/service/login/login.service';
 
 @Component({
   selector: 'app-login',
@@ -17,15 +17,18 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.pattern('^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$')]]
   })
 
- /* client: Client = {
+  loginError: string;
+  load: Boolean = false;
+
+  client: Client = {
     id: '',
     mail: '',
     mdp: '',
     nom: '',
     prenom: ''
-  };*/
+  };
 
-  constructor(private fb:FormBuilder, private route: Router/*, private loginService: LoginService, private localStorage:LocalStorageService*/) {}
+  constructor(private fb:FormBuilder, private route: Router, private loginService: LoginService, private localStorage:LocalStorageService) {}
 
   get email() {
     return this.loginForm.controls['email'];
@@ -35,31 +38,37 @@ export class LoginComponent {
   }
 
   public connexion(): void{
-    console.log('Test');
-    this.route.navigate(['pages/dashboard']);
-    /*const data = this.loginForm.value;
-    console.log(data);
+
+    const data = this.loginForm.value;
+
     this.client.mail = data.email ?? '';
     this.client.mdp = data.password ?? '';
 
+    this.load = true;
+    
     this.loginService.connexion(this.client).subscribe(
-
+      
       (response:any) =>{
         if(response.status === 200) {
 
           localStorage.setItem('token', response.data.token);
-          localStorage.setItem('type', 'client');
-
-          this.route.navigate(['/vitrine']);
+          localStorage.setItem('type', response.data.type);
           
-        }else{
-          console.log("ELSE ",response.message);
-        }
+          if(response.data.type == 'client') {  
+            this.route.navigate(['pages/vitrine']);
+          } else if(response.data.type == 'manager') {
+            this.route.navigate(['pages/dashboard']);
+          } else if (response.data.type == 'employe') {
+            this.route.navigate(['pages/rdv/emp']);
+          }
 
+        }
       },
       (error: HttpErrorResponse) => {
-        console.log(error.error.message);
+        this.loginError = error.error.message;
       }
-    )*/
+    ).add(() => {
+      this.load = false;
+    })
   }
 }

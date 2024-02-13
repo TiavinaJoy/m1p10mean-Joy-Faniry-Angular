@@ -39,8 +39,8 @@ export class GestionHoraireComponent implements OnInit {
       },
       dateClick: this.modalJourLibre.bind(this),
       events:  this.listeEvent(),
-      eventClick: this.modalFicheJourLibre.bind(this)
-
+      eventClick: this.modalFicheJourLibre.bind(this),
+      handleWindowResize: true
     }
       
     constructor() { }
@@ -52,8 +52,8 @@ export class GestionHoraireComponent implements OnInit {
     modalJourLibre(arg) {
       const today = new Date();
       const clickedDate = arg.date;
-      
-        if( today> clickedDate) {
+      today.setHours(0,0,0,0);
+        if( today > clickedDate) {
           this.afficherAjoutModal = false;
         }else {
           this.afficherAjoutModal = true;

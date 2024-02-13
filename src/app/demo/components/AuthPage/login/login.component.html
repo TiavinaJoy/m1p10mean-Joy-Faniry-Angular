@@ -5,9 +5,15 @@
             <p-card header="M1p11mean-joy-faniry">
                 <form  [formGroup] ="loginForm" (ngSubmit)="connexion()">
                     <div>
-                        <h2>
-                            Se connecter
-                        </h2>
+                        <div class="loadSpinner">
+                            <div>
+                                <h2>Se connecter</h2>
+                            </div>
+                            <div>
+                                <p-progressSpinner *ngIf="load" [style]="{width: '40px', height: '30px'}" styleClass="custom-spinner" strokeWidth="8" fill="var(--surface-ground)"></p-progressSpinner>
+                            </div>
+                        </div>
+                        <div *ngIf="loginError" class="bloc p-error align-item-center">{{ loginError }}</div>
                         <div class="field">
                             <label for="email">Email:</label>
                             <input type="text" pInputText formControlName="email" class="w-full" name="email" placeholder="email@gmail.com"/>

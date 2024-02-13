@@ -4,7 +4,7 @@
 		<full-calendar [options]="calendarOptions"></full-calendar>
 
         <!--Affichage fiche rdv-->
-        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des rendez-vous" [modal]="true" class="p-fluid" >
+        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des rendez-vous" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
             <ng-template pTemplate="content">
                 
                 <div class="field">
@@ -25,7 +25,7 @@
                 </div>
                 <div class="field">
                     <label for="dateDebut">Date début</label>
-					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut"> </p-calendar>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
                 </div>
 
             </ng-template>

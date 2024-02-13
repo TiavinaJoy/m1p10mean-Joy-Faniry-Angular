@@ -41,7 +41,8 @@ export class CalendrierClientComponent implements OnInit {
       },
       dateClick: this.modalJourLibre.bind(this),
       events:  this.listeEvent(),
-      eventClick: this.modalFicheJourLibre.bind(this)
+      eventClick: this.modalFicheJourLibre.bind(this),
+      handleWindowResize: true
 
     }
       
@@ -67,7 +68,7 @@ export class CalendrierClientComponent implements OnInit {
     modalJourLibre(arg) {
       const today = new Date();
       const clickedDate = arg.date;
-      
+      today.setHours(0,0,0,0);
         if( today> clickedDate) {
           this.afficherAjoutModal = false;
         }else {

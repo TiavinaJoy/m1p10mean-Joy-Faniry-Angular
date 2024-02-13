@@ -25,9 +25,8 @@ export class ListeRdvClientComponent implements OnInit{
       plugins: [dayGridPlugin,timeGridPlugin,listPlugin,interaction ],
       locale: 'fr',
       headerToolbar:{
-          left:'prev,next today',
           center:'title',
-          right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+          left:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
       editable:true,
       nowIndicator:true,
@@ -39,7 +38,8 @@ export class ListeRdvClientComponent implements OnInit{
         list:'Liste'
     },
     events:  this.listeEvent(),
-    eventClick: this.modalFicheJourLibre.bind(this)
+    eventClick: this.modalFicheJourLibre.bind(this),
+    handleWindowResize: true
   }
     
   constructor() { }

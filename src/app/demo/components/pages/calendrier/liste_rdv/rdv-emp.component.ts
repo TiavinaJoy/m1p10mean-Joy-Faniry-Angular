@@ -39,7 +39,8 @@ export class RdvEmpComponent implements OnInit{
           list:'Liste'
       },
       events:  this.listeEvent(),
-      eventClick: this.modalFicheJourLibre.bind(this)
+      eventClick: this.modalFicheJourLibre.bind(this),
+      handleWindowResize: true
     }
       
     constructor() { }
