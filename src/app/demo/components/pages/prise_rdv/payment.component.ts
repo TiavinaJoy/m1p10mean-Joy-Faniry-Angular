@@ -14,6 +14,6 @@ export class PaymentComponent {
 	}
 
 	valider(){
-		this.messageService.add({severity:'success', summary:'Service Message', detail:'Via MessageService'});
+		this.messageService.add({severity:'success', summary:'Service Message', detail:'Via MessageService', life: 3000});
 	}
 }

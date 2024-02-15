@@ -1,26 +1,51 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from 'src/app/demo/interfaces/product';
 import { MessageService } from 'primeng/api';
-import { Table } from 'primeng/table';
 import { ProductService } from 'src/app/demo/service/product.service';
+import { ServiceService } from 'src/app/demo/service/service/service.service';
+import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Service } from 'src/app/demo/interfaces/service';
+import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
+import { CategorieService } from 'src/app/demo/service/categorie/categorie.service';
+import { Categorie } from 'src/app/demo/interfaces/categorie';
+import { FormBuilder, Validators  } from '@angular/forms';
 
 @Component({
     templateUrl: './service.component.html',
-    providers: [MessageService]
+    providers: [MessageService],
+    styleUrl:'./service.component.scss'
 })
 export class ServiceComponent implements OnInit {
+    /*Mes variables */
+    first:Number;
 
-    productDialog: boolean = false;
+    rows:Number;
 
-    deleteProductDialog: boolean = false;
+    totalData:Number = 120;
 
-    deleteProductsDialog: boolean = false;
+    services: Service[]= [];
+
+    service: Service;
+
+    categories: Categorie[] = [];
+
+    selectedCategorie: Categorie | undefined;
+
+    deleteServiceDialog: boolean = false;
+
+    serviceDialog: boolean = false;
+    /* */
+
+    
+    
+
+    
+
 
     products: Product[] = [];
 
     product: Product = {};
-
-    selectedProducts: Product[] = [];
 
     submitted: boolean = false;
 
@@ -30,9 +55,28 @@ export class ServiceComponent implements OnInit {
 
     rowsPerPageOptions = [5, 10, 20];
 
-    constructor(private productService: ProductService, private messageService: MessageService) { }
+    serviceForm = this.fb.group({
+        nom: ['', [Validators.required]],
+        description: ['', [Validators.required]],
+        prix: ['', [Validators.required,Validators.min(1)]],
+        commission: ['', [Validators.required]],
+        duree: ['', [Validators.required]],
+        categorie: ['', [Validators.required]]
+    })
+
+    constructor(
+        private productService: ProductService, 
+        private messageService: MessageService,
+        private serviceService: ServiceService,
+        private categorieService: CategorieService,
+        private fb:FormBuilder,
+        private route: Router
+    ) { }
 
     ngOnInit() {
+        this.listeService(0);
+        this.listeCategorie();
+
         this.productService.getProducts().then(data => this.products = data);
 
         this.cols = [
@@ -50,46 +94,35 @@ export class ServiceComponent implements OnInit {
         ];
     }
 
+
     openNew() {
         this.product = {};
         this.submitted = false;
-        this.productDialog = true;
+        this.serviceDialog = true;
     }
 
-    deleteSelectedProducts() {
-        this.deleteProductsDialog = true;
-    }
 
     editProduct(product: Product) {
         this.product = { ...product };
-        this.productDialog = true;
+        this.serviceDialog = true;
     }
 
-    deleteProduct(product: Product) {
-        this.deleteProductDialog = true;
-        this.product = { ...product };
+    deleteService(service) {
+        this.deleteServiceDialog = true;
+        this.service = service;
     }
 
-    confirmDeleteSelected() {
-        this.deleteProductsDialog = false;
-        this.products = this.products.filter(val => !this.selectedProducts.includes(val));
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-        this.selectedProducts = [];
-    }
-
-    confirmDelete() {
-        this.deleteProductDialog = false;
-        this.products = this.products.filter(val => val.id !== this.product.id);
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        this.product = {};
+    confirmDelete(service) {
+        this.deleteServiceDialog = false;
+        this.updateStatutService(service._id);
     }
 
     hideDialog() {
-        this.productDialog = false;
+        this.serviceDialog = false;
         this.submitted = false;
     }
 
-    saveProduct() {
+    saveService() {
         this.submitted = true;
 
         if (this.product.name?.trim()) {
@@ -109,7 +142,7 @@ export class ServiceComponent implements OnInit {
             }
 
             this.products = [...this.products];
-            this.productDialog = false;
+            this.serviceDialog = false;
             this.product = {};
         }
     }
@@ -135,7 +168,56 @@ export class ServiceComponent implements OnInit {
         return id;
     }
 
-    onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    listeService(page:Number): void{
+        this.serviceService.listeServices(page).subscribe(
+          
+          (response:any) =>{
+            
+            if(response.status === 200) {
+                this.services = response.data.docs;
+            }
+          },
+          (error: HttpErrorResponse) => {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+          }
+        )
+    }
+
+    listeCategorie(): void{
+        this.categorieService.listeCategorie().subscribe(
+          
+            (response:any) =>{
+              
+              if(response.status === 200) {
+                  this.categories = response.data;
+              }
+            },
+            (error: HttpErrorResponse) => {
+              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            }
+          )
+    }
+
+    updateStatutService(id:string): void{
+        this.serviceService.updateStatutService(id).subscribe(
+          
+            (response:any) =>{
+              
+              if(response.status === 200) {
+                  this.service = response.data;
+                  console.log(response);
+                  this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+              }
+            },
+            (error: any) => {
+              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            }
+          )
+    }
+
+
+    onPageChange(event: PageEvent) {
+        this.first = event.first;
+        this.rows = event.rows;
     }
 }

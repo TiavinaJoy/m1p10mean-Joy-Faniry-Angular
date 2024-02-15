@@ -49,6 +49,8 @@ import {  ListboxModule } from 'primeng/listbox';
 import { ListeRdvClientComponent } from './demo/components/pages/calendrier/liste-rdv-client/liste-rdv-client.component';
 import { LocalStorageService, NgxWebstorageModule } from 'ngx-webstorage';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import { PaginatorModule } from 'primeng/paginator';
+import { BadgeModule } from 'primeng/badge';
 
 @NgModule({
     declarations: [
@@ -91,6 +93,8 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
         DropdownModule,
         RadioButtonModule,
         InputNumberModule,
+        PaginatorModule,
+        BadgeModule,
         /*Dashboard */
         ChartModule,
         MenuModule,
