@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, afterNextRender } from '@angular/core';
 import { Product } from 'src/app/demo/interfaces/product';
 import { MessageService } from 'primeng/api';
 import { ProductService } from 'src/app/demo/service/product.service';
 import { ServiceService } from 'src/app/demo/service/service/service.service';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Service } from 'src/app/demo/interfaces/service';
 import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { CategorieService } from 'src/app/demo/service/categorie/categorie.service';
@@ -17,12 +17,13 @@ import { FormBuilder, Validators  } from '@angular/forms';
     styleUrl:'./service.component.scss'
 })
 export class ServiceComponent implements OnInit {
-    /*Mes variables */
-    first:Number;
 
-    rows:Number;
 
-    totalData:Number = 120;
+    perPage:Number;
+
+    totalData:Number;
+
+    statut: number;
 
     services: Service[]= [];
 
@@ -30,42 +31,60 @@ export class ServiceComponent implements OnInit {
 
     categories: Categorie[] = [];
 
-    selectedCategorie: Categorie | undefined;
+    selectedCategorie: Categorie;
 
     deleteServiceDialog: boolean = false;
 
     serviceDialog: boolean = false;
-    /* */
 
-    
-    
-
-    
+    ficheServiceDialog:Boolean = false;
 
 
-    products: Product[] = [];
-
-    product: Product = {};
-
-    submitted: boolean = false;
-
-    cols: any[] = [];
-
-    statuses: any[] = [];
-
-    rowsPerPageOptions = [5, 10, 20];
+    unService: Service = {
+        id: '',
+        nom: '',
+        prix: 0,
+        commission: 0,
+        duree: 0,
+        statut: false,
+        description: '',
+        categorie: null
+    };
 
     serviceForm = this.fb.group({
         nom: ['', [Validators.required]],
         description: ['', [Validators.required]],
         prix: ['', [Validators.required,Validators.min(1)]],
-        commission: ['', [Validators.required]],
-        duree: ['', [Validators.required]],
+        commission: ['', [Validators.required,Validators.min(1)]],
+        duree: ['', [Validators.required,Validators.min(1)]],
         categorie: ['', [Validators.required]]
     })
 
+    get nom() {
+        return this.serviceForm.controls['nom'];
+    }
+
+    get description() {
+        return this.serviceForm.controls['description'];
+    }
+
+    get prix() {
+        return this.serviceForm.controls['prix'];
+    }
+
+    get commission() {
+        return this.serviceForm.controls['commission'];
+    }
+
+    get duree() {
+        return this.serviceForm.controls['duree'];
+    }
+
+    get categorie() {
+        return this.serviceForm.controls['categorie'];
+    }
+
     constructor(
-        private productService: ProductService, 
         private messageService: MessageService,
         private serviceService: ServiceService,
         private categorieService: CategorieService,
@@ -76,35 +95,29 @@ export class ServiceComponent implements OnInit {
     ngOnInit() {
         this.listeService(0);
         this.listeCategorie();
-
-        this.productService.getProducts().then(data => this.products = data);
-
-        this.cols = [
-            { field: 'product', header: 'Product' },
-            { field: 'price', header: 'Price' },
-            { field: 'category', header: 'Category' },
-            { field: 'rating', header: 'Reviews' },
-            { field: 'inventoryStatus', header: 'Status' }
-        ];
-
-        this.statuses = [
-            { label: 'INSTOCK', value: 'instock' },
-            { label: 'LOWSTOCK', value: 'lowstock' },
-            { label: 'OUTOFSTOCK', value: 'outofstock' }
-        ];
     }
-
+//MANISY DEFAULT VALUE DROPDOWN MBOLA TSY METY
 
     openNew() {
-        this.product = {};
-        this.submitted = false;
+        
+        this.serviceForm.reset();
         this.serviceDialog = true;
     }
 
 
-    editProduct(product: Product) {
-        this.product = { ...product };
-        this.serviceDialog = true;
+    editService(service:Service) {
+        this.unService = service;
+        this.selectedCategorie = service.categorie;
+        this.ficheServiceDialog = true;
+
+        this.serviceForm.patchValue({
+            nom: service.nom,
+            description: service.description,
+            prix: String(service.prix),
+            duree: String(service.duree),
+            commission:String(service.commission),
+            categorie: service.categorie.intitule
+         });
     }
 
     deleteService(service) {
@@ -114,76 +127,39 @@ export class ServiceComponent implements OnInit {
 
     confirmDelete(service) {
         this.deleteServiceDialog = false;
-        this.updateStatutService(service._id);
+        if(service.statut == true) this.statut = 0
+        else this.statut = 1
+        this.updateStatutService(service._id,this.statut);
     }
 
     hideDialog() {
         this.serviceDialog = false;
-        this.submitted = false;
     }
 
-    saveService() {
-        this.submitted = true;
-
-        if (this.product.name?.trim()) {
-            if (this.product.id) {
-                // @ts-ignore
-                this.product.inventoryStatus = this.product.inventoryStatus.value ? this.product.inventoryStatus.value : this.product.inventoryStatus;
-                this.products[this.findIndexById(this.product.id)] = this.product;
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-            } else {
-                this.product.id = this.createId();
-                this.product.code = this.createId();
-                this.product.image = 'product-placeholder.svg';
-                // @ts-ignore
-                this.product.inventoryStatus = this.product.inventoryStatus ? this.product.inventoryStatus.value : 'INSTOCK';
-                this.products.push(this.product);
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
-            }
-
-            this.products = [...this.products];
-            this.serviceDialog = false;
-            this.product = {};
-        }
+    onPageChange(event: PageEvent) {
+        this.listeService(event.page);
     }
 
-    findIndexById(id: string): number {
-        let index = -1;
-        for (let i = 0; i < this.products.length; i++) {
-            if (this.products[i].id === id) {
-                index = i;
-                break;
-            }
-        }
+    private listeService(page:Number): Service[]{
 
-        return index;
-    }
-
-    createId(): string {
-        let id = '';
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
-    }
-
-    listeService(page:Number): void{
         this.serviceService.listeServices(page).subscribe(
           
           (response:any) =>{
             
             if(response.status === 200) {
                 this.services = response.data.docs;
+                this.totalData = response.data.totalDocs;
+                this.perPage = response.data.limit;
             }
           },
           (error: HttpErrorResponse) => {
             this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
           }
         )
+        return this.services;
     }
 
-    listeCategorie(): void{
+    private listeCategorie(): Categorie[] {
         this.categorieService.listeCategorie().subscribe(
           
             (response:any) =>{
@@ -196,28 +172,73 @@ export class ServiceComponent implements OnInit {
               this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
             }
           )
+        return this.categories;
     }
 
-    updateStatutService(id:string): void{
-        this.serviceService.updateStatutService(id).subscribe(
+    private updateStatutService(id:string,statut:number): void{
+        this.serviceService.updateStatutService(id,statut).subscribe(
           
             (response:any) =>{
               
               if(response.status === 200) {
+
                   this.service = response.data;
-                  console.log(response);
                   this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
               }
             },
-            (error: any) => {
+            (error: HttpErrorResponse) => {
               this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
             }
           )
     }
 
+    public addService(): void{
 
-    onPageChange(event: PageEvent) {
-        this.first = event.first;
-        this.rows = event.rows;
+        const data = this.serviceForm.value;
+        
+        this.unService.nom =  data.nom;
+        this.unService.prix =   Number(data.prix);
+        this.unService.commission =  Number(data.commission);
+        this.unService.duree =  Number(data.duree);
+        this.unService.description =  data.description;
+        this.unService.categorie = this.selectedCategorie;
+
+        this.serviceService.addService(this.unService).subscribe(
+            (response:any) => {
+                if(response.status == 201) {
+                    this.serviceForm.reset();
+                    this.serviceDialog = false;
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+                }
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            }
+        )
     }
+
+    public updateService(service: any): void{
+
+        this.unService.id = service._id;
+        this.unService.nom =  service.nom;
+        this.unService.prix =   service.prix;
+        this.unService.commission =  service.commission;
+        this.unService.duree =  service.duree;
+        this.unService.description =  service.description;
+        this.unService.categorie = this.selectedCategorie;
+
+        this.serviceService.updateService(this.unService).subscribe(
+            (response:any) => {
+                if(response.status == 200) {
+                    this.ficheServiceDialog = false;
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+                }
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            }
+        )
+    }
+
+    
 }

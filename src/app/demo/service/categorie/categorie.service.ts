@@ -17,8 +17,8 @@ export class CategorieService {
   public listeCategorie(): Observable<Categorie> {
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-
-    return this.http.get<Categorie>(`${this.apiServerUrl}/service/$page`,{headers:this.headers});
+    return this.http.get<Categorie>(`${this.apiServerUrl}/categorie`,{headers:this.headers});
+    
   }
 
 }

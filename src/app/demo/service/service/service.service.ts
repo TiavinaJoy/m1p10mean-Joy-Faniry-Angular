@@ -15,19 +15,36 @@ export class ServiceService {
   constructor(private http: HttpClient) { }
 
   public listeServices(page:Number): Observable<Service> {
-    /*Raha te hanao lien http://localhost:3000/service/?page=0 dia mampiasa ilau HttpParams */
-    /*let queryParams = new HttpParams();
-    queryParams = queryParams.append("page",0);*/
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<Service>(`${this.apiServerUrl}/service/${page}`,{headers:this.headers});
 
-    return this.http.get<Service>(`${this.apiServerUrl}/service/$page`,{headers:this.headers});
   }
 
-  public updateStatutService(id:String): Observable<any> {
+  public updateStatutService(serviceId:String, statut: number): Observable<any> {
+    
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("statut",statut);
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.put<any>(`${this.apiServerUrl}/service/${serviceId}/statut`,null, {
+      headers: this.headers,
+      params: queryParams
+    });
+
+  }
+
+  public addService(service:Service): Observable<Service> {
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-    return this.http.put<any>(`${this.apiServerUrl}/service/$id/statut`,null,{headers: this.headers});
-    
+    return this.http.post<Service>(`${this.apiServerUrl}/service`,service, {headers: this.headers});
+
   }
+
+  public updateService(service:Service): Observable<any> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.put<any>(`${this.apiServerUrl}/service/${service.id}`,service, {headers: this.headers});
+
+  }
+
 }
