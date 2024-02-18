@@ -1,15 +1,16 @@
 import { Component, OnInit, afterNextRender } from '@angular/core';
-import { Product } from 'src/app/demo/interfaces/product';
 import { MessageService } from 'primeng/api';
-import { ProductService } from 'src/app/demo/service/product.service';
 import { ServiceService } from 'src/app/demo/service/service/service.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Service } from 'src/app/demo/interfaces/service';
 import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { CategorieService } from 'src/app/demo/service/categorie/categorie.service';
 import { Categorie } from 'src/app/demo/interfaces/categorie';
-import { FormBuilder, Validators  } from '@angular/forms';
+import { FormBuilder, NgForm, NgModelGroup, Validators  } from '@angular/forms';
+import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { Statut } from 'src/app/demo/interfaces/statut';
+import { ServiceSearch } from 'src/app/demo/interfaces/serviceSearch';
 
 @Component({
     templateUrl: './service.component.html',
@@ -17,15 +18,24 @@ import { FormBuilder, Validators  } from '@angular/forms';
     styleUrl:'./service.component.scss'
 })
 export class ServiceComponent implements OnInit {
+    
+    selectedStatut:Statut;
 
+    lesStatuts:Statut[] = [];
+
+    lesServices$: Observable<Service[]>;
+
+    refreshServices$ = new BehaviorSubject<boolean>(true);
 
     perPage:Number;
+    
+    page:Number;
 
     totalData:Number;
 
     statut: number;
 
-    services: Service[]= [];
+    services: Service[];
 
     service: Service;
 
@@ -39,6 +49,20 @@ export class ServiceComponent implements OnInit {
 
     ficheServiceDialog:Boolean = false;
 
+
+    lesServicesSearch: ServiceSearch = {
+        id: '',
+        nom:'',
+        prixMax: 0,
+        prixMin:0,
+        comMin:0,
+        comMax:0,
+        dureeMin:0,
+        dureeMax:0,
+        statut:0,
+        description:'',
+        categorie:''
+    };
 
     unService: Service = {
         id: '',
@@ -89,18 +113,20 @@ export class ServiceComponent implements OnInit {
         private serviceService: ServiceService,
         private categorieService: CategorieService,
         private fb:FormBuilder,
-        private route: Router
+        private route: Router,
+        private routes: ActivatedRoute
     ) { }
 
     ngOnInit() {
-        this.listeService(0);
+        this.lesStatuts.push({value:1,intitule:'Actif'},{value:0,intitule:'Inactif'});
+        this.listeService(null);
+        //this.lesServices$ = this.refreshServices$.pipe(switchMap(_ => this.listeService()));
         this.listeCategorie();
     }
 //MANISY DEFAULT VALUE DROPDOWN MBOLA TSY METY
 
     openNew() {
         
-        this.serviceForm.reset();
         this.serviceDialog = true;
     }
 
@@ -109,20 +135,12 @@ export class ServiceComponent implements OnInit {
         this.unService = service;
         this.selectedCategorie = service.categorie;
         this.ficheServiceDialog = true;
-
-        this.serviceForm.patchValue({
-            nom: service.nom,
-            description: service.description,
-            prix: String(service.prix),
-            duree: String(service.duree),
-            commission:String(service.commission),
-            categorie: service.categorie.intitule
-         });
     }
 
     deleteService(service) {
         this.deleteServiceDialog = true;
         this.service = service;
+        this.refreshServices$.next(true);
     }
 
     confirmDelete(service) {
@@ -136,17 +154,65 @@ export class ServiceComponent implements OnInit {
         this.serviceDialog = false;
     }
 
-    onPageChange(event: PageEvent) {
-        this.listeService(event.page);
+    
+    onPageChange(event: PageEvent,serviceSearch: NgForm) {
+        
+        console.log(event);
+        const queryParams = {
+            page: event.page,
+            perPage: 2, 
+        }
+        this.route.navigate([], {
+            relativeTo: this.routes,
+            queryParams,
+            queryParamsHandling: 'merge',
+        });
+        this.listeService(serviceSearch);
     }
 
-    private listeService(page:Number): Service[]{
+    public listeService(serviceSearch: NgForm): Service[]{
 
-        this.serviceService.listeServices(page).subscribe(
+        var queryParams = {};
+        if(serviceSearch !== null) {
+            queryParams = {
+                page: this.routes.snapshot.queryParamMap.get('page') ?? 0,
+                perPage: this.routes.snapshot.queryParamMap.get('perPage') ?? 2, 
+                nom: serviceSearch ? serviceSearch.value.nom : '',
+                prixMax: serviceSearch ? serviceSearch.value.prixMax : '',
+                prixMin: serviceSearch ? serviceSearch.value.prixMin : '',
+                comMin: serviceSearch ? serviceSearch.value.comMin : '',
+                comMax: serviceSearch ? serviceSearch.value.comMax : '',
+                dureeMin: serviceSearch ? serviceSearch.value.dureeMin : '',
+                dureeMax: serviceSearch ? serviceSearch.value.dureeMax : '',
+                statut: serviceSearch ? serviceSearch.value.statut : '',
+                description: serviceSearch ? serviceSearch.value.description : '',
+                categorie: serviceSearch ? serviceSearch.value.categorie : ''
+            };
+    
+            this.page = Number(this.routes.snapshot.queryParamMap.get('page'));
+            this.perPage = Number(this.routes.snapshot.queryParamMap.get('perPage'));
+        }
+        else if(serviceSearch === null) {
+            this.page = 0;
+            this.perPage = 2;
+        }
+        
+        this.route.navigate([], {
+            relativeTo: this.routes,
+            queryParams,
+            queryParamsHandling: 'merge',
+        });
+
+
+
+        this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,this.page,this.perPage).subscribe(
           
           (response:any) =>{
             
             if(response.status === 200) {
+
+                console.log(response.data.docs);
+                //this.lesServices$ = response.data.docs;
                 this.services = response.data.docs;
                 this.totalData = response.data.totalDocs;
                 this.perPage = response.data.limit;
@@ -240,5 +306,4 @@ export class ServiceComponent implements OnInit {
         )
     }
 
-    
 }

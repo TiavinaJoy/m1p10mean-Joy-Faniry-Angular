@@ -14,6 +14,72 @@
                     <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
                 </ng-template>
             </p-toolbar>
+            
+            <div class="search">
+                <form #serviceSearch="ngForm" (ngSubmit) = "listeService(serviceSearch)"><!---->
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="prixMinS">Prix Min:</label>
+                            <p-inputNumber  #prixMin ="ngModel" [(ngModel)] = "lesServicesSearch.prixMin" name="prixMin" [showButtons]="true" class="w-full"  mode="currency" currency="MGA" [min]="1" ></p-inputNumber>
+                        </div>
+                        <div class="field col-6">
+                            <label for="prixMaxS">Prix Max:</label>
+                            <p-inputNumber  #prixMax="ngModel" [(ngModel)] = "lesServicesSearch.prixMax" name="prixMax" [showButtons]="true" class="w-full"  mode="currency" currency="MGA" [min]="1" ></p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="dureeMinS">Durée Min:</label>
+                            <p-inputNumber  #dureeMin="ngModel" [(ngModel)] = "lesServicesSearch.dureeMin" name="dureeMin" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                        <div class="field col-6">
+                            <label for="dureeMaxS">Durée Max:</label>
+                            <p-inputNumber  #dureeMax="ngModel" [(ngModel)] = "lesServicesSearch.dureeMax" name="dureeMax" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="comMinS">Commission Min:</label>
+                            <p-inputNumber  #comMin="ngModel" [(ngModel)] = "lesServicesSearch.comMin" name="comMin" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                        <div class="field col-6">
+                            <label for="comMaxS">Commission Max:</label>
+                            <p-inputNumber  #comMax="ngModel" [(ngModel)] = "lesServicesSearch.comMax" name="comMax" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="nom">Nom:</label>
+                            <input type="text" #nom="ngModel" [(ngModel)] = "lesServicesSearch.nom" name="nom" class="w-full" pInputText   required autofocus />
+                        </div>
+                        <div class="field col-6">
+                            <label for="description">Description:</label>
+                            <textarea  #description="ngModel" [(ngModel)] = "lesServicesSearch.description" name="description" class ="w-full" pInputTextarea  required rows="3" cols="20"></textarea>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-4">
+                            <label for="statut">Statut:</label>
+                            <p-dropdown [options]="lesStatuts" #statut="ngModel" name="statut" [(ngModel)] = "lesServicesSearch.statut" styleClass="w-full" [(ngModel)]="selectedStatut"  optionLabel="intitule" optionValue="value"></p-dropdown>
+                        </div>
+                        <div class="field col-4">
+                            <label for="categorie">Catégorie:</label>
+                            <p-dropdown [options]="categories" #categorie="ngModel" name="categorie" [(ngModel)] = "lesServicesSearch.categorie" styleClass="w-full" [(ngModel)]="selectedCategorie"  optionLabel="intitule" optionValue="_id"></p-dropdown>
+                        </div>
+                        <div class="field col-4">
+                            <label for="categorie"></label>
+                            <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
+                        </div>
+                    </div>
+
+
+                    <div class="card flex justify-content-center">
+                        <p-paginator (onPageChange)="onPageChange($event,serviceSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
+                    </div>
+                </form>
+            </div>
+            
+
             <div class="serviceCard">
                 <p-card *ngFor ="let service of services" class="col-12 mt-2 mr-2">
                     <div class="flex  justify-content-between ">
@@ -64,9 +130,7 @@
                     </div>
                 </p-card>        
             </div>
-            <div class="card flex justify-content-center">
-                <p-paginator (onPageChange)="onPageChange($event)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
-            </div>
+            
         </div>
         <!--Ajout d'un service -->
         <p-dialog [(visible)]="serviceDialog" [style]="{width: '450px'}" header="Ajout d'un service" [modal]="true" class="p-fluid">
@@ -85,9 +149,9 @@
                             <div *ngIf ="description.errors?.['required']">La description du service est obligatoire.</div>
                         </small>
                     </div>
-                    <div class="field"><!--[(ngModel)]="selectedCategorie"-->
+                    <div class="field">
                         <label for="categorie">Catégorie</label>
-                        <p-dropdown [options]="categories" formControlName="categorie"  optionLabel="intitule" optionValue="_id"></p-dropdown>
+                        <p-dropdown [options]="categories" formControlName="categorie" [(ngModel)]="selectedCategorie"  optionLabel="intitule" optionValue="_id"></p-dropdown>
                         <small *ngIf ="categorie.invalid && (categorie.dirty || categorie.touched)" class="bloc p-error">
                             <div *ngIf ="categorie.errors?.['required']">La catégorie du service est obligatoire.</div>
                         </small>
@@ -139,24 +203,24 @@
 
         <!--Modification d'un service -->
         <p-dialog  [(visible)]="ficheServiceDialog" [style]="{width: '450px'}" header="Modification du service {{ unService.nom }}" [modal]="true" class="p-fluid">
-            <form [formGroup] ="serviceForm" (ngSubmit) = "updateService(unService)">
+            <form #serviceNgForm="ngForm" (ngSubmit) = "updateService(unService)">
                 <div class="field">
                     <label for="nom">Nom</label>
-                    <input type="text" pInputText  formControlName="nom" required autofocus />
+                    <input type="text" pInputText #nom="ngModel" [(ngModel)]="unService.nom" name="nom" required autofocus />
                     <small *ngIf ="nom.invalid && (nom.dirty || nom.touched)" class="bloc p-error">
                         <div *ngIf ="nom.errors?.['required']">L'intitulé du service est obligatoire.</div>
                     </small>
                 </div>
                 <div class="field">
                     <label for="description">Description</label>
-                    <textarea id="description"  formControlName="description" pInputTextarea  required rows="3" cols="20"></textarea>
+                    <textarea id="description" #description="ngModel" [(ngModel)]="unService.description" name="description" pInputTextarea  required rows="3" cols="20"></textarea>
                     <small *ngIf ="description.invalid && (description.dirty || description.touched)" class="bloc p-error">
                         <div *ngIf ="description.errors?.['required']">La description du service est obligatoire.</div>
                     </small>
                 </div>
                 <div class="field">
                     <label for="categorie">Catégorie</label>
-                    <p-dropdown [options]="categories" formControlName = "categorie"  name="selectedCategorie" optionLabel="intitule" optionValue="_id"></p-dropdown>
+                    <p-dropdown [options]="categories" #categorie="ngModel" [(ngModel)]="selectedCategorie" name="selectedCategorie" optionLabel="intitule" optionValue="_id" [required]="true"></p-dropdown>
                     <small *ngIf ="categorie.invalid && (categorie.dirty || categorie.touched)" class="bloc p-error">
                         <div *ngIf ="categorie.errors?.['required']">La catégorie du service est obligatoire.</div>
                     </small>
@@ -164,21 +228,21 @@
                 <div class="formgrid grid">
                     <div class="field col">
                         <label for="prix">Prix</label>
-                        <p-inputNumber id="prix" formControlName="prix" mode="currency" currency="MGA" [min]="1" ></p-inputNumber>
+                        <p-inputNumber id="prix" #prix="ngModel" [(ngModel)]="unService.prix" name ="prix" mode="currency" currency="MGA" [min]="1" [required] =true></p-inputNumber>
                         <small *ngIf ="prix.invalid && (prix.dirty || prix.touched)" class="bloc p-error">
                             <div *ngIf ="prix.errors?.['required']">Le prix du service est obligatoire.</div>
                         </small>
                     </div>
                     <div class="field col">
                         <label for="duree">Durée</label>
-                        <p-inputNumber id="duree"  formControlName="duree" mode="decimal" [min]="1"></p-inputNumber>
+                        <p-inputNumber id="duree" #duree="ngModel" [(ngModel)]="unService.duree" name="duree" mode="decimal" [min]="1" [required] =true></p-inputNumber>
                         <small *ngIf ="duree.invalid && (duree.dirty || duree.touched)" class="bloc p-error">
                             <div *ngIf ="duree.errors?.['required']">La durée du service est obligatoire.</div>
                         </small>
                     </div>
                     <div class="field col">
                         <label for="commission">Commission</label>
-                        <p-inputNumber id="commission" formControlName="commission" mode="decimal" [min]="1"></p-inputNumber>
+                        <p-inputNumber id="commission" #commission="ngModel" [(ngModel)]="unService.commission" name="commission" mode="decimal" [min]="1" [required] =true></p-inputNumber>
                         <small *ngIf ="commission.invalid && (commission.dirty || commission.touched)" class="bloc p-error">
                             <div *ngIf ="commission.errors?.['required']">La commission du service est obligatoire.</div>
                         </small>
