@@ -23,13 +23,14 @@ export class LoginComponent {
 
   user: Utilisateur = {
     id: '',
-	  mail: '',
-	  mdp: '',
+    mail: '',
+    mdp: '',
     nom: '',
     prenom: '',
     statut: false,
     role: null,
-    infoEmploye: null
+    infoEmploye: null,
+    confirmMdp: undefined
   };
 
   constructor(private fb:FormBuilder, private route: Router, private loginService: LoginService, private localStorage:LocalStorageService) {}

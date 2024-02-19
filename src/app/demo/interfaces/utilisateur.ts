@@ -5,6 +5,7 @@ export interface Utilisateur {
     id: string;
 	mail:string;
 	mdp:string;
+    confirmMdp:String;
     nom:string;
     prenom:string;
     statut: Boolean;

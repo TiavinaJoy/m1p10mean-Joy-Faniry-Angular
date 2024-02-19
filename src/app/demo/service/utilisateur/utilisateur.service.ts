@@ -1,8 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { EmployeSpec } from '../../interfaces/employeSpec';
+import { Utilisateur } from '../../interfaces/utilisateur';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,9 @@ export class UtilisateurService {
   private apiServerUrl = environment.apiBaseUrl;
   private headers : HttpHeaders;
   
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient
+  ) { }
 
   public addEmploye(employe:EmployeSpec): Observable<EmployeSpec> {
     
@@ -25,6 +28,20 @@ export class UtilisateurService {
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<any>(`${this.apiServerUrl}/role`, {headers: this.headers});
+
+  }
+
+  public detailsEmploye(id:string): Observable<Utilisateur> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<Utilisateur>(`${this.apiServerUrl}/personnel/${id}`, {headers: this.headers});
+
+  }
+
+  public updateEmployeSimple(employeId:String,employe:Utilisateur): Observable<any> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.put<any>(`${this.apiServerUrl}/personnel/${employeId}`,employe, {headers: this.headers});
 
   }
 }

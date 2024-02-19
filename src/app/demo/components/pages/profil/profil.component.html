@@ -1,4 +1,4 @@
-<div class="flex flex-column align-items-center justify-content-center">
+<!--<div class="flex flex-column align-items-center justify-content-center">
 	<div class="w-full surface-card py-8 px-5 sm:px-8" >
 		<div class="text-center mb-5">
 			<img src="assets/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3">
@@ -24,5 +24,118 @@
 				<button pButton pRipple label="Modifier" class="w-full p-12 mt-5 text-xl md:w-100rem" type="submit"></button>
 			</form>
 		</div>
+	</div>
+</div>--> 
+<div class="grid">
+	<div class="col-6">
+		<form #modifierProfil="ngForm" (ngSubmit)= "updateProfil(modifierProfil)">
+			<div class="surface-card py-8 px-5 sm:px-8" >
+				<div class="text-center mb-5">
+					<img src="assets/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3">
+					<div class="text-900 text-3xl font-medium mb-3">Modifier votre profil</div>
+				</div>
+				<div>
+					<label for="mail" class="block text-900 text-xl font-medium mb-2">Email</label>
+					<input  #mail = "ngModel" name="mail" [(ngModel)]="employeInfo.mail" type="text" placeholder="email@gmail.com" pInputText class="w-full md:w-30rem mb-5" >
+	
+					<label for="mdp" class="block text-900 font-medium text-xl mb-2">Mot de passe</label>
+					<p-password  #mdp = "ngModel" name="mdp" [(ngModel)]="employeInfo.mdp" placeholder="Password" [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>
+					
+					<label for="confirmMdp" class="block text-900 font-medium text-xl mb-2">Confirmer votre mot de passe</label>
+					<p-password  #confirmMdp = "ngModel" name="confirmMdp" [(ngModel)]="employeInfo.confirmMdp" placeholder="Password" [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>
+
+					<label for="nom" class="block text-900 text-xl font-medium mb-2">Nom</label>
+					<input #nom = "ngModel" name="nom" [(ngModel)]="employeInfo.nom" type="text" placeholder="" pInputText class="w-full md:w-30rem mb-5" >
+	
+					<label for="prenom" class="block text-900 text-xl font-medium mb-2">Prenom</label>
+					<input  #prenom = "ngModel" name="prenom" [(ngModel)]="employeInfo.prenom" type="text" placeholder="" pInputText class="w-full md:w-30rem mb-5" >
+	
+					<label for="picture" class="block text-900 text-xl font-medium mb-2">Photo</label>
+					<p-fileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" [maxFileSize]="1000000" (onUpload)="onBasicUpload()" ></p-fileUpload>
+	
+					<button pButton pRipple label="Modifier" class="w-full p-12 mt-5 text-xl md:w-100rem" type="submit"></button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="col-6">
+		<div class="w-full surface-card py-8 px-5 sm:px-8" >
+			<div class="text-center mb-5">
+				<img src="assets/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3">
+				<div class="text-900 text-3xl font-medium mb-3">Votre profil</div>
+			</div>
+			<div class="grid">
+				<div class="col-3">
+					<label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
+				</div>
+				<div class="col-9">
+					{{ employeInfo.mail }}
+				</div>
+			</div>
+			<div class="grid">
+				<div class="col-3">
+					<label for="nom" class="block text-900 font-medium text-xl mb-2">Nom</label>
+				</div>
+				<div class="col-9">
+					{{ employeInfo.nom }}
+				</div>
+			</div>
+			<div class="grid">
+				<div class="col-3">
+					<label for="nom" class="block text-900 font-medium text-xl mb-2">Prénom</label>
+				</div>
+				<div class="col-9">
+					{{ employeInfo.prenom }}
+				</div>
+			</div>
+			<div class="grid">
+				<div class="col-3">
+					<label for="nom" class="block text-900 font-medium text-xl mb-2">Salaire</label>
+				</div>
+				<div class="col-9">
+					{{ employeInfo.infoEmploye.salaire | number: '1.2-2' }}
+				</div>
+			</div>
+			<div class="grid">
+				<div class="col-3">
+					<label for="nom" class="block text-900 font-medium text-xl mb-2">Date d'embauche</label>
+				</div>
+				<div class="col-9">
+					{{ employeInfo.infoEmploye.dateEmbauche |date:'dd.MM.yyyy, hh:mm'}}
+				</div>
+			</div>
+			<div class="grid">
+				<div class="col-3">
+					<label for="finContrat" class="block text-900 text-xl font-medium mb-2">Fin contrat</label>
+				</div>
+				<div class="col-9">
+					{{employeInfo.infoEmploye.finContrat |date:'dd.MM.yyyy, hh:mm'}}
+				</div>
+			</div>
+			<div class="grid">
+				<div class="col-3">
+					<label for="services" class="block text-900 text-xl font-medium mb-2">Services</label>
+				</div>
+				<div class="col-9">
+					<p-table [value]="employeInfo.infoEmploye.service" [tableStyle]="{'min-width': '50rem'}">
+						<ng-template pTemplate="header">
+							<tr>
+								<th>Intitulé</th>
+								<th>Commission</th>
+								<th>Durée</th>
+							</tr>
+						</ng-template>
+						<ng-template pTemplate="body" let-service>
+							<tr>
+								<td>{{service.nom}}</td>
+								<td>{{service.commission}}%</td>
+								<td>{{service.duree}}h</td>
+							</tr>
+						</ng-template>
+					</p-table>
+				</div>
+			</div>
+		</div>
+		
 	</div>
 </div>
