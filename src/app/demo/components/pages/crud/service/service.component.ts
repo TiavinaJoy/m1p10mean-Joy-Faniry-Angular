@@ -188,7 +188,7 @@ export class ServiceComponent implements OnInit {
                 description: serviceSearch ? serviceSearch.value.description : '',
                 categorie: serviceSearch ? serviceSearch.value.categorie : ''
             };
-    
+
             this.page = Number(this.routes.snapshot.queryParamMap.get('page'));
             this.perPage = Number(this.routes.snapshot.queryParamMap.get('perPage'));
         }

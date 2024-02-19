@@ -20,14 +20,14 @@ export class ServiceService {
     let queryParams = new HttpParams();
     console.log('SERVICE ', page);
     console.log('SERVICE per page', perPage);
-  
+    
     queryParams= queryParams.append("prixMin",service.prixMin.toString() ?? '');
     queryParams= queryParams.append("prixMax",service.prixMax.toString() ?? '');
     queryParams= queryParams.append("comMin",service.comMin.toString() ?? '');
     queryParams= queryParams.append("comMax",service.comMax.toString() ?? '');
     queryParams= queryParams.append("dureeMin",service.dureeMin.toString() ?? '');
     queryParams= queryParams.append("dureeMax",service.dureeMax.toString() ?? '');
-    queryParams= queryParams.append("statut",service ? service.statut.toString() : '');
+    queryParams= queryParams.append("statut",service.statut ? service.statut.toString() : '');
     queryParams= queryParams.append("nom",service.nom ?? '');
     queryParams= queryParams.append("description",service.description ?? '');
     queryParams= queryParams.append("categorie",service.categorie ?? '');
