@@ -68,4 +68,10 @@ export class ServiceService {
 
   }
 
+  public tousLesServices(): Observable<any> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<any>(`${this.apiServerUrl}/services`, {headers: this.headers});
+
+  }
 }

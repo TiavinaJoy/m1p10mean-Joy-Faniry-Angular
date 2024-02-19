@@ -51,6 +51,7 @@ import { LocalStorageService, NgxWebstorageModule } from 'ngx-webstorage';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import { PaginatorModule } from 'primeng/paginator';
 import { BadgeModule } from 'primeng/badge';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @NgModule({
     declarations: [
@@ -95,6 +96,7 @@ import { BadgeModule } from 'primeng/badge';
         InputNumberModule,
         PaginatorModule,
         BadgeModule,
+        MultiSelectModule,
         /*Dashboard */
         ChartModule,
         MenuModule,

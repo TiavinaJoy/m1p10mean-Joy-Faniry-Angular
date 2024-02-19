@@ -6,7 +6,6 @@
                 <ng-template pTemplate="left">
                     <div class="my-2">
                         <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
-                        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button>
                     </div>
                 </ng-template>
 
@@ -17,29 +16,7 @@
             </p-toolbar>
 
             <p-table #dt [value]="products" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name','country.name','representative.name','status']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedProducts" selectionMode="multiple" [rowHover]="true" dataKey="id">
-                <ng-template pTemplate="caption">
-                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                        <h5 class="m-0">Rechercher</h5>
-                    </div>
-                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                        <!--<form>-->
-                            <span class="mt-2 md:mr-4">
-                                <input pInputText type="text" name="nom" placeholder="Nom..."  class="w-full sm:w-auto"/>
-                                <p-inputNumber mode="decimal" name="minPrice" placeholder="Prix min" mode="currency" currency="MGA"></p-inputNumber>
-                                <p-inputNumber mode="decimal" name="maxPrice" placeholder="Prix max" mode="currency" currency="MGA"></p-inputNumber>
-                                <p-dropdown [(ngModel)]="product.inventoryStatus" inputId="inventoryStatus" optionValue="label" [options]="statuses" placeholder="Catégorie...">
-                                    <ng-template pTemplate="selectedItem">
-                                        <span *ngIf="product && product.inventoryStatus" [class]="'product-badge status-' + product.inventoryStatus.toString().toLowerCase()">{{product.inventoryStatus}}</span>
-                                    </ng-template>
-                                    <ng-template let-option pTemplate="item">
-                                        <span [class]="'product-badge status-' + option.value">{{option.label}}</span>
-                                    </ng-template>
-                                </p-dropdown>
-                            </span>
-                            <p-button label="Rechercher" ></p-button>
-                        <!--</form>-->
-                    </div>
-                </ng-template>
+                
                 <ng-template pTemplate="header">
                     <tr>
                         <th style="width: 3rem">
@@ -95,67 +72,59 @@
             </p-table>
         </div>
 
-        <p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
-            <ng-template pTemplate="content">
-                <img [src]="'assets/demo/images/product/' + product.image" [alt]="product.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="product.image">
-                <div class="field">
+        <p-dialog blockScroll="true" [(visible)]="newEmploye" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+            <form #addEmploye="ngForm" (ngSubmit) = "ajoutEmploye(addEmploye)">
+                <div class="field"> 
                     <label for="nom">Nom</label>
-                    <input type="text" pInputText id="nom" name="nom" [(ngModel)]="product.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.name}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">Le nom est obligatoire.</small>
+                    <input type="text" pInputText #nom = "ngModel" name="nom" [(ngModel)]="employe.nom" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employe.nom}"/>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.nom">Le nom est obligatoire.</small>
                 </div>
                 <div class="field">
                     <label for="prenom">Prénom</label>
-                    <input type="text" pInputText id="prenom" name="prenom" [(ngModel)]="product.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.name}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">Le prénom est obligatoire.</small>
+                    <input type="text" pInputText #prenom = "ngModel" name="prenom" [(ngModel)]="employe.prenom" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employe.prenom}"/>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.prenom">Le prénom est obligatoire.</small>
                 </div>
                 <div class="field">
                     <label for="mail">Email</label>
-                    <input type="text" pInputText id="mail" name="mail" [(ngModel)]="product.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.name}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">L'email est obligatoire.</small>
-                </div>
-                <div class="field">
-                    <label for="salaire">Salaire</label>
-                    <p-inputNumber mode="decimal" name="salaire"  mode="currency" currency="MGA"></p-inputNumber>
+                    <input type="text" pInputText #mail = "ngModel" name="mail" [(ngModel)]="employe.mail" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employe.mail}"/>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.mail">L'email est obligatoire.</small>
+                    <!--<small *ngIf ="mail.errors?.['email']" class="bloc p-error">L'intitulé du service est obligatoire.</small>-->
                 </div>
                 <div class="field">
                     <label for="role">Rôle</label>
-                    <p-dropdown [(ngModel)]="product.inventoryStatus" inputId="inventoryStatus" optionValue="label" [options]="statuses" placeholder="Select">
-                        <ng-template pTemplate="selectedItem">
-                            <span *ngIf="product && product.inventoryStatus" [class]="'product-badge status-' + product.inventoryStatus.toString().toLowerCase()">{{product.inventoryStatus}}</span>
-                        </ng-template>
-                        <ng-template let-option pTemplate="item">
-                            <span [class]="'product-badge status-' + option.value">{{option.label}}</span>
-                        </ng-template>
-                    </p-dropdown>
+                    <p-dropdown [options]="roles" [(ngModel)]="roleSelected" #role="ngModel" name="role"  optionLabel="intitule" optionValue="_id" styleClass="w-full"></p-dropdown>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.role">Le rôle est obligatoire.</small>
                 </div>
                 <div class="field">
                     <label for="service">Services</label>
-                    <p-dropdown [(ngModel)]="product.inventoryStatus" inputId="inventoryStatus" optionValue="label" [options]="statuses" placeholder="Select">
-                        <ng-template pTemplate="selectedItem">
-                            <span *ngIf="product && product.inventoryStatus" [class]="'product-badge status-' + product.inventoryStatus.toString().toLowerCase()">{{product.inventoryStatus}}</span>
-                        </ng-template>
-                        <ng-template let-option pTemplate="item">
-                            <span [class]="'product-badge status-' + option.value">{{option.label}}</span>
-                        </ng-template>
-                    </p-dropdown>
+                    <p-multiSelect [options]="services" [(ngModel)]="serviceSelected" #service="ngModel" name="service" optionLabel="nom" optionValue="_id" display="chip"></p-multiSelect>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.service">Le choix de service est obligatoire.</small>
                 </div>
-
+                <div class="field">
+                    <label for="salaire">Salaire</label>
+                    <p-inputNumber mode="decimal" #salaire = "ngModel" name="salaire" [(ngModel)]="employe.salaire" min="1"  mode="currency" currency="MGA"></p-inputNumber>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.salaire">Le salaire est obligatoire.</small>
+                </div>
                 <div class="formgrid grid">
-                    <div class="field col">
-                        <label for="debutContrat">Date début de contrat</label>
-                        <p-calendar name="debutContrat" id="debutContrat" dateFormat="dd.mm.y" ></p-calendar>
+                    <div class="field col-6">
+                        <label for="dateEmbauche">Date début de contrat</label>
+                        <p-calendar name="dateEmbauche" #dateEmbauche = "ngModel" [(ngModel)]="employe.dateEmbauche" dateFormat="dd.mm.y" ></p-calendar>
+                        <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.dateEmbauche">La date d'embauche est obligatoire.</small>
                     </div>
-                    <div class="field col">
+                    <div class="field col-6">
                         <label for="finContrat">Date fin de contrat</label>
-                        <p-calendar name="finContrat" id="finContrat" dateFormat="dd.mm.y" ></p-calendar>
+                        <p-calendar name="finContrat" #finContrat = "ngModel" [(ngModel)]="employe.finContrat" dateFormat="dd.mm.y" ></p-calendar>
                     </div>
                 </div>
-            </ng-template>
-
-            <ng-template pTemplate="footer">
-                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
-            </ng-template>
+                <div class="grid">
+                    <div class="col-6">
+                        <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="hideDialog()"></button>
+                    </div>
+                    <div class="col-6">
+                        <button pButton type="submit" pRipple label="Enregistrer" icon="pi pi-check" class="p-button-outlined p-button-success"></button>
+                    </div>
+                </div>
+            </form>
         </p-dialog>
 
         <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">

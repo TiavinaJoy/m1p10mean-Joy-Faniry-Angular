@@ -1,16 +1,64 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from 'src/app/demo/interfaces/product';
 import { MessageService } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { ProductService } from 'src/app/demo/service/product.service';
+import { NgForm } from '@angular/forms';
+import { Role } from 'src/app/demo/interfaces/role';
+import { InfoEmploye } from 'src/app/demo/interfaces/infoEmploye';
+import { Service } from 'src/app/demo/interfaces/service';
+import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ServiceService } from 'src/app/demo/service/service/service.service';
+import { EmployeSpec } from 'src/app/demo/interfaces/employeSpec';
 
 @Component({
     templateUrl: './employe.component.html',
     providers: [MessageService]
 })
 export class EmployeComponent implements OnInit {
-
-    productDialog: boolean = false;
+    /*MES VARIABLES */
+    newEmploye: boolean = false;
+    submitted: boolean = false;
+    serviceSelected: Service;
+    services:Service[];
+    addService:Service = {
+        id: '',
+        nom: '',
+        prix: 0,
+        commission: 0,
+        duree: 0,
+        statut: false,
+        description: '',
+        categorie: null
+    };
+    servicesGo:Service[];
+    roles:Role[];
+    roleSelected: Role;
+    role: Role = {
+        id: '',
+        intitule: ''
+    };
+    infoEmploye:InfoEmploye = {
+        dateEmbauche: undefined,
+        finContrat: undefined,
+        salaire: 0,
+        service: []
+    };
+    employe: EmployeSpec = {
+        id: '',
+        mail:'',
+        mdp:'',
+        nom:'',
+        prenom:'',
+        statut: false,
+        role: '',
+        dateEmbauche: new Date(),
+        finContrat: new Date(),
+        salaire: 0,
+        service: []
+    };
+    
+    
+    /* */
 
     deleteProductDialog: boolean = false;
 
@@ -22,47 +70,34 @@ export class EmployeComponent implements OnInit {
 
     selectedProducts: Product[] = [];
 
-    submitted: boolean = false;
-
     cols: any[] = [];
 
     statuses: any[] = [];
 
     rowsPerPageOptions = [5, 10, 20];
 
-    constructor(private productService: ProductService, private messageService: MessageService) { }
+    
+    constructor(
+        private serviceService: ServiceService, 
+        private messageService: MessageService,
+        private utilisateurService:UtilisateurService
+    ) { }
 
     ngOnInit() {
-        this.productService.getProducts().then(data => this.products = data);
-
-        this.cols = [
-            { field: 'product', header: 'Product' },
-            { field: 'price', header: 'Price' },
-            { field: 'category', header: 'Category' },
-            { field: 'rating', header: 'Reviews' },
-            { field: 'inventoryStatus', header: 'Status' }
-        ];
-
-        this.statuses = [
-            { label: 'INSTOCK', value: 'instock' },
-            { label: 'LOWSTOCK', value: 'lowstock' },
-            { label: 'OUTOFSTOCK', value: 'outofstock' }
-        ];
-    }
+        this.lesServices();
+        this.lesRoles();
+    } 
 
     openNew() {
         this.product = {};
+        this.newEmploye = true;
         this.submitted = false;
-        this.productDialog = true;
     }
 
-    deleteSelectedProducts() {
-        this.deleteProductsDialog = true;
-    }
 
     editProduct(product: Product) {
         this.product = { ...product };
-        this.productDialog = true;
+        this.newEmploye = true;
     }
 
     deleteProduct(product: Product) {
@@ -85,57 +120,60 @@ export class EmployeComponent implements OnInit {
     }
 
     hideDialog() {
-        this.productDialog = false;
-        this.submitted = false;
+        this.newEmploye = false;
     }
 
-    saveProduct() {
+    private lesServices(): Service[] {
+
+        this.serviceService.tousLesServices().subscribe(
+            (response:any) => {
+                this.services = response.data;
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            }
+        );
+        return this.services;
+    }
+
+    private lesRoles(): Role[] {
+
+        this.utilisateurService.listeRole().subscribe(
+            (response:any) => {
+                this.roles = response.data;
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            }
+        );
+        return this.roles;
+    }
+
+    public ajoutEmploye(addEmploye:NgForm): void{
+
         this.submitted = true;
+    
+        this.employe.nom = addEmploye ? addEmploye.value.nom : '';
+        this.employe.prenom = addEmploye ? addEmploye.value.prenom : '';
+        this.employe.mail = addEmploye ? addEmploye.value.mail : '';
+        this.employe.dateEmbauche = addEmploye ? addEmploye.value.dateEmbauche : '';
+        this.employe.role = addEmploye ? addEmploye.value.role : '';
+        this.employe.salaire = addEmploye ? addEmploye.value.salaire : 0;
+        this.employe.service = addEmploye ? addEmploye.value.service : [];                                            
+        this.employe.finContrat =     addEmploye ? addEmploye.value.finContrat : ''; 
 
-        if (this.product.name?.trim()) {
-            if (this.product.id) {
-                // @ts-ignore
-                this.product.inventoryStatus = this.product.inventoryStatus.value ? this.product.inventoryStatus.value : this.product.inventoryStatus;
-                this.products[this.findIndexById(this.product.id)] = this.product;
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-            } else {
-                this.product.id = this.createId();
-                this.product.code = this.createId();
-                this.product.image = 'product-placeholder.svg';
-                // @ts-ignore
-                this.product.inventoryStatus = this.product.inventoryStatus ? this.product.inventoryStatus.value : 'INSTOCK';
-                this.products.push(this.product);
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+
+        this.utilisateurService.addEmploye(this.employe).subscribe( 
+            (response:any) => {
+                if(response.status === 201) {
+                    addEmploye.reset();
+                    this.newEmploye = false;
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+                }
+            },
+            (error: HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
             }
-
-            this.products = [...this.products];
-            this.productDialog = false;
-            this.product = {};
-        }
-    }
-
-    findIndexById(id: string): number {
-        let index = -1;
-        for (let i = 0; i < this.products.length; i++) {
-            if (this.products[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    }
-
-    createId(): string {
-        let id = '';
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
-    }
-
-    onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+        )
     }
 }
