@@ -3,7 +3,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators  } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalStorageService } from 'ngx-webstorage';
-import { Client } from 'src/app/demo/interfaces/client';
+import * as removeAccents from 'remove-accents';
+import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { LoginService } from 'src/app/demo/service/login/login.service';
 
 @Component({
@@ -20,12 +21,15 @@ export class LoginComponent {
   loginError: string;
   load: Boolean = false;
 
-  client: Client = {
+  user: Utilisateur = {
     id: '',
-    mail: '',
-    mdp: '',
+	  mail: '',
+	  mdp: '',
     nom: '',
-    prenom: ''
+    prenom: '',
+    statut: false,
+    role: null,
+    infoEmploye: null
   };
 
   constructor(private fb:FormBuilder, private route: Router, private loginService: LoginService, private localStorage:LocalStorageService) {}
@@ -40,31 +44,34 @@ export class LoginComponent {
   public connexion(): void{
 
     const data = this.loginForm.value;
+    var typeUser = '';
 
-    this.client.mail = data.email ?? '';
-    this.client.mdp = data.password ?? '';
+    this.user.mail = data.email ?? '';
+    this.user.mdp = data.password ?? '';
 
     this.load = true;
     
-    this.loginService.connexion(this.client).subscribe(
+    this.loginService.connexion(this.user).subscribe(
       
       (response:any) =>{
         if(response.status === 200) {
 
+          typeUser = removeAccents(response.data.type).toLocaleLowerCase();
           localStorage.setItem('token', response.data.token);
-          localStorage.setItem('type', response.data.type);
+          localStorage.setItem('type', typeUser);
           
-          if(response.data.type == 'client') {  
+          if(typeUser == 'client') {  
             this.route.navigate(['pages/vitrine']);
-          } else if(response.data.type == 'manager') {
+          } else if(typeUser== 'manager') {
             this.route.navigate(['pages/dashboard']);
-          } else if (response.data.type == 'employe') {
+          } else if (typeUser == 'employe') {
             this.route.navigate(['pages/rdv/emp']);
           }
 
         }
       },
       (error: HttpErrorResponse) => {
+        console.log(error);
         this.loginError = error.error.message;
       }
     ).add(() => {

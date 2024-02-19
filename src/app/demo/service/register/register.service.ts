@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Client } from '../../interfaces/client';
+import {  Utilisateur } from '../../interfaces/utilisateur';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -12,8 +12,8 @@ export class RegisterService {
 
   constructor(private http: HttpClient) { }
 
-  public inscription(client:Client): Observable<HttpResponse<any>> {
-    return this.http.post<HttpResponse<any>>(`${this.apiUrl}/client`,client);
+  public inscription(user:Utilisateur): Observable<HttpResponse<any>> {
+    return this.http.post<HttpResponse<any>>(`${this.apiUrl}/client`,user);
   }
   
 }

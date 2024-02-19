@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {  FormBuilder, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Client } from 'src/app/demo/interfaces/client';
+import {  Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { LocalStorageService } from 'ngx-webstorage';
 import { RegisterService } from 'src/app/demo/service/register/register.service';
 
@@ -29,12 +29,15 @@ export class RegisterComponent {
   prenomError: string;
   registerError: string;
 
-  client: Client = {
+  user: Utilisateur = {
     id: '',
-    mail: '',
-    mdp: '',
+	  mail: '',
+	  mdp: '',
     nom: '',
-    prenom: ''
+    prenom: '',
+    statut: false,
+    role: null,
+    infoEmploye: null
   };
 
   constructor(private fb:FormBuilder,private route: Router, private registerService: RegisterService,  private localStorage:LocalStorageService) {}
@@ -56,14 +59,14 @@ export class RegisterComponent {
   public register(): void{
     const data = this.registerForm.value;
 
-    this.client.mail = data.email ?? '';
-    this.client.mdp = data.password ?? '';
-    this.client.nom = data.nom ?? '';
-    this.client.prenom = data.prenom ?? '';
+    this.user.mail = data.email ?? '';
+    this.user.mdp = data.password ?? '';
+    this.user.nom = data.nom ?? '';
+    this.user.prenom = data.prenom ?? '';
 
     this.load = true;
 
-    this.registerService.inscription(this.client).subscribe(
+    this.registerService.inscription(this.user).subscribe(
 
       (response:any) =>{
         if(response.status === 201) {
