@@ -1,16 +1,80 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService } from 'src/app/demo/service/product.service';
-import { PhotoService } from 'src/app/demo/service/photo.service';
-import { Product } from 'src/app/demo/interfaces/product';
+import { PreferenceService } from 'src/app/demo/service/preference/preference.service';
+import { Service } from 'src/app/demo/interfaces/service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
+import { Preference } from 'src/app/demo/interfaces/preference';
+import { NgForm } from '@angular/forms';
+import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ServiceService } from 'src/app/demo/service/service/service.service';
+import { ServiceSearch } from 'src/app/demo/interfaces/serviceSearch';
+import { Statut } from 'src/app/demo/interfaces/statut';
+import { Categorie } from 'src/app/demo/interfaces/categorie';
+import { CategorieService } from 'src/app/demo/service/categorie/categorie.service';
+import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
+import { PreferenceSpec } from 'src/app/demo/interfaces/preferenceSpec';
+import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
 
 @Component({
-    templateUrl: './vitrine.component.html'
+    templateUrl: './vitrine.component.html',
+    providers: [MessageService]
 })
 export class VitrineComponent implements OnInit {
 
-    products!: Product[];
+    employes:Utilisateur[];
 
-    images!: any[];
+    employeSelected: Utilisateur;
+
+    categories: Categorie[] = [];
+
+    selectedCategorie: Categorie;
+    
+    lesStatuts:Statut[] = [];
+    
+    selectedStatut:Statut;
+    
+    preferences:Preference[];
+
+    oneFav: any;
+
+    services:Service[];
+
+    perPage:Number;
+    
+    page:Number;
+
+    totalData:Number;
+
+    serviceFav: any;
+
+    lesServicesSearch: ServiceSearch = {
+        id: '',
+        nom:'',
+        prixMax: 0,
+        prixMin:0,
+        comMin:0,
+        comMax:0,
+        dureeMin:0,
+        dureeMax:0,
+        statut:0,
+        description:'',
+        categorie:''
+    };
+    
+    preferenceAdd: PreferenceSpec ={
+        id: '',
+        client: '',
+        personnel: [],
+        service: '',
+        statut: true
+    }
+    
+    favorisDialog:Boolean = false;
+
+    favorisUpdateDialog: Boolean = false;
+
+    updateStatutFavDialog:Boolean = false;
 
     carouselResponsiveOptions: any[] = [
         {
@@ -30,16 +94,208 @@ export class VitrineComponent implements OnInit {
         }
     ];
 
-    constructor(private productService: ProductService, private photoService: PhotoService) { }
+    constructor(
+        private messageService:MessageService,
+        private preferenceService:PreferenceService,
+        private serviceService:ServiceService,
+        private categorieService: CategorieService,
+        private utilisateurService:UtilisateurService,
+        private route:Router,
+        private routes:ActivatedRoute
+    ) { }
 
     ngOnInit() {
-        this.productService.getProductsSmall().then(products => {
-            this.products = products;
+        this.lesStatuts.push({value:1,intitule:'Actif'},{value:0,intitule:'Inactif'});
+        this.listeFavoris();
+        this.listeCategorie();
+        this.listeEmploye();
+        this.listeService(null,0,10);
+    }
+
+    onPageChange(event: PageEvent,serviceSearch: NgForm) {
+        
+        this.listeService(serviceSearch,event.page,10);
+    }
+    
+    addFavoris(service: Service) {
+        this.serviceFav = service;
+        this.favorisDialog = true;
+    }
+
+    updateFavoris(serviceFav:Preference){
+        this.oneFav = serviceFav;
+        this.favorisUpdateDialog = true;
+    }
+
+    deleteFavoris(service:Preference){
+        this.oneFav = service;
+        this.updateStatutFavDialog = true;
+    }
+
+    public updateStatutFavoris(service: Preference): void {
+        var statut = 0;
+
+        if(service.statut == true) statut = 0
+        else statut = 1
+
+        this.preferenceService.updateStatutFavoris(this.oneFav._id,statut).subscribe(
+            (response:any) => {
+                
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+                this.updateStatutFavDialog = false;
+
+            },
+            (error:HttpErrorResponse) => {
+                if(error.status !== 500) {
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+                }else{
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                }
+            }
+        );
+
+    }
+
+    public modifierFavori(updateFavorisForm: NgForm) : void{
+
+        const personnel = {
+            personnel: updateFavorisForm ? updateFavorisForm.value.employe : []
+        }
+        this.preferenceService.updateFavoris(this.oneFav._id,personnel).subscribe(
+            (response:any) => {
+                updateFavorisForm.reset();
+                this.favorisUpdateDialog = false;
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+            },
+            (error:HttpErrorResponse) => {
+                if(error.status !== 500) {
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+                }else{
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                }
+            }
+        );
+        
+    }
+
+    public ajoutFavoris(favorisForm: NgForm): void {
+
+        this.preferenceAdd.client = '65d454f689bb70990bb685ae';
+        this.preferenceAdd.personnel = favorisForm ? favorisForm.value.employe : [];
+        this.preferenceAdd.service = this.serviceFav._id;
+        
+
+        this.preferenceService.ajoutFavoris(this.preferenceAdd).subscribe(
+            (response:any) => {
+                favorisForm.reset();
+                this.favorisDialog = false;
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+            },
+            (error:HttpErrorResponse) => {
+                if(error.status !== 500) {
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+                }else{
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                }
+            }
+        );
+        
+    }
+
+    public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): Service[]{
+
+        var queryParams = {};
+        if(serviceSearch !== null) {
+            if(pageP === undefined){
+                pageP = 0; 
+            } 
+            queryParams = {
+                page: pageP,
+                perPage: perPageP, 
+                nom: serviceSearch ? serviceSearch.value.nom : '',
+                prixMax: serviceSearch ? serviceSearch.value.prixMax : '',
+                prixMin: serviceSearch ? serviceSearch.value.prixMin : '',
+                comMin: serviceSearch ? serviceSearch.value.comMin : '',
+                comMax: serviceSearch ? serviceSearch.value.comMax : '',
+                dureeMin: serviceSearch ? serviceSearch.value.dureeMin : '',
+                dureeMax: serviceSearch ? serviceSearch.value.dureeMax : '',
+                statut: serviceSearch ? serviceSearch.value.statut : '',
+                description: serviceSearch ? serviceSearch.value.description : '',
+                categorie: serviceSearch ? serviceSearch.value.categorie : ''
+            };
+        }
+        
+        this.route.navigate([], {
+            relativeTo: this.routes,
+            queryParams,
+            queryParamsHandling: 'merge',
         });
 
-        this.photoService.getImages().then(images => {
-            this.images = images;
-        });
+        this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).subscribe(
+          
+          (response:any) =>{
+            
+            if(response.status === 200) {
+                this.services = response.data.docs;
+                this.totalData = response.data.totalDocs;
+                this.perPage = response.data.limit;
+            }
+          },
+          (error: HttpErrorResponse) => {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+          }
+        )
+        return this.services;
+    }
+
+    private listeFavoris(): Preference[]{
+
+        this.preferenceService.listeFavoris('65d454f689bb70990bb685ae').subscribe(
+            (response:any) => {
+                this.preferences = response.data;
+            },
+            (error:HttpErrorResponse) => {
+                if(error.status !== 500) {
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+                }else{
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                }
+            }
+        );
+        return this.preferences;
+    }
+
+    private listeEmploye(): Utilisateur[] {
+
+        this.utilisateurService.listeEmploye().subscribe(
+            (response:any) => {
+                this.employes = response.data;
+            },
+            (error:HttpErrorResponse) => {
+                if(error.status !== 500) {
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+                }else{
+                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                }
+            }
+        );
+        return this.employes;
+    }
+
+    private listeCategorie(): Categorie[] {
+        this.categorieService.listeCategorie().subscribe(
+          
+            (response:any) =>{
+              
+              if(response.status === 200) {
+                  this.categories = response.data;
+              }
+            },
+            (error: HttpErrorResponse) => {
+              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            }
+          )
+        return this.categories;
     }
     
 }

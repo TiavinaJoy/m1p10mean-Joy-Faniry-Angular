@@ -44,4 +44,11 @@ export class UtilisateurService {
     return this.http.put<any>(`${this.apiServerUrl}/personnel/${employeId}`,employe, {headers: this.headers});
 
   }
+
+  public listeEmploye(): Observable<Utilisateur[]> {
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<any>(`${this.apiServerUrl}/personnel/all`, {headers: this.headers});
+
+  }
 }

@@ -1,14 +1,14 @@
 import { Component,  OnDestroy,  OnInit, afterNextRender } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { ServiceService } from 'src/app/demo/service/service/service.service';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute,  Router } from '@angular/router';
+import { HttpErrorResponse,  } from '@angular/common/http';
 import { Service } from 'src/app/demo/interfaces/service';
 import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { CategorieService } from 'src/app/demo/service/categorie/categorie.service';
 import { Categorie } from 'src/app/demo/interfaces/categorie';
-import { FormBuilder, NgForm, NgModelGroup, Validators  } from '@angular/forms';
-import { BehaviorSubject, Observable, Subject, distinctUntilChanged, of, startWith, switchMap } from 'rxjs';
+import { FormBuilder, NgForm,  Validators  } from '@angular/forms';
+import { BehaviorSubject, Observable,  distinctUntilChanged, of,  switchMap } from 'rxjs';
 import { Statut } from 'src/app/demo/interfaces/statut';
 import { ServiceSearch } from 'src/app/demo/interfaces/serviceSearch';
 

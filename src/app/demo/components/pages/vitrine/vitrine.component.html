@@ -1,85 +1,176 @@
 <div class="grid p-fluid">
     <div class="col-12">
         <div class="card">
-            <h5>Offres spéciales</h5>
-            <p-carousel [value]="products" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
-                <ng-template let-product pTemplate="item">
+            <h5>Liste des services préférées</h5>
+            <p-carousel [value]="preferences" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
+                <ng-template let-service pTemplate="item">
                         <div class="border-round m-2 text-center p-2" style="border: 1px solid var(--surface-d)">
-                            <div class="my-5">
-                                <img src="assets/demo/images/product/{{product.image}}" [alt]="product.name" class="shadow-4" width="50%"/>
-                            </div>
                             <div>
-                                <h5 class="mb-1">{{product.name}}</h5>
-                                <h6 class="mt-0 mb-3">${{product.price}}</h6>
-                                <span [class]="'product-badge status-'+product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
+                                <h5 class="mb-1">{{service.service.nom}}</h5>
+                                <h6 class="mt-0 mb-3">MGA {{ service.service.prix | number: '1.2-2' }} </h6>
+                                <span>{{service.service.categorie.intitule}}</span>
                                 <div class="my-5">
-                                    <button pButton pRipple icon="pi pi-search" class="mr-2 p-button-rounded"></button>
                                     <button pButton pRipple icon="pi pi-star-fill" class="mr-2 p-button-rounded p-button-success"></button>
-                                    <button pButton pRipple icon="pi pi-cog" class="p-button-rounded p-button-info"></button>
+                                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-info" (click) = "updateFavoris(service)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" class="mr-2 p-button-rounded" (click)="deleteFavoris(service)" ></button>
                                 </div>
                             </div>
                         </div>
                 </ng-template>
             </p-carousel>
             <h5>Liste des services</h5>
-            <p-table  [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [tableStyle]="{'min-width': '50rem'}">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th pResizableColumn>Name</th>
-                        <th pResizableColumn>Country</th>
-                        <th pResizableColumn>Company</th>
-                        <th pResizableColumn>Representative</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body">
-                    <tr>
-                        <td>dd</td>
-                        <td>dd</td>
-                        <td>dd</td>
-                        <td>dd</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-            <!--<p-table styleClass="p-datatable-gridlines" [tableStyle]="{'min-width': '50rem'}">
-                <ng-template pTemplate="caption">
-                    Brushing
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Styling</th>
-                        <th>Prix: 10 000 Ar</th>
-                        <th class="col-4 mb-2 lg:col-4 lg:mb-4"> <p-button label="Programmer"  styleClass="p-button-success" ></p-button> </th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body">
-                    <tr>
-                        <td>Durée: 1h</td>
-                        <td>Description: lorem</td>
-                    </tr>
-                </ng-template>
-            </p-table>-->
-            <h5>Listes des employés</h5>
-            <div class="card">
-                <p-carousel [value]="products" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
-                    <ng-template let-product pTemplate="item">
-                            <div class="border-round m-2 text-center p-2" style="border: 1px solid var(--surface-d)">
-                                <div class="my-5">
-                                    <img src="assets/demo/images/product/{{product.image}}" [alt]="product.name" class="shadow-4" width="50%"/>
-                                </div>
-                                <div>
-                                    <h5 class="mb-1">{{product.name}}</h5>
-                                    <h6 class="mt-0 mb-3">${{product.price}}</h6>
-                                    <span [class]="'product-badge status-'+product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
-                                    <div class="my-5">
-                                        <button pButton pRipple icon="pi pi-search" class="mr-2 p-button-rounded"></button>
-                                        <button pButton pRipple icon="pi pi-star-fill" class="mr-2 p-button-rounded p-button-success"></button>
-                                        <button pButton pRipple icon="pi pi-cog" class="p-button-rounded p-button-info"></button>
-                                    </div>
-                                </div>
-                            </div>
-                    </ng-template>
-                </p-carousel>
+            <div class="search">
+                <form #serviceSearch="ngForm" (ngSubmit) = "listeService(serviceSearch,page,perPage)">
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="prixMinS">Prix Min:</label>
+                            <p-inputNumber  #prixMin ="ngModel" [(ngModel)] = "lesServicesSearch.prixMin" name="prixMin" [showButtons]="true" class="w-full"  mode="currency" currency="MGA" [min]="1" ></p-inputNumber>
+                        </div>
+                        <div class="field col-6">
+                            <label for="prixMaxS">Prix Max:</label>
+                            <p-inputNumber  #prixMax="ngModel" [(ngModel)] = "lesServicesSearch.prixMax" name="prixMax" [showButtons]="true" class="w-full"  mode="currency" currency="MGA" [min]="1" ></p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="dureeMinS">Durée Min:</label>
+                            <p-inputNumber  #dureeMin="ngModel" [(ngModel)] = "lesServicesSearch.dureeMin" name="dureeMin" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                        <div class="field col-6">
+                            <label for="dureeMaxS">Durée Max:</label>
+                            <p-inputNumber  #dureeMax="ngModel" [(ngModel)] = "lesServicesSearch.dureeMax" name="dureeMax" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="comMinS">Commission Min:</label>
+                            <p-inputNumber  #comMin="ngModel" [(ngModel)] = "lesServicesSearch.comMin" name="comMin" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                        <div class="field col-6">
+                            <label for="comMaxS">Commission Max:</label>
+                            <p-inputNumber  #comMax="ngModel" [(ngModel)] = "lesServicesSearch.comMax" name="comMax" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="nom">Nom:</label>
+                            <input type="text" #nom="ngModel" [(ngModel)] = "lesServicesSearch.nom" name="nom" class="w-full" pInputText   required autofocus />
+                        </div>
+                        <div class="field col-6">
+                            <label for="description">Description:</label>
+                            <textarea  #description="ngModel" [(ngModel)] = "lesServicesSearch.description" name="description" class ="w-full" pInputTextarea  required rows="3" cols="20"></textarea>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-4">
+                            <label for="statut">Statut:</label>
+                            <p-dropdown [options]="lesStatuts" #statut="ngModel" name="statut" [(ngModel)] = "lesServicesSearch.statut" styleClass="w-full" [(ngModel)]="selectedStatut"  optionLabel="intitule" optionValue="value"></p-dropdown>
+                        </div>
+                        <div class="field col-4">
+                            <label for="categorie">Catégorie:</label>
+                            <p-dropdown [options]="categories" #categorie="ngModel" name="categorie" [(ngModel)] = "lesServicesSearch.categorie" styleClass="w-full" [(ngModel)]="selectedCategorie"  optionLabel="intitule" optionValue="_id"></p-dropdown>
+                        </div>
+                        <div class="field col-4">
+                            <label for="categorie"></label>
+                            <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
+                        </div>
+                    </div>
+                </form>
             </div>
+            
+            <div class="serviceCard">
+                <p-card *ngFor ="let service of services" class="col-12 mt-2 mr-2">
+                    <div class="flex  justify-content-between ">
+                        <div class="col-4 mb-4"> 
+                            <h4>{{ service.nom }}</h4> 
+                        </div>
+                        <div class="col-4 mb-4">
+                            <p-badge  [severity] ="service.statut ? 'success' : 'danger'"></p-badge>
+                        </div>
+                        <div class="col-2 mb-3">
+                            <button pButton pRipple icon="pi pi-star-fill" class="p-button-rounded p-button-danger mr-2" (click)="addFavoris(service)"></button>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="col-6 mb-4">
+                            {{ service.categorie.intitule }}
+                        </div>
+                        <div class="col-6 mb-4 ">
+                            {{ service.prix | currency: "MGA" }}
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="col-6 mb-4 ">
+                                <b>Durée:</b>
+                        </div>
+                        <div class="col-6 mb-4 ">
+                            {{ service.duree }}h
+                        </div>
+                    </div>
+                    <div class="grid formgrid">
+                        <div class="col-6 mb-4 ">
+                                <b>Commission:</b>
+                        </div>
+                        <div class="col-6 mb-4 ">
+                            {{ service.commission }}%
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="col-12 mb-4 mt-4">
+                                <b>Description:</b>
+                        </div>
+                        <div class="descriptionCard col-6 mb-4" > 
+                            {{ service.description }}
+                        </div>
+                    </div>
+                </p-card>        
+            </div>
+            <div class="card flex justify-content-center">
+                <p-paginator (onPageChange)="onPageChange($event,serviceSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
+            </div>
+
+            <!--Ajout au favori -->
+            <p-dialog [(visible)]="favorisDialog" [style]="{width: '450px'}" header="Ajout des employés favoris" [modal]="true" class="p-fluid">
+                <form #favorisForm ="ngForm" (ngSubmit) = "ajoutFavoris(favorisForm)">
+                    <div class="field">
+                        <label for="employe">Choisir vos employés préférés pour ce service</label>
+                        <p-multiSelect [options]="employes" [(ngModel)]="employeSelected" #employe="ngModel" name="employe" optionLabel="nom" optionValue="_id" display="chip"></p-multiSelect>
+                    </div>
+                    <div class="grid">
+                        <div class="col-6"></div>
+                        <div class="col-6">
+                            <button pButton type="submit" icon="pi pi-check" label="Ajouter au favoris" iconPos="right" class="p-button-outlined p-button-success"></button>
+                        </div>
+                    </div>
+                </form>
+            </p-dialog>
+
+            <!--Update au favori -->
+            <p-dialog [(visible)]="favorisUpdateDialog" [style]="{width: '450px'}" header="Modifier les personnels favoris" [modal]="true" class="p-fluid">
+                <form #updateFavorisForm ="ngForm" (ngSubmit) = "modifierFavori(updateFavorisForm)">
+                    <div class="field">
+                        <label for="employe">Choisir vos employés préférés pour ce service</label>
+                        <p-multiSelect [options]="employes" [(ngModel)]="employeSelected" #employe="ngModel" name="employe" optionLabel="nom" optionValue="_id" display="chip"></p-multiSelect>
+                    </div>
+                    <div class="grid">
+                        <div class="col-6"></div>
+                        <div class="col-6">
+                            <button pButton type="submit" icon="pi pi-check" label="Modifier" iconPos="right" class="p-button-outlined p-button-success"></button>
+                        </div>
+                    </div>
+                </form>
+            </p-dialog>
+
+            <!--Modification statut favoris-->
+            <p-dialog [(visible)]="updateStatutFavDialog" header="Confirmation" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span *ngIf="oneFav">Etes-vous sûr de vouloir retirer le service <b>{{oneFav.service.nom}}</b> de votre favoris?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Supprimer" (click)="updateStatutFavoris(oneFav)"></button>
+                </ng-template>
+            </p-dialog>
         </div>
     </div>
 </div>
