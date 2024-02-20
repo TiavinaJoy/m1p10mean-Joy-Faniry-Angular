@@ -16,7 +16,7 @@
             </p-toolbar>
             
             <div class="search">
-                <form #serviceSearch="ngForm" (ngSubmit) = "listeService(serviceSearch)">
+                <form #serviceSearch="ngForm" (ngSubmit) = "listeService(serviceSearch,page,perPage)">
                     <div class="grid">
                         <div class="field col-6">
                             <label for="prixMinS">Prix Min:</label>
@@ -71,16 +71,12 @@
                             <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
                         </div>
                     </div>
-
-                    <div class="card flex justify-content-center">
-                        <p-paginator (onPageChange)="onPageChange($event,serviceSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
-                    </div>
                 </form>
             </div>
             
 
             <div class="serviceCard">
-                <p-card *ngFor ="let service of services" class="col-12 mt-2 mr-2">
+                <p-card *ngFor ="let service of lesServices$ | async" class="col-12 mt-2 mr-2">
                     <div class="flex  justify-content-between ">
                         <div class="col-4 mb-4"> 
                             <h4>{{ service.nom }}</h4> 
@@ -129,7 +125,9 @@
                     </div>
                 </p-card>        
             </div>
-            
+            <div class="card flex justify-content-center">
+                <p-paginator (onPageChange)="onPageChange($event,serviceSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
+            </div>
         </div>
         <!--Ajout d'un service -->
         <p-dialog [(visible)]="serviceDialog" [style]="{width: '450px'}" header="Ajout d'un service" [modal]="true" class="p-fluid">
