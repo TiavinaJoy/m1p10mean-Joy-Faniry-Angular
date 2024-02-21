@@ -15,6 +15,8 @@ import { CategorieService } from 'src/app/demo/service/categorie/categorie.servi
 import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { PreferenceSpec } from 'src/app/demo/interfaces/preferenceSpec';
 import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
+import { TokenService } from 'src/app/demo/service/token/token.service';
 
 @Component({
     templateUrl: './vitrine.component.html',
@@ -100,6 +102,7 @@ export class VitrineComponent implements OnInit {
         private serviceService:ServiceService,
         private categorieService: CategorieService,
         private utilisateurService:UtilisateurService,
+        private tokenService: TokenService,
         private route:Router,
         private routes:ActivatedRoute
     ) { }
@@ -139,18 +142,14 @@ export class VitrineComponent implements OnInit {
         else statut = 1
 
         this.preferenceService.updateStatutFavoris(this.oneFav._id,statut).subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 this.updateStatutFavDialog = false;
 
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
 
@@ -158,21 +157,18 @@ export class VitrineComponent implements OnInit {
 
     public modifierFavori(updateFavorisForm: NgForm) : void{
 
-        const personnel = {
+        var personnel = {
             personnel: updateFavorisForm ? updateFavorisForm.value.employe : []
         }
+        
         this.preferenceService.updateFavoris(this.oneFav._id,personnel).subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 updateFavorisForm.reset();
                 this.favorisUpdateDialog = false;
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
         
@@ -186,17 +182,13 @@ export class VitrineComponent implements OnInit {
         
 
         this.preferenceService.ajoutFavoris(this.preferenceAdd).subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 favorisForm.reset();
                 this.favorisDialog = false;
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
         
@@ -242,7 +234,7 @@ export class VitrineComponent implements OnInit {
             }
           },
           (error: HttpErrorResponse) => {
-            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
           }
         )
         return this.services;
@@ -250,16 +242,16 @@ export class VitrineComponent implements OnInit {
 
     private listeFavoris(): Preference[]{
 
+        const id = this.tokenService.decodeToken(localStorage.getItem('token'));   
+
         this.preferenceService.listeFavoris('65d454f689bb70990bb685ae').subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 this.preferences = response.data;
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+
             }
         );
         return this.preferences;
@@ -268,15 +260,11 @@ export class VitrineComponent implements OnInit {
     private listeEmploye(): Utilisateur[] {
 
         this.utilisateurService.listeEmploye().subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 this.employes = response.data;
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
         return this.employes;
@@ -285,14 +273,14 @@ export class VitrineComponent implements OnInit {
     private listeCategorie(): Categorie[] {
         this.categorieService.listeCategorie().subscribe(
           
-            (response:any) =>{
+            (response:CustomResponse) =>{
               
               if(response.status === 200) {
                   this.categories = response.data;
               }
             },
             (error: HttpErrorResponse) => {
-              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
           )
         return this.categories;

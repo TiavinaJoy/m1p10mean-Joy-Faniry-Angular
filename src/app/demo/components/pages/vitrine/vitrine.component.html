@@ -1,6 +1,7 @@
 <div class="grid p-fluid">
     <div class="col-12">
         <div class="card">
+            <p-toast></p-toast>
             <h5>Liste des services préférées</h5>
             <p-carousel [value]="preferences" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
                 <ng-template let-service pTemplate="item">
