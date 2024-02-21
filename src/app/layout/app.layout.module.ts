@@ -17,6 +17,7 @@ import { AppConfigModule } from './config/config.module';
 import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
 import { BadgeModule } from 'primeng/badge';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,9 @@ import { BadgeModule } from 'primeng/badge';
         InputSwitchModule,
         RippleModule,
         RouterModule,
-        BadgeModule
+        BadgeModule,
+        ButtonModule,
+        RippleModule
         //Pour la configuration theme etc
         //AppConfigModule
     ],
