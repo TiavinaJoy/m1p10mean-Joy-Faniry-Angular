@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Service } from '../../interfaces/service';
 import { ServiceSearch } from '../../interfaces/serviceSearch';
+import { CustomResponse } from '../../interfaces/customResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class ServiceService {
   private headers : HttpHeaders;
   
   constructor(private http: HttpClient) { }
-//
+
   public listeServices(service:ServiceSearch,page: Number, perPage: Number): Observable<Service[]> {
 
     let queryParams = new HttpParams();
@@ -42,29 +43,30 @@ export class ServiceService {
 
   }
 
-  public updateStatutService(serviceId:String, statut: number): Observable<any> {
+  public updateStatutService(serviceId:String, statut: number): Observable<CustomResponse> {
     
     let queryParams = new HttpParams();
     queryParams = queryParams.append("statut",statut);
+
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-    return this.http.put<any>(`${this.apiServerUrl}/service/${serviceId}/statut`,null, {
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/service/${serviceId}/statut`,null, {
       headers: this.headers,
       params: queryParams
     });
 
   }
 
-  public addService(service:Service): Observable<Service> {
+  public addService(service:Service): Observable<CustomResponse> {
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-    return this.http.post<Service>(`${this.apiServerUrl}/service`,service, {headers: this.headers});
+    return this.http.post<CustomResponse>(`${this.apiServerUrl}/service`,service, {headers: this.headers});
 
   }
 
-  public updateService(service:Service): Observable<any> { 
+  public updateService(service:Service): Observable<CustomResponse> { 
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-    return this.http.put<any>(`${this.apiServerUrl}/service/${service.id}`,service, {headers: this.headers});
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/service/${service.id}`,service, {headers: this.headers});
 
   }
 

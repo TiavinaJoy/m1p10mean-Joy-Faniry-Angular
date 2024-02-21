@@ -7,10 +7,11 @@ import { Service } from 'src/app/demo/interfaces/service';
 import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { CategorieService } from 'src/app/demo/service/categorie/categorie.service';
 import { Categorie } from 'src/app/demo/interfaces/categorie';
-import { FormBuilder, NgForm,  Validators  } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm,  Validators  } from '@angular/forms';
 import { BehaviorSubject, Observable,  distinctUntilChanged, of,  switchMap } from 'rxjs';
 import { Statut } from 'src/app/demo/interfaces/statut';
 import { ServiceSearch } from 'src/app/demo/interfaces/serviceSearch';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
 
 @Component({
     templateUrl: './service.component.html',
@@ -123,15 +124,14 @@ export class ServiceComponent implements OnDestroy,OnInit {
 
     ngOnInit() {
         this.lesStatuts.push({value:1,intitule:'Actif'},{value:0,intitule:'Inactif'});
-        //this.listeService(null,0,10);
-        this.lesServices$ = this.refreshServices$.pipe(
+        this.listeService(null,0,10);
+        /*this.lesServices$ = this.refreshServices$.pipe(
             distinctUntilChanged(),
             //startWith(undefined),
             switchMap(() => this.listeService(null,0,10))
-        );
+        );*/
         this.listeCategorie();
     }
-//MANISY DEFAULT VALUE DROPDOWN MBOLA TSY METY
 
     openNew() {
         
@@ -163,11 +163,10 @@ export class ServiceComponent implements OnDestroy,OnInit {
 
     onPageChange(event: PageEvent,serviceSearch: NgForm) {
         
-        console.log(event);
         this.listeService(serviceSearch,event.page,10);
     }
 
-    public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): Observable<Service[]>{
+    public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): Service[]{
 
         var queryParams = {};
         if(serviceSearch !== null) {
@@ -196,11 +195,10 @@ export class ServiceComponent implements OnDestroy,OnInit {
             queryParamsHandling: 'merge',
         });
 
-       return this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).pipe(
+       /*return this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).pipe(
         switchMap( (response:any) => {
             if(response.status === 200) {
 
-                console.log(response.data.docs);
                 //this.lesServices$ = response.data.docs;
                 //this.services = response.data.docs;
                 this.totalData = response.data.totalDocs;
@@ -211,39 +209,37 @@ export class ServiceComponent implements OnDestroy,OnInit {
                 //this.messageService.add({ severity: 'error', summary: 'Erreur', detail: response.message, life: 3000 });
             }
         })
-       ) 
-        /*  this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).subscribe(
+       ) */
+        this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).subscribe(
           
           (response:any) =>{
             
             if(response.status === 200) {
 
                 console.log(response.data.docs);
-                this.lesServices$ = response.data.docs;
-                //this.services = response.data.docs;
+                this.services = response.data.docs;
                 this.totalData = response.data.totalDocs;
                 this.perPage = response.data.limit;
             }
           },
           (error: HttpErrorResponse) => {
-            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
           }
         )
-        //return this.services;
-        return this.lesServices$;*/
+        return this.services;
     }
 
     private listeCategorie(): Categorie[] {
         this.categorieService.listeCategorie().subscribe(
           
-            (response:any) =>{
+            (response:CustomResponse) =>{
               
               if(response.status === 200) {
                   this.categories = response.data;
               }
             },
             (error: HttpErrorResponse) => {
-              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
           )
         return this.categories;
@@ -252,7 +248,7 @@ export class ServiceComponent implements OnDestroy,OnInit {
     private updateStatutService(id:string,statut:number): void{
         this.serviceService.updateStatutService(id,statut).subscribe(
           
-            (response:any) =>{
+            (response:CustomResponse) =>{
               
               if(response.status === 200) {
                   this.service = response.data;
@@ -261,14 +257,14 @@ export class ServiceComponent implements OnDestroy,OnInit {
               }
             },
             (error: HttpErrorResponse) => {
-              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
           )
     }
 
-    public addService(): void{
+    public addService(serviceForm:FormGroup): void{
 
-        const data = this.serviceForm.value;
+        const data = serviceForm.value;
         
         this.unService.nom =  data.nom;
         this.unService.prix =   Number(data.prix);
@@ -278,7 +274,8 @@ export class ServiceComponent implements OnDestroy,OnInit {
         this.unService.categorie = this.selectedCategorie;
 
         this.serviceService.addService(this.unService).subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
+
                 if(response.status == 201) {
                     this.serviceForm.reset();
                     this.serviceDialog = false;
@@ -286,7 +283,7 @@ export class ServiceComponent implements OnDestroy,OnInit {
                 }
             },
             (error:HttpErrorResponse) => {
-                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         )
     }
@@ -302,7 +299,7 @@ export class ServiceComponent implements OnDestroy,OnInit {
         this.unService.categorie = this.selectedCategorie;
 
         this.serviceService.updateService(this.unService).subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 if(response.status == 200) {
                     this.ficheServiceDialog = false;
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });

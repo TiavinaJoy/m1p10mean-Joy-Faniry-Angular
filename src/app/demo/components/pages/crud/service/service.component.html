@@ -76,7 +76,7 @@
             
 
             <div class="serviceCard">
-                <p-card *ngFor ="let service of lesServices$ | async" class="col-12 mt-2 mr-2">
+                <p-card *ngFor ="let service of services " class="col-12 mt-2 mr-2">
                     <div class="flex  justify-content-between ">
                         <div class="col-4 mb-4"> 
                             <h4>{{ service.nom }}</h4> 
@@ -131,7 +131,7 @@
         </div>
         <!--Ajout d'un service -->
         <p-dialog [(visible)]="serviceDialog" [style]="{width: '450px'}" header="Ajout d'un service" [modal]="true" class="p-fluid">
-                <form [formGroup] ="serviceForm" (ngSubmit) = "addService()">
+                <form [formGroup] ="serviceForm" (ngSubmit) = "addService(serviceForm)">
                     <div class="field">
                         <label for="nom">Nom</label>
                         <input type="text" pInputText  formControlName="nom" required autofocus />
