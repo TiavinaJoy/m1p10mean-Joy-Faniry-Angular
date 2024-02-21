@@ -124,7 +124,7 @@
             </div>
         </div>
         <!--Ajout d'un employe-->
-        <p-dialog blockScroll="true" [(visible)]="newEmploye" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+        <p-dialog blockScroll="true" [(visible)]="newEmploye" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}" [styleClass]="'dialog'">
             <form #addEmploye="ngForm" (ngSubmit) = "ajoutEmploye(addEmploye)">
                 <div class="field"> 
                     <label for="nom">Nom</label>
