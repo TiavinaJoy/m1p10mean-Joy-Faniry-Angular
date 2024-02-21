@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
 import { EmployeSpec } from 'src/app/demo/interfaces/employeSpec';
 import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { TokenService } from 'src/app/demo/service/token/token.service';
@@ -51,17 +52,12 @@ export class ProfilComponent implements OnInit{
     public detailsEmploye(): Utilisateur {
 
         this.utilisateurService.detailsEmploye('65d35e5c86034400299419e7').subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 this.employeInfo = response.data;
                 console.log(this.employeInfo);
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    console.log("serveur");
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
         return this.employeInfo;
@@ -76,18 +72,13 @@ export class ProfilComponent implements OnInit{
         this.employeInfo.confirmMdp = modifierProfil ? modifierProfil.value.confirmMdp : '';
 
         this.utilisateurService.updateEmployeSimple('65d35e5c86034400299419e7',this.employeInfo).subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 console.log(response);
                 modifierProfil.reset();
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    console.log("serveur");
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         )
     }

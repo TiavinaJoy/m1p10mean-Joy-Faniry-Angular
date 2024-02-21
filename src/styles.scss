@@ -84,3 +84,8 @@ body {
     padding-right:5px;
     padding-top:5px;
 }
+
+p-dialog .ui-dialog {
+    overflow: scroll;
+    max-height: 70%;
+  }

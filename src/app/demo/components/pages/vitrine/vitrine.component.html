@@ -130,7 +130,7 @@
             </div>
 
             <!--Ajout au favori -->
-            <p-dialog [(visible)]="favorisDialog" [style]="{width: '450px'}" header="Ajout des employés favoris" [modal]="true" class="p-fluid">
+            <p-dialog [(visible)]="favorisDialog" [style]="{width: '450px'}" header="Ajout des employés favoris" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
                 <form #favorisForm ="ngForm" (ngSubmit) = "ajoutFavoris(favorisForm)">
                     <div class="field">
                         <label for="employe">Choisir vos employés préférés pour ce service</label>
@@ -146,7 +146,7 @@
             </p-dialog>
 
             <!--Update au favori -->
-            <p-dialog [(visible)]="favorisUpdateDialog" [style]="{width: '450px'}" header="Modifier les personnels favoris" [modal]="true" class="p-fluid">
+            <p-dialog [(visible)]="favorisUpdateDialog" [style]="{width: '450px'}" header="Modifier les personnels favoris" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
                 <form #updateFavorisForm ="ngForm" (ngSubmit) = "modifierFavori(updateFavorisForm)">
                     <div class="field">
                         <label for="employe">Choisir vos employés préférés pour ce service</label>

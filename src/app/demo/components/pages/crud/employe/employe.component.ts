@@ -9,6 +9,11 @@ import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur
 import { HttpErrorResponse } from '@angular/common/http';
 import { ServiceService } from 'src/app/demo/service/service/service.service';
 import { EmployeSpec } from 'src/app/demo/interfaces/employeSpec';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
+import { UtilisateurSpec } from 'src/app/demo/interfaces/utilisateurSpec';
+import { Statut } from 'src/app/demo/interfaces/statut';
 
 @Component({
     templateUrl: './employe.component.html',
@@ -16,6 +21,15 @@ import { EmployeSpec } from 'src/app/demo/interfaces/employeSpec';
 })
 export class EmployeComponent implements OnInit {
     /*MES VARIABLES */
+    statut: number;
+    employeUpdate:Utilisateur;
+    employeDelete:Utilisateur;
+    lesStatuts:Statut[] = [];
+    selectedStatut: Statut;
+    totalData: Number;
+    perPage:Number;
+    page:Number;
+    lesEmpSearch: Utilisateur[];
     newEmploye: boolean = false;
     submitted: boolean = false;
     serviceSelected: Service;
@@ -30,7 +44,6 @@ export class EmployeComponent implements OnInit {
         description: '',
         categorie: null
     };
-    servicesGo:Service[];
     roles:Role[];
     roleSelected: Role;
     role: Role = {
@@ -56,19 +69,26 @@ export class EmployeComponent implements OnInit {
         salaire: 0,
         service: []
     };
+    empSearch: UtilisateurSpec={
+        nom: '',
+        prenom: '',
+        mail: '',
+        statut: '',
+        role: '',
+        salaireMin: '',
+        salaireMax: '',
+        dateEmbaucheMin: '',
+        dateEmbaucheMax: '',
+        finContratMax: '',
+        finContratMin: '',
+        service: ''
+    }
     
-    
-    /* */
 
-    deleteProductDialog: boolean = false;
+    deleteEmployeDialog: boolean = false;
 
-    deleteProductsDialog: boolean = false;
+    updateEmployeDialog: boolean = false;
 
-    products: Product[] = [];
-
-    product: Product = {};
-
-    selectedProducts: Product[] = [];
 
     cols: any[] = [];
 
@@ -76,51 +96,75 @@ export class EmployeComponent implements OnInit {
 
     rowsPerPageOptions = [5, 10, 20];
 
-    
+    /*Error variable */
+    nomError:string;
+    prenomError:string;
+    mailError:string;
+    roleError:string;
+    serviceError:string;
+    salaireError:string;
+    dateEmbaucheError:string;
+    finContratError:string;
+    errorMessage:string;
+
     constructor(
         private serviceService: ServiceService, 
         private messageService: MessageService,
+        private route: Router,
+        private routes: ActivatedRoute,
         private utilisateurService:UtilisateurService
     ) { }
 
     ngOnInit() {
+        this.lesStatuts.push({value:1,intitule:'Actif'},{value:0,intitule:'Inactif'});
         this.lesServices();
         this.lesRoles();
+        this.listePersonnel(null,0,10);
     } 
 
     openNew() {
-        this.product = {};
         this.newEmploye = true;
         this.submitted = false;
-    }
 
-
-    editProduct(product: Product) {
-        this.product = { ...product };
-        this.newEmploye = true;
-    }
-
-    deleteProduct(product: Product) {
-        this.deleteProductDialog = true;
-        this.product = { ...product };
-    }
-
-    confirmDeleteSelected() {
-        this.deleteProductsDialog = false;
-        this.products = this.products.filter(val => !this.selectedProducts.includes(val));
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-        this.selectedProducts = [];
-    }
-
-    confirmDelete() {
-        this.deleteProductDialog = false;
-        this.products = this.products.filter(val => val.id !== this.product.id);
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        this.product = {};
+        this.nomError= '';
+        this.prenomError= '';
+        this.mailError= '';
+        this.roleError= '';
+        this.serviceError= '';
+        this.salaireError= '';
+        this.dateEmbaucheError= '';
+        this.finContratError= '';
     }
 
     hideDialog() {
         this.newEmploye = false;
+    }
+
+    deleteEmploye(employe: Utilisateur) {
+        this.deleteEmployeDialog = true;
+        this.employeDelete = employe;
+    }
+    
+    updateEmp(employe: Utilisateur) {
+        this.updateEmployeDialog = true;
+        this.employe.salaire = employe.infoEmploye.salaire;
+    }
+
+    public desactivation(employe:any): void{
+
+        if(employe.statut == true) this.statut = 0
+        else this.statut = 1
+
+        this.utilisateurService.updateStatutEmploye('65d5b33e22c9b6c6965bce2e',this.statut).subscribe(
+            (response:CustomResponse) => {
+
+                this.deleteEmployeDialog = false;                
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        );
     }
 
     private lesServices(): Service[] {
@@ -133,7 +177,6 @@ export class EmployeComponent implements OnInit {
                 if(error.status !== 500) {
                     this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
                 }else{
-                    console.log("serveur");
                     this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
                 }
             }
@@ -144,16 +187,11 @@ export class EmployeComponent implements OnInit {
     private lesRoles(): Role[] {
 
         this.utilisateurService.listeRole().subscribe(
-            (response:any) => {
+            (response:CustomResponse) => {
                 this.roles = response.data;
             },
             (error:HttpErrorResponse) => {
-                if(error.status !== 500) {
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    console.log("serveur");
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
-                }
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
         return this.roles;
@@ -172,9 +210,12 @@ export class EmployeComponent implements OnInit {
         this.employe.service = addEmploye ? addEmploye.value.service : [];                                            
         this.employe.finContrat =     addEmploye ? addEmploye.value.finContrat : ''; 
 
+        if(addEmploye.value.service == undefined) {
+            this.employe.service = []
+        }
 
         this.utilisateurService.addEmploye(this.employe).subscribe( 
-            (response:any) => {
+            (response:CustomResponse) => {
                 if(response.status === 201) {
                     addEmploye.reset();
                     this.newEmploye = false;
@@ -182,13 +223,109 @@ export class EmployeComponent implements OnInit {
                 }
             },
             (error: HttpErrorResponse) => {
-                if(error.status !== 500) {
+                console.log(error);
+                if(error.status != 400) {
                     this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-                }else{
-                    console.log("serveur");
-                    this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                }
+                if(error.status == 400) {
+                    if(error.error.message.nom) {
+                        this.nomError = error.error.message.nom ;
+                    }
+                    if(error.error.message.prenom) {
+                        this.prenomError = error.error.message.prenom ;
+                    }
+                    if(error.error.message.mail) {
+                        this.mailError = error.error.message.mail ;
+                    }
+                    if(error.error.message.role) {
+                        this.roleError = error.error.message.role ;
+                    }
+                    if(error.error.message.finContrat) {
+                        this.finContratError = error.error.message.finContrat ;
+                    }
                 }
             }
         )
     }
+
+    public listePersonnel(employeSearch: NgForm, pageP:Number,perPageP:Number): Utilisateur[]{
+
+        var queryParams = {};
+        if(!this.utilisateurService.checkVide(employeSearch)) {
+
+            console.log("Non vide mais dans le lien et component")
+            if(pageP === undefined){
+                pageP = 0; 
+            } 
+
+            queryParams = {
+                page: pageP,
+                perPage: perPageP, 
+                nom: employeSearch ? employeSearch.value.nom : '',
+                prenom: employeSearch ? employeSearch.value.prenom : '',
+                mail: employeSearch ? employeSearch.value.mail : '',
+                statut: employeSearch ? employeSearch.value.statut : '',
+                role: employeSearch ? employeSearch.value.role : '',
+                salaireMin: employeSearch ? employeSearch.value.salaireMin : '',
+                salaireMax: employeSearch ? employeSearch.value.salaireMax : '',
+                dateEmbaucheMin: employeSearch ? employeSearch.value.dateEmbaucheMin : '',
+                dateEmbaucheMax: employeSearch ? employeSearch.value.dateEmbaucheMax : '',
+                finContratMax: employeSearch ? employeSearch.value.finContratMax : '',
+                finContratMin: employeSearch ? employeSearch.value.finContratMin : '',
+                service: employeSearch ? employeSearch.value.service : ''
+            };
+        }
+        
+        this.route.navigate([], {
+            relativeTo: this.routes,
+            queryParams,
+            queryParamsHandling: 'merge',
+        });
+
+        this.utilisateurService.listePersonnel(employeSearch ? employeSearch.value : this.empSearch,pageP,perPageP).subscribe(
+          
+          (response:any) =>{
+            
+            if(response.status === 200) {
+
+                console.log(response.data.docs);
+                this.lesEmpSearch = response.data.docs;
+                this.totalData = response.data.totalDocs;
+                this.perPage = response.data.limit;
+            }
+          },
+          (error: HttpErrorResponse) => {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+          }
+        )
+        return this.lesEmpSearch;
+    }
+
+    public modificationEmploye(empUpdate: NgForm): void {
+        var serv = [];
+        if( empUpdate && empUpdate.value.service != undefined) serv =  empUpdate.value.service;
+
+        var infoEmp = {
+            salaire: empUpdate ? empUpdate.value.salaire : 0,
+            service: serv,
+            role: empUpdate ? empUpdate.value.role : '',
+            finContrat: empUpdate ? empUpdate.value.finContrat : ''
+        };
+
+        this.utilisateurService.updateInfoEmploye(infoEmp,'65d5b33e22c9b6c6965bce2e').subscribe(
+            (response:CustomResponse) => {
+                if(response.status == 200) {
+
+                    empUpdate.reset();
+                    this.updateEmployeDialog = false;
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+                }
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        )
+
+    }
+
 }
