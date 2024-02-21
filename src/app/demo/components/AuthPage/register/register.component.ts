@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
-import {  FormBuilder, Validators } from '@angular/forms';
+import {  FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {  Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { LocalStorageService } from 'ngx-webstorage';
 import { RegisterService } from 'src/app/demo/service/register/register.service';
+import { MessageService } from 'primeng/api';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrl: './register.component.scss',
+  providers: [MessageService]
 })
 export class RegisterComponent {
   registerForm = this.fb.group(
@@ -41,13 +44,23 @@ export class RegisterComponent {
     confirmMdp: undefined
   };
 
-  constructor(private fb:FormBuilder,private route: Router, private registerService: RegisterService,  private localStorage:LocalStorageService) {}
+  constructor(
+    private fb:FormBuilder,
+    private route: Router, 
+    private registerService: RegisterService,  
+    private localStorage:LocalStorageService,
+    private messageService: MessageService,
+  ) {}
 
   get email() {
     return this.registerForm.controls['email'];
   }
   get password() {
     return this.registerForm.controls['password'];
+  }
+
+  get confirmPassword() {
+    return this.registerForm.controls['confirmPassword'];
   }
 
   get nom() {
@@ -57,30 +70,33 @@ export class RegisterComponent {
     return this.registerForm.controls['prenom'];
   }
 
-  public register(): void{
-    const data = this.registerForm.value;
+  public register(registerForm: FormGroup): void{
+
+    const data = registerForm.value;
 
     this.user.mail = data.email ?? '';
     this.user.mdp = data.password ?? '';
     this.user.nom = data.nom ?? '';
     this.user.prenom = data.prenom ?? '';
+    this.user.confirmMdp = data.confirmPassword ?? '';
 
     this.load = true;
 
     this.registerService.inscription(this.user).subscribe(
 
-      (response:any) =>{
+      (response:CustomResponse) =>{
         if(response.status === 201) {
-
+          
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('type', response.data.type);
 
-          this.route.navigate(['pages/dashboard']);
-
+          this.route.navigate(['pages/vitrine']);
         }
       },
       (error: HttpErrorResponse) => {
-        
+        if(error.message) {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+        }
         if(error.error.message.mail) {
           this.mailError = error.error.message.mail;
         }

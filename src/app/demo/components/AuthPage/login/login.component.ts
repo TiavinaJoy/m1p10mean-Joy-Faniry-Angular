@@ -1,16 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, Validators  } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators  } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalStorageService } from 'ngx-webstorage';
+import { MessageService } from 'primeng/api';
 import * as removeAccents from 'remove-accents';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
 import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { LoginService } from 'src/app/demo/service/login/login.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  providers: [MessageService]
 })
 export class LoginComponent {
   loginForm = this.fb.group({
@@ -33,7 +36,13 @@ export class LoginComponent {
     confirmMdp: undefined
   };
 
-  constructor(private fb:FormBuilder, private route: Router, private loginService: LoginService, private localStorage:LocalStorageService) {}
+  constructor(
+    private fb:FormBuilder, 
+    private route: Router, 
+    private loginService: LoginService, 
+    private localStorage:LocalStorageService,
+    private messageService: MessageService
+  ) {}
 
   get email() {
     return this.loginForm.controls['email'];
@@ -42,9 +51,9 @@ export class LoginComponent {
     return this.loginForm.controls['password'];
   }
 
-  public connexion(): void{
+  public connexion(loginForm: FormGroup): void{
 
-    const data = this.loginForm.value;
+    const data = loginForm.value;
     var typeUser = '';
 
     this.user.mail = data.email ?? '';
@@ -54,7 +63,7 @@ export class LoginComponent {
     
     this.loginService.connexion(this.user).subscribe(
       
-      (response:any) =>{
+      (response:CustomResponse) =>{
         if(response.status === 200) {
 
           typeUser = removeAccents(response.data.type).toLocaleLowerCase();
@@ -71,8 +80,10 @@ export class LoginComponent {
 
         }
       },
-      (error: HttpErrorResponse) => {
-        console.log(error);
+      (error: HttpErrorResponse) => { 
+        if(error.status == 500) {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+        }
         this.loginError = error.error.message;
       }
     ).add(() => {

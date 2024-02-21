@@ -3,7 +3,8 @@
         <!-- Css: cadre !!!  -->
         <div class="loginInscriptionContainer">
             <p-card header="M1p11mean-joy-faniry">
-                <form  [formGroup] ="loginForm" (ngSubmit)="connexion()">
+                <p-toast></p-toast>
+                <form  [formGroup] ="loginForm" (ngSubmit)="connexion(loginForm)">
                     <div>
                         <div class="loadSpinner">
                             <div>
