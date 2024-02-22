@@ -101,21 +101,21 @@
                             <th style="width:25%">Action</th>
                         </tr>
                     </ng-template>
-                    <ng-template pTemplate="body" let-employe>
+                    <ng-template pTemplate="body" let-employes>
                         <tr *ngIf="employe.role.intitule != 'Client'">
-                            <td>{{employe.nom}}</td>
-                            <td>{{employe.prenom}}</td>
-                            <td>{{employe.mail}}</td>
-                            <td><p-badge  [severity] ="employe.statut ? 'success' : 'danger'"></p-badge></td>
-                            <td>{{employe.role.intitule}}</td>
-                            <td><p-listbox [options]="employe.infoEmploye.service"  optionLabel="nom"></p-listbox></td>
-                            <td>{{ employe.infoEmploye.dateEmbauche | date:'dd.MM.yyyy, hh:mm' }}</td>
-                            <td>{{ employe.infoEmploye.finContrat | date:'dd.MM.yyyy, hh:mm' }}</td>
-                            <td>{{ employe.infoEmploye.salaire | currency: "MGA" }} </td>
+                            <td>{{employes.nom}}</td>
+                            <td>{{employes.prenom}}</td>
+                            <td>{{employes.mail}}</td>
+                            <td><p-badge  [severity] ="employes.statut ? 'success' : 'danger'"></p-badge></td>
+                            <td>{{employes.role.intitule}}</td>
+                            <td><p-listbox [options]="employes.infoEmploye.service"  optionLabel="nom"></p-listbox></td>
+                            <td>{{ employes.infoEmploye.dateEmbauche | date:'dd.MM.yyyy, hh:mm' }}</td>
+                            <td>{{ employes.infoEmploye.finContrat | date:'dd.MM.yyyy, hh:mm' }}</td>
+                            <td>{{ employes.infoEmploye.salaire | currency: "MGA" }} </td>
                             <td>
                                 <div class="flex">
-                                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click) = "updateEmp(employe)"></button>
-                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmploye(employe)"></button>
+                                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click) = "updateEmp(employes)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmploye(employes)"></button>
                                 </div>
                             </td>
                         </tr>
@@ -197,7 +197,7 @@
         
         <!--Update employe -->
         <p-dialog  [(visible)]="updateEmployeDialog" [style]="{width: '450px'}" header="Modification de l'employé {{ employe.nom }}" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
-            <form #empUpdate="ngForm" (ngSubmit) = "modificationEmploye(empUpdate)">
+            <form #empUpdate="ngForm" (ngSubmit) = "modificationEmploye(empUpdate,empId)">
                 <div class="field">
                     <label for="service">Service</label>
                     <p-multiSelect [options]="services" [(ngModel)]="serviceSelected" #service="ngModel" name="service" optionLabel="nom" optionValue="_id" display="chip"></p-multiSelect>
