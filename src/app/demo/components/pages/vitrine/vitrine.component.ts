@@ -23,6 +23,7 @@ import { TokenService } from 'src/app/demo/service/token/token.service';
     providers: [MessageService]
 })
 export class VitrineComponent implements OnInit {
+    idClient: string = this.tokenService.decodeToken(localStorage.getItem('token')).sub;
 
     employes:Utilisateur[];
 
@@ -176,7 +177,7 @@ export class VitrineComponent implements OnInit {
 
     public ajoutFavoris(favorisForm: NgForm): void {
 
-        this.preferenceAdd.client = '65d454f689bb70990bb685ae';
+        this.preferenceAdd.client = this.idClient;
         this.preferenceAdd.personnel = favorisForm ? favorisForm.value.employe : [];
         this.preferenceAdd.service = this.serviceFav._id;
         
@@ -241,10 +242,8 @@ export class VitrineComponent implements OnInit {
     }
 
     private listeFavoris(): Preference[]{
-
-        const id = this.tokenService.decodeToken(localStorage.getItem('token'));   
-
-        this.preferenceService.listeFavoris('65d454f689bb70990bb685ae').subscribe(
+        console.log(this.idClient);
+        this.preferenceService.listeFavoris(this.idClient).subscribe(
             (response:CustomResponse) => {
                 this.preferences = response.data;
             },
