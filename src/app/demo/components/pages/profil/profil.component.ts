@@ -13,10 +13,11 @@ import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur
     providers: [MessageService]
 })
 export class ProfilComponent implements OnInit{
+    employeId: string = this.tokenService.decodeToken(localStorage.getItem("token")).sub;
     uploadedFiles: any[] = [];
 
     employeInfo: Utilisateur = {
-        id: '',
+        _id: '',
         mail: '',
         mdp: '',
         nom: '',
@@ -34,7 +35,7 @@ export class ProfilComponent implements OnInit{
     ) {}
 
     ngOnInit(): void {
-        this.detailsEmploye();
+        this.detailsEmploye(this.employeId);
     }
 
     onUpload(event: any) {
@@ -49,9 +50,9 @@ export class ProfilComponent implements OnInit{
         this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
     }
 
-    public detailsEmploye(): Utilisateur {
+    public detailsEmploye(empId:string): Utilisateur {
 
-        this.utilisateurService.detailsEmploye('65d35e5c86034400299419e7').subscribe(
+        this.utilisateurService.detailsEmploye(empId).subscribe(
             (response:CustomResponse) => {
                 this.employeInfo = response.data;
                 console.log(this.employeInfo);
@@ -69,9 +70,10 @@ export class ProfilComponent implements OnInit{
         this.employeInfo.mdp = modifierProfil ? modifierProfil.value.mdp : this.employeInfo.mdp;
         this.employeInfo.nom = modifierProfil ? modifierProfil.value.nom : this.employeInfo.nom;
         this.employeInfo.prenom = modifierProfil ? modifierProfil.value.prenom : this.employeInfo.prenom;
+        this.employeInfo.infoEmploye.salaire = this.employeInfo.infoEmploye.salaire;
         this.employeInfo.confirmMdp = modifierProfil ? modifierProfil.value.confirmMdp : '';
 
-        this.utilisateurService.updateEmployeSimple('65d35e5c86034400299419e7',this.employeInfo).subscribe(
+        this.utilisateurService.updateEmployeSimple(this.employeId,this.employeInfo).subscribe(
             (response:CustomResponse) => {
                 console.log(response);
                 modifierProfil.reset();

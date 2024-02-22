@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { UtilisateurSpec } from 'src/app/demo/interfaces/utilisateurSpec';
 import { Statut } from 'src/app/demo/interfaces/statut';
+import { TokenService } from 'src/app/demo/service/token/token.service';
 
 @Component({
     templateUrl: './employe.component.html',
@@ -21,6 +22,8 @@ import { Statut } from 'src/app/demo/interfaces/statut';
 })
 export class EmployeComponent implements OnInit {
     /*MES VARIABLES */
+    empId: string;
+    personnelId: string = this.tokenService.decodeToken(localStorage.getItem("token")).sub;
     statut: number;
     employeUpdate:Utilisateur;
     employeDelete:Utilisateur;
@@ -64,8 +67,8 @@ export class EmployeComponent implements OnInit {
         prenom:'',
         statut: false,
         role: '',
-        dateEmbauche: new Date(),
-        finContrat: new Date(),
+        dateEmbauche: undefined,
+        finContrat: undefined,
         salaire: 0,
         service: []
     };
@@ -110,6 +113,7 @@ export class EmployeComponent implements OnInit {
     constructor(
         private serviceService: ServiceService, 
         private messageService: MessageService,
+        private tokenService: TokenService,
         private route: Router,
         private routes: ActivatedRoute,
         private utilisateurService:UtilisateurService
@@ -146,16 +150,18 @@ export class EmployeComponent implements OnInit {
     }
     
     updateEmp(employe: Utilisateur) {
+        this.empId = employe._id;
         this.updateEmployeDialog = true;
         this.employe.salaire = employe.infoEmploye.salaire;
+        this.employe.finContrat = employe.infoEmploye.finContrat;
     }
 
-    public desactivation(employe:any): void{
+    public desactivation(employe:Utilisateur): void{
 
         if(employe.statut == true) this.statut = 0
         else this.statut = 1
 
-        this.utilisateurService.updateStatutEmploye('65d5b33e22c9b6c6965bce2e',this.statut).subscribe(
+        this.utilisateurService.updateStatutEmploye(employe._id,this.statut).subscribe(
             (response:CustomResponse) => {
 
                 this.deleteEmployeDialog = false;                
@@ -301,7 +307,8 @@ export class EmployeComponent implements OnInit {
         return this.lesEmpSearch;
     }
 
-    public modificationEmploye(empUpdate: NgForm): void {
+    public modificationEmploye(empUpdate: NgForm ,empId: string): void {
+
         var serv = [];
         if( empUpdate && empUpdate.value.service != undefined) serv =  empUpdate.value.service;
 
@@ -311,8 +318,7 @@ export class EmployeComponent implements OnInit {
             role: empUpdate ? empUpdate.value.role : '',
             finContrat: empUpdate ? empUpdate.value.finContrat : ''
         };
-
-        this.utilisateurService.updateInfoEmploye(infoEmp,'65d5b33e22c9b6c6965bce2e').subscribe(
+        this.utilisateurService.updateInfoEmploye(infoEmp,empId).subscribe(
             (response:CustomResponse) => {
                 if(response.status == 200) {
 
