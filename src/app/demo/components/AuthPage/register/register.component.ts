@@ -7,6 +7,7 @@ import { LocalStorageService } from 'ngx-webstorage';
 import { RegisterService } from 'src/app/demo/service/register/register.service';
 import { MessageService } from 'primeng/api';
 import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
+import * as removeAccents from 'remove-accents';
 
 @Component({
   selector: 'app-register',
@@ -33,7 +34,6 @@ export class RegisterComponent {
   registerError: string;
 
   user: Utilisateur = {
-    _id: '',
     mail: '',
     mdp: '',
     nom: '',
@@ -81,14 +81,16 @@ export class RegisterComponent {
     this.user.confirmMdp = data.confirmPassword ?? '';
 
     this.load = true;
+    var typeUser = '';
 
     this.registerService.inscription(this.user).subscribe(
 
       (response:CustomResponse) =>{
         if(response.status === 201) {
+          typeUser = removeAccents(response.data.user.role.intitule).toLocaleLowerCase();
           
           localStorage.setItem('token', response.data.token);
-          localStorage.setItem('type', response.data.type);
+          localStorage.setItem('type', typeUser);
 
           this.route.navigate(['pages/vitrine']);
         }

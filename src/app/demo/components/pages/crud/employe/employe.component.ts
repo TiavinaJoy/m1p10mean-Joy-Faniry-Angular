@@ -15,6 +15,7 @@ import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { UtilisateurSpec } from 'src/app/demo/interfaces/utilisateurSpec';
 import { Statut } from 'src/app/demo/interfaces/statut';
 import { TokenService } from 'src/app/demo/service/token/token.service';
+import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 
 @Component({
     templateUrl: './employe.component.html',
@@ -156,6 +157,11 @@ export class EmployeComponent implements OnInit {
         this.employe.finContrat = employe.infoEmploye.finContrat;
     }
 
+    onPageChange(event: PageEvent,employeSearch: NgForm) {
+        
+        this.listePersonnel(employeSearch,event.page,10);
+    }
+    
     public desactivation(employe:Utilisateur): void{
 
         if(employe.statut == true) this.statut = 0
@@ -256,6 +262,11 @@ export class EmployeComponent implements OnInit {
 
     public listePersonnel(employeSearch: NgForm, pageP:Number,perPageP:Number): Utilisateur[]{
 
+        if(pageP === undefined || perPageP === undefined){
+            pageP = 0; 
+            perPageP = 10;
+        } 
+        /*
         var queryParams = {};
         if(!this.utilisateurService.checkVide(employeSearch)) {
 
@@ -286,7 +297,7 @@ export class EmployeComponent implements OnInit {
             relativeTo: this.routes,
             queryParams,
             queryParamsHandling: 'merge',
-        });
+        });*/
 
         this.utilisateurService.listePersonnel(employeSearch ? employeSearch.value : this.empSearch,pageP,perPageP).subscribe(
           
