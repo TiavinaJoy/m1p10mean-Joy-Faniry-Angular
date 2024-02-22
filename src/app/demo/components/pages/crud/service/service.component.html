@@ -93,7 +93,7 @@
                     </div>
                     <div class="grid">
                         <div class="col-6 mb-4">
-                            {{ service.categorie.intitule }}
+                            {{ service.categorie?.intitule || ''}}
                         </div>
                         <div class="col-6 mb-4 ">
                             {{ service.prix | currency: "MGA" }}
@@ -217,7 +217,7 @@
                 </div>
                 <div class="field">
                     <label for="categorie">Catégorie</label>
-                    <p-dropdown [options]="categories" #categorie="ngModel" [(ngModel)]="selectedCategorie" name="selectedCategorie" optionLabel="intitule" optionValue="_id" [required]="true"></p-dropdown>
+                    <p-dropdown [options]="categories" #categorie="ngModel" [(ngModel)]="updateCategorie" name="categorie" optionLabel="intitule" optionValue="_id" [required]="true"></p-dropdown>
                     <small *ngIf ="categorie.invalid && (categorie.dirty || categorie.touched)" class="bloc p-error">
                         <div *ngIf ="categorie.errors?.['required']">La catégorie du service est obligatoire.</div>
                     </small>

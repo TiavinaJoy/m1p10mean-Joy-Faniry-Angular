@@ -44,6 +44,11 @@ export class ServiceComponent implements OnDestroy,OnInit {
 
     selectedCategorie: Categorie;
 
+    updateCategorie:Categorie = {
+        id: '',
+        intitule: ''
+    };
+
     deleteServiceDialog: boolean = false;
 
     serviceDialog: boolean = false;
@@ -141,7 +146,8 @@ export class ServiceComponent implements OnDestroy,OnInit {
 
     editService(service:Service) {
         this.unService = service;
-        this.selectedCategorie = service.categorie;
+        this.updateCategorie = service.categorie;
+        //this.updateCategorie.intitule = this.categories.find(cat => cat.id == service.categorie.id).intitule
         this.ficheServiceDialog = true;
     }
 
@@ -167,12 +173,22 @@ export class ServiceComponent implements OnDestroy,OnInit {
     }
 
     public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): Service[]{
+        if(pageP === undefined || perPageP === undefined){
+            pageP = 0; 
+            perPageP = 10;
+        } 
+        /*var queryParams = {};
 
-        var queryParams = {};
         if(serviceSearch !== null) {
-            if(pageP === undefined){
+            
+            if(pageP === undefined || perPageP === undefined){
                 pageP = 0; 
+                perPageP = 10;
             } 
+            if(serviceSearch && serviceSearch.value.nom) queryParams['nom'] = serviceSearch.value.nom
+            if(serviceSearch && serviceSearch.value.description) queryParams['description'] = serviceSearch.value.description
+            if(serviceSearch && serviceSearch.value.statut) queryParams['statut'] = serviceSearch.value.statut
+            if(serviceSearch && serviceSearch.value.categorie) queryParams['categorie'] = serviceSearch.value.categorie
             queryParams = {
                 page: pageP,
                 perPage: perPageP, 
@@ -187,29 +203,17 @@ export class ServiceComponent implements OnDestroy,OnInit {
                 description: serviceSearch ? serviceSearch.value.description : '',
                 categorie: serviceSearch ? serviceSearch.value.categorie : ''
             };
-        }
-        
+            
+        }   
+        queryParams['page'] = pageP;
+        queryParams['perPage'] = perPageP;
+
         this.route.navigate([], {
             relativeTo: this.routes,
             queryParams,
             queryParamsHandling: 'merge',
-        });
+        });*/
 
-       /*return this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).pipe(
-        switchMap( (response:any) => {
-            if(response.status === 200) {
-
-                //this.lesServices$ = response.data.docs;
-                //this.services = response.data.docs;
-                this.totalData = response.data.totalDocs;
-                this.perPage = response.data.limit;
-                return of(response.data.docs);
-            } else {
-                return null;
-                //this.messageService.add({ severity: 'error', summary: 'Erreur', detail: response.message, life: 3000 });
-            }
-        })
-       ) */
         this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).subscribe(
           
           (response:any) =>{
@@ -265,7 +269,6 @@ export class ServiceComponent implements OnDestroy,OnInit {
     public addService(serviceForm:FormGroup): void{
 
         const data = serviceForm.value;
-        
         this.unService.nom =  data.nom;
         this.unService.prix =   Number(data.prix);
         this.unService.commission =  Number(data.commission);
@@ -290,23 +293,32 @@ export class ServiceComponent implements OnDestroy,OnInit {
 
     public updateService(service: any): void{
 
+
         this.unService.id = service._id;
         this.unService.nom =  service.nom;
         this.unService.prix =   service.prix;
         this.unService.commission =  service.commission;
         this.unService.duree =  service.duree;
         this.unService.description =  service.description;
-        this.unService.categorie = this.selectedCategorie;
+
+        if(typeof this.updateCategorie === 'object') {
+            this.unService.categorie = undefined;
+        }  
+        else if (typeof this.updateCategorie === 'string' ) {
+            this.unService.categorie = this.updateCategorie;
+        }
 
         this.serviceService.updateService(this.unService).subscribe(
             (response:CustomResponse) => {
+                this.unService.categorie = this.updateCategorie;
                 if(response.status == 200) {
                     this.ficheServiceDialog = false;
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },
             (error:HttpErrorResponse) => {
-                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+                this.unService.categorie = this.updateCategorie;
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         )
     }
