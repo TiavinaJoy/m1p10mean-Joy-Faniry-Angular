@@ -2,7 +2,7 @@ import { InfoEmploye } from "./infoEmploye";
 import { Role } from "./role";
 
 export interface Utilisateur {
-    _id: string;
+    _id?: string;
 	mail:string;
 	mdp:string;
     confirmMdp:String;

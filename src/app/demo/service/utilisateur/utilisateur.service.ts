@@ -59,22 +59,40 @@ export class UtilisateurService {
 
     let queryParams = new HttpParams();
 
-    if(!this.checkVide(employe)) 
-    {
-      console.log("Non vide dans le param");
-      queryParams= queryParams.append("nom",employe.nom );
-      queryParams= queryParams.append("prenom",employe.prenom );
-      queryParams= queryParams.append("mail",employe.mail );
-      queryParams= queryParams.append("statut",employe.statut );
-      queryParams= queryParams.append("role",employe.role );
-      queryParams= queryParams.append("salaireMin",employe.salaireMin );
-      queryParams= queryParams.append("salaireMax",employe.salaireMax );
-      queryParams= queryParams.append("dateEmbaucheMin",employe.dateEmbaucheMin );
-      queryParams= queryParams.append("dateEmbaucheMax",employe.dateEmbaucheMax );
-      queryParams= queryParams.append("finContratMin",employe.finContratMin );
-      queryParams= queryParams.append("finContratMax", employe.finContratMax );
-      queryParams= queryParams.append("service", employe.service );
+
+    if(employe.salaireMin || employe.salaireMax) {
+      if(employe.salaireMin && employe.salaireMax) { 
+        queryParams= queryParams.append("salaireMin",employe.salaireMin.toString() ?? '');
+        queryParams= queryParams.append("salaireMax",employe.salaireMax.toString() ?? '');
+      }
+      else if (employe.salaireMin && !employe.salaireMax) queryParams= queryParams.append("salaireMin",employe.salaireMin.toString() ?? '');
+      else if (!employe.salaireMin && employe.salaireMax) queryParams= queryParams.append("salaireMax",employe.salaireMax.toString() ?? '');
     }
+
+    if(employe.dateEmbaucheMin || employe.dateEmbaucheMax) {
+      if(employe.dateEmbaucheMin && employe.dateEmbaucheMax) { 
+        queryParams= queryParams.append("dateEmbaucheMin",employe.dateEmbaucheMin.toString() ?? '');
+        queryParams= queryParams.append("dateEmbaucheMax",employe.dateEmbaucheMax.toString() ?? '');
+      }
+      else if (employe.dateEmbaucheMin && !employe.dateEmbaucheMax) queryParams= queryParams.append("dateEmbaucheMin",employe.dateEmbaucheMin.toString() ?? '');
+      else if (!employe.dateEmbaucheMin && employe.dateEmbaucheMax) queryParams= queryParams.append("dateEmbaucheMax",employe.dateEmbaucheMax.toString() ?? '');
+    }
+
+    if(employe.finContratMin || employe.finContratMax) {
+      if(employe.finContratMin && employe.finContratMax) { 
+        queryParams= queryParams.append("finContratMin",employe.finContratMin.toString() ?? '');
+        queryParams= queryParams.append("finContratMax",employe.finContratMax.toString() ?? '');
+      }
+      else if (employe.finContratMin && !employe.finContratMax) queryParams= queryParams.append("finContratMin",employe.finContratMin.toString() ?? '');
+      else if (!employe.finContratMin && employe.finContratMax) queryParams= queryParams.append("finContratMax",employe.finContratMax.toString() ?? '');
+    }
+
+    if(employe.nom) queryParams= queryParams.append("nom",employe.nom ?? '');
+    if(employe.prenom) queryParams= queryParams.append("prenom",employe.prenom ?? '');
+    if(employe.mail) queryParams= queryParams.append("mail",employe.mail ?? '');
+    if(employe.statut) queryParams= queryParams.append("statut",employe.statut ?? '');
+    if(employe.role) queryParams= queryParams.append("role",employe.role  );
+    if(employe.service) queryParams= queryParams.append("service",employe.service ?? '');
 
     queryParams= queryParams.append("page", page.toString() ?? '0');
     queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
