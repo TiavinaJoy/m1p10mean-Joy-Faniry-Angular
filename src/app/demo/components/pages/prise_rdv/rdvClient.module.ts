@@ -30,6 +30,7 @@ import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { DragDropModule } from 'primeng/dragdrop';
 @NgModule({
 	imports: [
 		CommonModule,
@@ -46,6 +47,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 		InputTextModule,
 		/*Calendrier */
 		FullCalendarModule,
+		DragDropModule,
 		/*Personal */
 		FormsModule,
 		ListboxModule,

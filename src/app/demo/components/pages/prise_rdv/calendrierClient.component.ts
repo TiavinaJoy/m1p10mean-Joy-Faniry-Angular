@@ -5,12 +5,18 @@ import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interaction from "@fullcalendar/interaction";
 import { Router } from '@angular/router';
+import { Service } from 'src/app/demo/interfaces/service';
+import { ServiceService } from 'src/app/demo/service/service/service.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
 
 @Component({
-    templateUrl: './calendrierClient.component.html'
+    templateUrl: './calendrierClient.component.html',
+    providers: [MessageService]
 })
 export class CalendrierClientComponent implements OnInit {
-    
+  draggedService: Service;
+  services:Service[];
     submitte: Boolean = false;
     selectedCountry!: any;
     countries!: any;
@@ -46,9 +52,15 @@ export class CalendrierClientComponent implements OnInit {
 
     }
       
-    constructor(private router: Router) { }
+    constructor(
+      private router: Router,
+      private serviceService: ServiceService,
+      private messageService: MessageService
+    ) { }
 
     ngOnInit() {
+
+      this.lesServices();
         this.countries = [
             { name: 'Australia', code: 'AU' },
             { name: 'Brazil', code: 'BR' },
@@ -63,7 +75,33 @@ export class CalendrierClientComponent implements OnInit {
         ];
     }
 
-    
+    private lesServices(): Service[] {
+
+      this.serviceService.tousLesServices().subscribe(
+          (response:any) => {
+            console.log(response.data)
+              this.services = response.data;
+          },
+          (error:HttpErrorResponse) => {
+              if(error.status !== 500) {
+                  this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+              }else{
+                  this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.message, life: 3000 });
+              }
+          }
+      );
+      return this.services;
+  }
+
+    /*DRAG AND DROP */
+    dragStart(service: Service) {
+      this.draggedService = service;
+    }
+
+    dragEnd() {
+      this.draggedService = null;
+    }
+    /*DRAG AND DROP */
     /*Ouverture du formulaire d'ajout des jours libre */
     modalJourLibre(arg) {
       const today = new Date();
