@@ -52,7 +52,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import { PaginatorModule } from 'primeng/paginator';
 import { BadgeModule } from 'primeng/badge';
 import { MultiSelectModule } from 'primeng/multiselect';
-
+import { DragDropModule } from 'primeng/dragdrop';
 @NgModule({
     declarations: [
         AppComponent, 
@@ -97,6 +97,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
         PaginatorModule,
         BadgeModule,
         MultiSelectModule,
+        DragDropModule,
         /*Dashboard */
         ChartModule,
         MenuModule,

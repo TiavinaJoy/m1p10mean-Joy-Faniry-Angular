@@ -5,7 +5,7 @@
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                     <div class="my-2">
-                        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                        <button pButton pRipple label="Nouveau" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
                     </div>
                 </ng-template>
 
@@ -154,10 +154,31 @@
                     <div *ngIf="roleError" class="bloc p-error justify-content-center align-item-center">{{ roleError }}</div>
                 </div>
                 <div class="field">
+                    <label for="serv">Service dragged</label>
+                    <div class="flex p-2 border-1 surface-border border-round w-full" >
+                        <div class="p-2 border-1 surface-border border-round w-15rem" style="height:200px; overflow-y: scroll;">
+                            <ul class="list-none flex flex-column gap-2 p-0 m-0">
+                                <li *ngFor="let serviceDrag of services" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStart(serviceDrag)" (onDragEnd)="dragEnd()">
+                                    {{serviceDrag.nom}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="p-2 border-1 surface-border border-round w-15rem" pDroppable (onDrop)="drop()" style="height:200px; overflow-y: scroll;">
+                            <p class="text-center surface-border border-bottom-1">Services selectionnées</p>
+                            <ul class="list-none flex flex-column gap-2 p-0 m-0" *ngIf="allSelectedServices" >
+                                <li *ngFor="let serv of allSelectedServices" class="p-2 border-round shadow-1">
+                                    {{serv.nom}}
+                                    <i class="pi pi-times" iconPos="right" (click)="supprimerServ(serv)"></i>
+                                </li>                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="field">
                     <label for="service">Services</label>
                     <p-multiSelect [options]="services" [(ngModel)]="serviceSelected" #service="ngModel" name="service" optionLabel="nom" optionValue="_id" display="chip"></p-multiSelect>
                     <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.service">Le choix de service est obligatoire.</small>
-                </div>
+                </div>--> 
                 <div class="field">
                     <label for="salaire">Salaire</label>
                     <p-inputNumber mode="decimal" #salaire = "ngModel" name="salaire" [(ngModel)]="employe.salaire" min="1"  mode="currency" currency="MGA"></p-inputNumber>

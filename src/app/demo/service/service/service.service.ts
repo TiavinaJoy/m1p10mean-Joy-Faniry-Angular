@@ -66,7 +66,7 @@ export class ServiceService {
   public updateService(service:Service): Observable<CustomResponse> { 
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-    return this.http.put<CustomResponse>(`${this.apiServerUrl}/service/${service.id}`,service, {headers: this.headers});
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/service/${service._id}`,service, {headers: this.headers});
 
   }
 

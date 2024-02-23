@@ -23,6 +23,10 @@ import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 })
 export class EmployeComponent implements OnInit {
     /*MES VARIABLES */
+    servId: string[] = [];
+    allSelectedServices: Service[] | undefined = [];
+    draggedservice: Service | undefined | null;
+    //
     empId: string;
     personnelId: string = this.tokenService.decodeToken(localStorage.getItem("token")).sub;
     statut: number;
@@ -39,7 +43,6 @@ export class EmployeComponent implements OnInit {
     serviceSelected: Service;
     services:Service[];
     addService:Service = {
-        id: '',
         nom: '',
         prix: 0,
         commission: 0,
@@ -144,6 +147,45 @@ export class EmployeComponent implements OnInit {
     hideDialog() {
         this.newEmploye = false;
     }
+    
+    supprimerServ(serv:Service) {
+        let servIndex = this.findIndexToRemove(serv);
+        this.services = this.services?.filter((val, i) => i != servIndex);
+        this.allSelectedServices = this.allSelectedServices?.filter((val, i) => i != servIndex);
+        serv = null;
+    }
+
+    dragStart(serv: Service) {
+        this.draggedservice = serv;
+    }
+
+    dragEnd() {
+        this.draggedservice = null;
+    }
+
+    findIndexToRemove(serv:Service){
+        let index = -1;
+        for(let i = 0; i< (this.services as Service[]).length; i++) {
+            if(serv._id === (this.services as Service[])[i]._id) {
+                index = 1;
+                break;
+            }
+        }
+        return index;
+    }
+    drop() {
+        
+        if(this.draggedservice){
+            
+        console.log(this.draggedservice)
+            let servIndex = this.findIndexToRemove(this.draggedservice);
+        console.log(servIndex);
+            this.allSelectedServices = [...(this.allSelectedServices as Service[]), this.draggedservice];
+            this.services = this.services?.filter((val, i) => i != servIndex);
+        console.log(this.services);
+            this.draggedservice = null;
+        }
+    }
 
     deleteEmploye(employe: Utilisateur) {
         this.deleteEmployeDialog = true;
@@ -211,6 +253,11 @@ export class EmployeComponent implements OnInit {
 
     public ajoutEmploye(addEmploye:NgForm): void{
 
+        if(this.allSelectedServices.length != 0) {
+            this.allSelectedServices.forEach(idServ => {
+                this.servId = [...this.servId, idServ._id];
+            })
+        }
         this.submitted = true;
     
         this.employe.nom = addEmploye ? addEmploye.value.nom : '';
@@ -219,9 +266,9 @@ export class EmployeComponent implements OnInit {
         this.employe.dateEmbauche = addEmploye ? addEmploye.value.dateEmbauche : '';
         this.employe.role = addEmploye ? addEmploye.value.role : '';
         this.employe.salaire = addEmploye ? addEmploye.value.salaire : 0;
-        this.employe.service = addEmploye ? addEmploye.value.service : [];                                            
+        this.employe.service = this.servId;                                            
         this.employe.finContrat =     addEmploye ? addEmploye.value.finContrat : ''; 
-
+        
         if(addEmploye.value.service == undefined) {
             this.employe.service = []
         }
@@ -231,6 +278,7 @@ export class EmployeComponent implements OnInit {
                 if(response.status === 201) {
                     addEmploye.reset();
                     this.newEmploye = false;
+                    this.allSelectedServices = null;
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },
