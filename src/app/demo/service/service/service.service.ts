@@ -51,7 +51,7 @@ export class ServiceService {
     
     if(service.nom) queryParams= queryParams.append("nom",service.nom ?? '');
     if(service.description) queryParams= queryParams.append("description",service.description ?? '');
-    if(service.statut) queryParams= queryParams.append("statut",service.statut ? service.statut.toString() : '');
+    if(service.statut == 0 || service.statut == 1) queryParams= queryParams.append("statut",service.statut.toString());
     if(service.categorie) queryParams= queryParams.append("categorie",service.categorie ?? '');
 
     queryParams= queryParams.append("page", page.toString() ?? '');
