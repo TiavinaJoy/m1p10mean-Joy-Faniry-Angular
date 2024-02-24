@@ -269,9 +269,9 @@ export class EmployeComponent implements OnInit {
         this.employe.service = this.servId;                                            
         this.employe.finContrat =     addEmploye ? addEmploye.value.finContrat : ''; 
         
-        if(addEmploye.value.service == undefined) {
+        /*if(addEmploye.value.service == undefined) {
             this.employe.service = []
-        }
+        }*/
 
         this.utilisateurService.addEmploye(this.employe).subscribe( 
             (response:CustomResponse) => {
