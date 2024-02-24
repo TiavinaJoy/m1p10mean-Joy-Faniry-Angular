@@ -1,0 +1,16 @@
+<p-card>
+	<ng-template pTemplate="title">
+		Liste des personnels
+	</ng-template>
+	
+	<ng-template pTemplate="content">
+		<p-listbox [options]="cities" [(ngModel)]="selectedList" [filter]="true"></p-listbox>
+	</ng-template>
+	
+	<ng-template pTemplate="footer">
+		<div class="grid grid-nogutter justify-content-end">
+			<p-button label="Suivant" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+		</div>
+	</ng-template>
+	
+</p-card>

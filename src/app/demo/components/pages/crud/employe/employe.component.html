@@ -1,0 +1,252 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Nouveau" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <div class="search">
+                <form #employeSearch="ngForm" (ngSubmit) = "listePersonnel(employeSearch,page,perPage)">
+                    <div class="grid">
+                        <div class="field col-4">
+                            <label for="nom">Nom:</label>
+                            <input type="text"  #nom ="ngModel" [(ngModel)] = "empSearch.nom" name="nom" class="w-full" pInputText   autofocus />
+                        </div>
+                        <div class="field col-4">
+                            <label for="prenom">Prénom:</label>
+                            <input type="text"  #prenom="ngModel" [(ngModel)] = "empSearch.prenom" name="prenom" class="w-full" pInputText   autofocus />
+                        </div>
+                        <div class="field col-4">
+                            <label for="mail">Email:</label>
+                            <input type="text"  #mail="ngModel" [(ngModel)] = "empSearch.mail" name="mail" class="w-full" pInputText   autofocus />
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="salaireMin">Salaire Min:</label>
+                            <p-inputNumber  #salaireMin="ngModel" [(ngModel)] = "empSearch.salaireMin" name="salaireMin" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                        <div class="field col-6">
+                            <label for="salaireMax">Salaire Max:</label>
+                            <p-inputNumber  #salaireMax="ngModel" [(ngModel)] = "empSearch.salaireMax" name="salaireMax" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="dateEmbaucheMin">Date d'embauche min:</label>
+                            <p-calendar #dateEmbaucheMin="ngModel" [(ngModel)] = "empSearch.dateEmbaucheMin" name="dateEmbaucheMin" styleClass="w-full"  dateFormat="dd.mm.y"></p-calendar>
+                        </div>
+                        <div class="field col-6">
+                            <label for="dateEmbaucheMax">Date d'embauche max:</label>
+                            <p-calendar  #dateEmbaucheMax="ngModel" [(ngModel)] = "empSearch.dateEmbaucheMax" name="dateEmbaucheMax" styleClass ="w-full" dateFormat="dd.mm.y" ></p-calendar>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="finContratMin">Fin contrat min:</label>
+                            <p-calendar #finContratMin="ngModel" [(ngModel)] = "empSearch.finContratMin" name="finContratMin" styleClass="w-full"  dateFormat="dd.mm.y"></p-calendar>
+                        </div>
+                        <div class="field col-6">
+                            <label for="finContratMax">Fin contrat max:</label>
+                            <p-calendar  #finContratMax="ngModel" [(ngModel)] = "empSearch.finContratMax" name="finContratMax" styleClass ="w-full" dateFormat="dd.mm.y" ></p-calendar>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">
+                            <label for="statut">Statut:</label>
+                            <p-dropdown [options]="lesStatuts" #statut="ngModel" name="statut" [(ngModel)] = "empSearch.statut" styleClass="w-full" [(ngModel)]="selectedStatut"  optionLabel="intitule" optionValue="value"></p-dropdown>
+                        </div>
+                        <div class="field col-6">
+                            <label for="role">Rôle:</label>
+                            <p-dropdown [options]="roles" #role="ngModel" name="role" [(ngModel)] = "empSearch.role" styleClass="w-full" [(ngModel)]="roleSelected"  optionLabel="intitule" optionValue="_id"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="field col-6">   
+                            <label for="service">Service:</label>
+                            <p-dropdown [options]="services" #service="ngModel" name="service" [(ngModel)] = "empSearch.service" styleClass="w-full" [(ngModel)]="serviceSelected"  optionLabel="nom" optionValue="_id"></p-dropdown>
+                        </div>
+                        <div class="field col-6">
+                            <label for="categorie"></label>
+                            <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h5>Liste des employe</h5><!--[paginator]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" -->
+                <p-table [value]="lesEmpSearch" [tableStyle]="{'min-width': '50rem'}" >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width:25%">Nom</th>
+                            <th style="width:25%">Prénom</th>
+                            <th style="width:25%">Email</th>
+                            <th style="width:25%">Statut</th>
+                            <th style="width:25%">Rôle</th>
+                            <th style="width:25%">Services</th>
+                            <th style="width:25%">Date d'embauche</th>
+                            <th style="width:25%">Fin de contrat</th>
+                            <th style="width:25%">Salaire</th>
+                            <th style="width:25%">Action</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-employes>
+                        <tr *ngIf="employes.role.intitule != 'Client'">
+                            <td>{{employes.nom}}</td>
+                            <td>{{employes.prenom}}</td>
+                            <td>{{employes.mail}}</td>
+                            <td><p-badge  [severity] ="employes.statut ? 'success' : 'danger'"></p-badge></td>
+                            <td>{{employes.role.intitule}}</td>
+                            <td><p-listbox [options]="employes.infoEmploye.service"  optionLabel="nom"></p-listbox></td>
+                            <td>{{ employes.infoEmploye.dateEmbauche | date:'dd.MM.yyyy, hh:mm' }}</td>
+                            <td>{{ employes.infoEmploye.finContrat | date:'dd.MM.yyyy, hh:mm' }}</td>
+                            <td>{{ employes.infoEmploye.salaire | currency: "MGA" }} </td>
+                            <td>
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click) = "updateEmp(employes)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmploye(employes)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div class="card flex justify-content-center">
+                    <p-paginator (onPageChange)="onPageChange($event,employeSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
+                </div>
+            </div>
+        </div>
+        <!--Ajout d'un employe-->
+        <p-dialog blockScroll="true" [(visible)]="newEmploye" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}" [styleClass]="'dialog'">
+            <form #addEmploye="ngForm" (ngSubmit) = "ajoutEmploye(addEmploye)">
+                <div class="field"> 
+                    <label for="nom">Nom</label>
+                    <input type="text" pInputText #nom = "ngModel" name="nom" [(ngModel)]="employe.nom" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employe.nom}"/>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.nom">Le nom est obligatoire.</small>
+                    <div *ngIf="nomError" class="bloc p-error justify-content-center align-item-center">{{ nomError }}</div>
+                </div>
+                <div class="field">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" pInputText #prenom = "ngModel" name="prenom" [(ngModel)]="employe.prenom" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employe.prenom}"/>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.prenom">Le prénom est obligatoire.</small>
+                    <div *ngIf="prenomError" class="bloc p-error justify-content-center align-item-center">{{ prenomError }}</div>
+                </div>
+                <div class="field">
+                    <label for="mail">Email</label>
+                    <input type="text" pInputText #mail = "ngModel" name="mail" [(ngModel)]="employe.mail" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employe.mail}"/>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.mail">L'email est obligatoire.</small>
+                    <div *ngIf="mailError" class="bloc p-error justify-content-center align-item-center">{{ mailError }}</div>
+                </div>
+                <div class="field">
+                    <label for="role">Rôle</label>
+                    <p-dropdown [options]="roles" [(ngModel)]="roleSelected" #role="ngModel" name="role"  optionLabel="intitule" optionValue="_id" styleClass="w-full"></p-dropdown>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.role">Le rôle est obligatoire.</small>
+                    <div *ngIf="roleError" class="bloc p-error justify-content-center align-item-center">{{ roleError }}</div>
+                </div>
+                <div class="field">
+                    <label for="serv">Service dragged</label>
+                    <div class="flex p-2 border-1 surface-border border-round w-full" >
+                        <div class="p-2 border-1 surface-border border-round w-15rem" style="height:200px; overflow-y: scroll;">
+                            <ul class="list-none flex flex-column gap-2 p-0 m-0">
+                                <li *ngFor="let serviceDrag of services" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStart(serviceDrag)" (onDragEnd)="dragEnd()">
+                                    {{serviceDrag.nom}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="p-2 border-1 surface-border border-round w-15rem" pDroppable (onDrop)="drop()" style="height:200px; overflow-y: scroll;">
+                            <p class="text-center surface-border border-bottom-1">Services selectionnées</p>
+                            <ul class="list-none flex flex-column gap-2 p-0 m-0" *ngIf="allSelectedServices" >
+                                <li *ngFor="let serv of allSelectedServices" class="p-2 border-round shadow-1">
+                                    {{serv.nom}}
+                                    <i class="pi pi-times" iconPos="right" (click)="supprimerServ(serv)"></i>
+                                </li>                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="field">
+                    <label for="service">Services</label>
+                    <p-multiSelect [options]="services" [(ngModel)]="serviceSelected" #service="ngModel" name="service" optionLabel="nom" optionValue="_id" display="chip"></p-multiSelect>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.service">Le choix de service est obligatoire.</small>
+                </div>--> 
+                <div class="field">
+                    <label for="salaire">Salaire</label>
+                    <p-inputNumber mode="decimal" #salaire = "ngModel" name="salaire" [(ngModel)]="employe.salaire" min="1"  mode="currency" currency="MGA"></p-inputNumber>
+                    <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.salaire">Le salaire est obligatoire.</small>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <label for="dateEmbauche">Date début de contrat</label>
+                        <p-calendar name="dateEmbauche" #dateEmbauche = "ngModel" [(ngModel)]="employe.dateEmbauche" dateFormat="dd.mm.y" ></p-calendar>
+                        <small class="ng-dirty ng-invalid bloc p-error" *ngIf="submitted && !employe.dateEmbauche">La date d'embauche est obligatoire.</small>
+                    </div>
+                    <div class="field col-6">
+                        <label for="finContrat">Date fin de contrat</label>
+                        <p-calendar name="finContrat" #finContrat = "ngModel" [(ngModel)]="employe.finContrat" dateFormat="dd.mm.y" ></p-calendar>
+                        <div *ngIf="finContratError" class="bloc p-error justify-content-center align-item-center">{{ finContratError }}</div>
+                        
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="col-6">
+                        <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="hideDialog()"></button>
+                    </div>
+                    <div class="col-6">
+                        <button pButton type="submit" pRipple label="Enregistrer" icon="pi pi-check" class="p-button-outlined p-button-success"></button>
+                    </div>
+                </div>
+            </form>
+        </p-dialog>
+        <!-- Update statut employe -->
+        <p-dialog [(visible)]="deleteEmployeDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="employeDelete">Voulez-vous désactiver le statut de l'employé <b>{{employeDelete.nom}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="hideDialog()"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-success p-button-outlined" label="Désactiver" (click)="desactivation(employeDelete)"></button>
+            </ng-template>
+        </p-dialog>
+        
+        <!--Update employe -->
+        <p-dialog  [(visible)]="updateEmployeDialog" [style]="{width: '450px'}" header="Modification de l'employé {{ employe.nom }}" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+            <form #empUpdate="ngForm" (ngSubmit) = "modificationEmploye(empUpdate,empId)">
+                <div class="field">
+                    <label for="service">Service</label>
+                    <p-multiSelect [options]="services" [(ngModel)]="serviceSelected" #service="ngModel" name="service" optionLabel="nom" optionValue="_id" display="chip"></p-multiSelect>
+                </div>
+                <div class="field">
+                    <label for="salaire">Salaire</label>
+                    <p-inputNumber id="salaire" #salaire="ngModel" [(ngModel)]="employe.salaire" name ="salaire" mode="currency" currency="MGA" [required] =true></p-inputNumber>
+                </div>
+                <div class="field">
+                    <label for="role">Rôle</label>
+                    <p-dropdown [options]="roles" #role="ngModel" [(ngModel)]="roleSelected" name="role" optionLabel="intitule" optionValue="_id" [required]="true"></p-dropdown>
+                </div>
+                <div class="field">
+                    <label for="finContrat">Fin contrat</label>
+                    <p-calendar name="finContrat" #finContrat = "ngModel" [(ngModel)]="employe.finContrat" dateFormat="dd.mm.y" ></p-calendar>
+                </div>
+                <div class="grid">
+                    <div class="col-6">
+                        <button pButton  icon="pi pi-times" label="Annuler" iconPos="left" class=" p-button-danger p-button-outlined" (click)="hideDialog()"></button>
+                    </div>
+                    <div class="col-6">
+                        <button pButton type="submit" icon="pi pi-check" label="Modifier" iconPos="right" class="p-button-outlined p-button-success"></button>
+                    </div>
+                </div>
+            </form>
+        </p-dialog>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="flex justify-content-center align-items-center h-full">
+    <div class="loginInscriptionCadre justify-content-center align-item-center" >  
+        <!-- Css: cadre !!!  -->
+        <div class="loginInscriptionContainer">
+            <p-card header="M1p11mean-joy-faniry">
+                <p-toast></p-toast>
+                <form  [formGroup] ="loginForm" (ngSubmit)="connexion(loginForm)">
+                    <div>
+                        <div class="loadSpinner">
+                            <div>
+                                <h2>Se connecter</h2>
+                            </div>
+                            <div>
+                                <p-progressSpinner *ngIf="load" [style]="{width: '40px', height: '30px'}" styleClass="custom-spinner" strokeWidth="8" fill="var(--surface-ground)"></p-progressSpinner>
+                            </div>
+                        </div>
+                        <div *ngIf="loginError" class="bloc p-error align-item-center">{{ loginError }}</div>
+                        <div class="field">
+                            <label for="email">Email:</label>
+                            <input type="text" pInputText formControlName="email" class="w-full" name="email" placeholder="email@gmail.com"/>
+                            <small *ngIf ="email.invalid && (email.dirty || email.touched)" class="bloc p-error">
+                                <div *ngIf ="email.errors?.['required']">Veuillez inserer votre email.</div>
+                                <div *ngIf ="email.errors?.['email']">Veuillez inserer un email valide.</div>
+                            </small>
+                        </div>
+                        <div class="field">
+                            <label for="password">Mot de passe:</label>
+                            <input type="password" pInputText formControlName="password" class="w-full" name="password" placeholder=""/>
+                            <small *ngIf ="password.invalid && (password.dirty || password.touched)" class="bloc p-error">
+                                <div *ngIf ="password.errors?.['required']">Veuillez inserer votre mot de passe.</div>
+                                <div *ngIf ="password.errors?.['password']">Veuillez inserer un mot de passe valide.</div>
+                            </small>
+                        </div>
+                        <p-button type="submit" label="Se connecter" styleClass="w-full"></p-button>
+                        <div class="mt-2">
+                            Pas encore membre? <a routerLink="/register"> S'inscrire</a>
+                        </div>
+                    </div>
+                </form>
+            </p-card>    
+            <div>
+                <img src="../../../../../assets/demo/images/curly.jpg" alt="">
+            </div>
+        </div>
+    </div>
+</div>
