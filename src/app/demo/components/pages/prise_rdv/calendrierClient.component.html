@@ -1,0 +1,79 @@
+<p-card>
+    <ng-template pTemplate="content">
+        <!--<div class="grid">
+            <div class="col-3">
+                <div class="p-2 border-1 surface-border border-round w-15rem">
+                    <ul class="list-none flex flex-column gap-2 p-0 m-0">
+                        <li *ngFor="let service of services" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStart(service)" (onDragEnd)="dragEnd()">
+                            {{service.nom}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-9">
+                
+            </div>
+        </div>-->
+        <full-calendar [options]="calendarOptions"></full-calendar>
+
+		<!--Ajout des rendez-vous-->
+		<p-dialog [(visible)]="afficherAjoutModal"  header="Ajout des heures libres de l'employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}" >
+            <ng-template pTemplate="content">
+
+                <div class="field">
+                    <label for="dateDebut">Date début</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
+                </div>
+            
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerAjoutModal()"></button>
+                <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-text" (click)="ajoutLibre()"></button>
+            </ng-template>
+        </p-dialog>
+		<!--Fin de l'ajout des rendez-vous-->
+
+        <!--Affichage fiche rdv-->
+        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des rendez-vous" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+            <ng-template pTemplate="content" >
+                
+                <div class="field">
+					<span>Employe: </span> RASOLOFONIRINA Jeanne
+                </div>
+                <div class="field">
+                    <span>Client: </span> RASOLOFONIRINA Jeanne
+                </div>
+                <div class="field">
+                    <label for="service">Service: </label>
+                    <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [listStyle]="{ 'max-height': '250px' }" [style]="{ width: '15rem' }" [listStyle]="{'max-height': '220px'}">
+                        <ng-template let-country pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ country.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </div>
+                <div class="field">
+                    <label for="dateDebut">Date début</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerFicheModal()"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-text" (click)="modifierLibre()"></button>
+            </ng-template>
+            
+        </p-dialog>
+        <!--Fin affichage fiche rdv-->
+    </ng-template>
+		
+    <ng-template pTemplate="footer">
+        <div class="flex flex-column md:flex-row md:justify-content-between">
+            <p-button label="Retour" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+            <p-button label="Suivant" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+        </div>
+    </ng-template>
+    
+</p-card>

@@ -1,0 +1,40 @@
+<div class="card">
+	<div class="col-12">
+        <h3>Liste des rendez-vous du personnel</h3>
+		<full-calendar [options]="calendarOptions"></full-calendar>
+
+        <!--Affichage fiche rdv-->
+        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des rendez-vous" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+            <ng-template pTemplate="content">
+                
+                <div class="field">
+					<span>Employe: </span> RASOLOFONIRINA Jeanne
+                </div>
+                <div class="field">
+                    <span>Client: </span> RASOLOFONIRINA Jeanne
+                </div>
+                <div class="field">
+                    <label for="service">Service: </label>
+                    <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [listStyle]="{ 'max-height': '250px' }" [style]="{ width: '15rem' }" [listStyle]="{'max-height': '220px'}">
+                        <ng-template let-country pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <div>{{ country.name }}</div>
+                            </div>
+                        </ng-template>
+                    </p-listbox>
+                </div>
+                <div class="field">
+                    <label for="dateDebut">Date début</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerFicheModal()"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-text" (click)="modifierLibre()"></button>
+            </ng-template>
+            
+        </p-dialog>
+        <!--Fin affichage fiche rdv-->
+	</div>
+</div>

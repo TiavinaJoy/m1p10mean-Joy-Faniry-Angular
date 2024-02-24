@@ -1,0 +1,71 @@
+<div class="flex justify-content-center align-items-center h-full">
+    <div class="loginInscriptionCadre justify-content-center align-item-center" >  
+        <div class="loginInscriptionContainer">
+            <p-card header="M1p11mean-joy-faniry">
+                <p-toast></p-toast>
+                <form [formGroup] ="registerForm" (ngSubmit) = "register(registerForm)">
+                    <div>
+                        <div class="loadSpinner">
+                            <div>
+                                <h2>Se connecter</h2>
+                            </div>
+                            <div>
+                                <p-progressSpinner *ngIf="load" [style]="{width: '40px', height: '30px'}" styleClass="custom-spinner" strokeWidth="8" fill="var(--surface-ground)"></p-progressSpinner>
+                            </div>
+                        </div>
+                        <div *ngIf="registerError" class="bloc p-error justify-content-center align-item-center">{{ registerError }}</div>
+                        <div class="field">
+                            <label for="email">Email:</label>
+                            <input type="text" pInputText formControlName="email" class="w-full" name="email" placeholder="email@gmail.com"/>
+                            <small *ngIf ="email.invalid && (email.dirty || email.touched)" class="bloc p-error">
+                                <div *ngIf ="email.errors?.['required']">Veuillez inserer votre email.</div>
+                                <div *ngIf ="email.errors?.['email']">Veuillez inserer un email valide.</div>
+                            </small>
+                            <div *ngIf="mailError" class="bloc p-error justify-content-center align-item-center">{{ mailError }}</div>
+                        </div>
+                        <div class="field">
+                            <label for="password">Mot de passe:</label>
+                            <input type="password" pInputText formControlName="password" class="w-full" name="password" placeholder="" />
+                            <small *ngIf ="password.invalid && (password.dirty || password.touched)" class="bloc p-error">
+                                <div *ngIf ="password.errors?.['required']">Veuillez inserer votre mot de passe.</div>
+                                <div *ngIf ="password.errors?.['password']">Veuillez inserer un mot de passe valide.</div>
+                            </small>
+                            <div *ngIf="mdpError" class="bloc p-error justify-content-center align-item-center">{{ mdpError }}</div>
+                        </div>
+                        <div class="field">
+                            <label for="confirmPassword">Confirmer votre mot de passe:</label>
+                            <input type="password" pInputText formControlName="confirmPassword" class="w-full" name="confirmPassword" placeholder="" />
+                            <small *ngIf ="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)" class="bloc p-error">
+                                <div *ngIf ="confirmPassword.errors?.['required']">Veuillez confirmer votre mot de passe.</div>
+                            </small>
+                            <div *ngIf="mdpError" class="bloc p-error justify-content-center align-item-center">{{ mdpError }}</div>
+                        </div>
+                        <div class="field">
+                            <label for="nom">Nom:</label>
+                            <input type="text" pInputText formControlName="nom" class="w-full" name="nom" placeholder="" />
+                            <small   *ngIf ="nom.invalid && (nom.dirty || nom.touched)" class="bloc p-error">
+                                <div *ngIf ="nom.errors?.['required']">Veuillez inserer votre nom.</div>
+                            </small>
+                            <div *ngIf="nomError" class="bloc p-error justify-content-center align-item-center">{{ nomError }}</div>
+                        </div>
+                        <div class="field">
+                            <label for="prenom">Prenom:</label>
+                            <input type="text" pInputText formControlName="prenom" class="w-full" name="prenom" placeholder=""/>
+                            <small   *ngIf ="prenom.invalid && (prenom.dirty || prenom.touched)" class="bloc p-error">
+                                <div *ngIf ="prenom.errors?.['required']">Veuillez inserer votre prénom.</div>
+                            </small>
+                            <div *ngIf="prenomError" class="bloc p-error justify-content-center align-item-center">{{ prenomError }}</div>
+                        </div>
+                        <p-button type="submit" label="S'inscrire" styleClass="w-full" ></p-button>
+                        <div class="mt-2">
+                            Déjà membre? <a routerLink="/"> Se connecter</a>
+                        </div>
+                    </div>
+                </form>
+            </p-card>    
+            <div>
+                <img src="../../../../../assets/demo/images/curly.jpg" alt="">
+            </div>
+        </div>
+    </div>
+</div>
