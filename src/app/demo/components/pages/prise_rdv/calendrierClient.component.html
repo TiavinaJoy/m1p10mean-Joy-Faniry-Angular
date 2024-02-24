@@ -1,5 +1,19 @@
 <p-card>
     <ng-template pTemplate="content">
+        <!--<div class="grid">
+            <div class="col-3">
+                <div class="p-2 border-1 surface-border border-round w-15rem">
+                    <ul class="list-none flex flex-column gap-2 p-0 m-0">
+                        <li *ngFor="let service of services" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStart(service)" (onDragEnd)="dragEnd()">
+                            {{service.nom}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-9">
+                
+            </div>
+        </div>-->
         <full-calendar [options]="calendarOptions"></full-calendar>
 
 		<!--Ajout des rendez-vous-->

@@ -21,17 +21,39 @@ export class ServiceService {
     let queryParams = new HttpParams();
     console.log('SERVICE ', page);
     console.log('SERVICE per page', perPage);
+  
+    if(service.prixMin || service.prixMax) {
+      if(service.prixMin && service.prixMax) { 
+        queryParams= queryParams.append("prixMin",service.prixMin.toString() ?? '');
+        queryParams= queryParams.append("prixMax",service.prixMax.toString() ?? '');
+      }
+      else if (service.prixMin && !service.prixMax) queryParams= queryParams.append("prixMin",service.prixMin.toString() ?? '');
+      else if (!service.prixMin && service.prixMax) queryParams= queryParams.append("prixMax",service.prixMax.toString() ?? '');
+    }
+
+    if(service.comMin || service.comMax) {
+      if(service.comMin && service.comMax) { 
+        queryParams= queryParams.append("comMin",service.comMin.toString() ?? '');
+        queryParams= queryParams.append("comMax",service.comMax.toString() ?? '');
+      }
+      else if (service.comMin && !service.comMax) queryParams= queryParams.append("comMin",service.comMin.toString() ?? '');
+      else if (!service.comMin && service.comMax) queryParams= queryParams.append("comMax",service.comMax.toString() ?? '');
+    }
+
+    if(service.dureeMin || service.dureeMax) {
+      if(service.dureeMin && service.dureeMax) { 
+        queryParams= queryParams.append("dureeMin",service.dureeMin.toString() ?? '');
+        queryParams= queryParams.append("dureeMax",service.dureeMax.toString() ?? '');
+      }
+      else if (service.dureeMin && !service.dureeMax) queryParams= queryParams.append("dureeMin",service.dureeMin.toString() ?? '');
+      else if (!service.dureeMin && service.dureeMax) queryParams= queryParams.append("dureeMax",service.dureeMax.toString() ?? '');
+    }
     
-    queryParams= queryParams.append("prixMin",service.prixMin.toString() ?? '');
-    queryParams= queryParams.append("prixMax",service.prixMax.toString() ?? '');
-    queryParams= queryParams.append("comMin",service.comMin.toString() ?? '');
-    queryParams= queryParams.append("comMax",service.comMax.toString() ?? '');
-    queryParams= queryParams.append("dureeMin",service.dureeMin.toString() ?? '');
-    queryParams= queryParams.append("dureeMax",service.dureeMax.toString() ?? '');
-    queryParams= queryParams.append("statut",service.statut ? service.statut.toString() : '');
-    queryParams= queryParams.append("nom",service.nom ?? '');
-    queryParams= queryParams.append("description",service.description ?? '');
-    queryParams= queryParams.append("categorie",service.categorie ?? '');
+    if(service.nom) queryParams= queryParams.append("nom",service.nom ?? '');
+    if(service.description) queryParams= queryParams.append("description",service.description ?? '');
+    if(service.statut) queryParams= queryParams.append("statut",service.statut ? service.statut.toString() : '');
+    if(service.categorie) queryParams= queryParams.append("categorie",service.categorie ?? '');
+
     queryParams= queryParams.append("page", page.toString() ?? '');
     queryParams= queryParams.append("perPage", perPage.toString() ?? '');
 

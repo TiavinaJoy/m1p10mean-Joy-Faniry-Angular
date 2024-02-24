@@ -1,6 +1,6 @@
-<div class="grid">
+<div class="grid p-fluid">
     <div class="col-12">
-        <div class="card px-6 py-6">
+        <div class="card">
             <p-toast></p-toast>
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
@@ -93,7 +93,7 @@
                     </div>
                     <div class="grid">
                         <div class="col-6 mb-4">
-                            {{ service.categorie.intitule }}
+                            {{ service.categorie?.intitule || ''}}
                         </div>
                         <div class="col-6 mb-4 ">
                             {{ service.prix | currency: "MGA" }}
@@ -104,7 +104,7 @@
                                 <b>Durée:</b>
                         </div>
                         <div class="col-6 mb-4 ">
-                            {{ service.duree }}h
+                            {{ service.duree }}mn
                         </div>
                     </div>
                     <div class="grid formgrid">
@@ -128,9 +128,8 @@
             <div class="card flex justify-content-center">
                 <p-paginator (onPageChange)="onPageChange($event,serviceSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
             </div>
-        </div>
-        <!--Ajout d'un service -->
-        <p-dialog [(visible)]="serviceDialog" [style]="{width: '450px'}" header="Ajout d'un service" [modal]="true" class="p-fluid">
+            <!--Ajout d'un service -->
+            <p-dialog [(visible)]="serviceDialog" [style]="{width: '450px'}" header="Ajout d'un service" [modal]="true" class="p-fluid">
                 <form [formGroup] ="serviceForm" (ngSubmit) = "addService(serviceForm)">
                     <div class="field">
                         <label for="nom">Nom</label>
@@ -185,75 +184,76 @@
                         </div>
                     </div>
                 </form>
-        </p-dialog>
-        <!--Modification statut d'un service-->
-        <p-dialog [(visible)]="deleteServiceDialog" header="Confirmation" [modal]="true" [style]="{width:'450px'}">
-            <div class="flex align-items-center justify-content-center">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="service">Etes-vous sûr de vouloir désactiver le statut du service <b>{{service.nom}}</b>?</span>
-            </div>
-            <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="Non" (click)="deleteServiceDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Désactiver" (click)="confirmDelete(service)"></button>
-            </ng-template>
-        </p-dialog>
+            </p-dialog>
+            <!--Modification statut d'un service-->
+            <p-dialog [(visible)]="deleteServiceDialog" header="Confirmation" [modal]="true" [style]="{width:'450px'}" class="p-fluid">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span *ngIf="service">Etes-vous sûr de vouloir désactiver le statut du service <b>{{service.nom}}</b>?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="Non" (click)="deleteServiceDialog = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Désactiver" (click)="confirmDelete(service)"></button>
+                </ng-template>
+            </p-dialog>
 
-        <!--Modification d'un service -->
-        <p-dialog  [(visible)]="ficheServiceDialog" [style]="{width: '450px'}" header="Modification du service {{ unService.nom }}" [modal]="true" class="p-fluid">
-            <form #serviceNgForm="ngForm" (ngSubmit) = "updateService(unService)">
-                <div class="field">
-                    <label for="nom">Nom</label>
-                    <input type="text" pInputText #nom="ngModel" [(ngModel)]="unService.nom" name="nom" required autofocus />
-                    <small *ngIf ="nom.invalid && (nom.dirty || nom.touched)" class="bloc p-error">
-                        <div *ngIf ="nom.errors?.['required']">L'intitulé du service est obligatoire.</div>
-                    </small>
-                </div>
-                <div class="field">
-                    <label for="description">Description</label>
-                    <textarea id="description" #description="ngModel" [(ngModel)]="unService.description" name="description" pInputTextarea  required rows="3" cols="20"></textarea>
-                    <small *ngIf ="description.invalid && (description.dirty || description.touched)" class="bloc p-error">
-                        <div *ngIf ="description.errors?.['required']">La description du service est obligatoire.</div>
-                    </small>
-                </div>
-                <div class="field">
-                    <label for="categorie">Catégorie</label>
-                    <p-dropdown [options]="categories" #categorie="ngModel" [(ngModel)]="selectedCategorie" name="selectedCategorie" optionLabel="intitule" optionValue="_id" [required]="true"></p-dropdown>
-                    <small *ngIf ="categorie.invalid && (categorie.dirty || categorie.touched)" class="bloc p-error">
-                        <div *ngIf ="categorie.errors?.['required']">La catégorie du service est obligatoire.</div>
-                    </small>
-                </div>
-                <div class="formgrid grid">
-                    <div class="field col">
-                        <label for="prix">Prix</label>
-                        <p-inputNumber id="prix" #prix="ngModel" [(ngModel)]="unService.prix" name ="prix" mode="currency" currency="MGA" [min]="1" [required] =true></p-inputNumber>
-                        <small *ngIf ="prix.invalid && (prix.dirty || prix.touched)" class="bloc p-error">
-                            <div *ngIf ="prix.errors?.['required']">Le prix du service est obligatoire.</div>
+            <!--Modification d'un service -->
+            <p-dialog  [(visible)]="ficheServiceDialog" [style]="{width: '450px'}" header="Modification du service {{ unService.nom }}" [modal]="true" class="p-fluid">
+                <form #serviceNgForm="ngForm" (ngSubmit) = "updateService(unService)">
+                    <div class="field">
+                        <label for="nom">Nom</label>
+                        <input type="text" pInputText #nom="ngModel" [(ngModel)]="unService.nom" name="nom" required autofocus />
+                        <small *ngIf ="nom.invalid && (nom.dirty || nom.touched)" class="bloc p-error">
+                            <div *ngIf ="nom.errors?.['required']">L'intitulé du service est obligatoire.</div>
                         </small>
                     </div>
-                    <div class="field col">
-                        <label for="duree">Durée</label>
-                        <p-inputNumber id="duree" #duree="ngModel" [(ngModel)]="unService.duree" name="duree" mode="decimal" [min]="1" [required] =true></p-inputNumber>
-                        <small *ngIf ="duree.invalid && (duree.dirty || duree.touched)" class="bloc p-error">
-                            <div *ngIf ="duree.errors?.['required']">La durée du service est obligatoire.</div>
+                    <div class="field">
+                        <label for="description">Description</label>
+                        <textarea id="description" #description="ngModel" [(ngModel)]="unService.description" name="description" pInputTextarea  required rows="3" cols="20"></textarea>
+                        <small *ngIf ="description.invalid && (description.dirty || description.touched)" class="bloc p-error">
+                            <div *ngIf ="description.errors?.['required']">La description du service est obligatoire.</div>
                         </small>
                     </div>
-                    <div class="field col">
-                        <label for="commission">Commission</label>
-                        <p-inputNumber id="commission" #commission="ngModel" [(ngModel)]="unService.commission" name="commission" mode="decimal" [min]="1" [required] =true></p-inputNumber>
-                        <small *ngIf ="commission.invalid && (commission.dirty || commission.touched)" class="bloc p-error">
-                            <div *ngIf ="commission.errors?.['required']">La commission du service est obligatoire.</div>
+                    <div class="field">
+                        <label for="categorie">Catégorie</label>
+                        <p-dropdown [options]="categories" #categorie="ngModel" [(ngModel)]="updateCategorie" name="categorie" optionLabel="intitule" optionValue="_id" [required]="true"></p-dropdown>
+                        <small *ngIf ="categorie.invalid && (categorie.dirty || categorie.touched)" class="bloc p-error">
+                            <div *ngIf ="categorie.errors?.['required']">La catégorie du service est obligatoire.</div>
                         </small>
                     </div>
-                </div>
-                <div class="grid">
-                    <div class="col-6">
-                        <button pButton  icon="pi pi-times" label="Annuler" iconPos="left" class=" p-button-danger p-button-outlined" (click)="hideDialog()"></button>
+                    <div class="formgrid grid">
+                        <div class="field col">
+                            <label for="prix">Prix</label>
+                            <p-inputNumber id="prix" #prix="ngModel" [(ngModel)]="unService.prix" name ="prix" mode="currency" currency="MGA" [min]="1" [required] =true></p-inputNumber>
+                            <small *ngIf ="prix.invalid && (prix.dirty || prix.touched)" class="bloc p-error">
+                                <div *ngIf ="prix.errors?.['required']">Le prix du service est obligatoire.</div>
+                            </small>
+                        </div>
+                        <div class="field col">
+                            <label for="duree">Durée</label>
+                            <p-inputNumber id="duree" #duree="ngModel" [(ngModel)]="unService.duree" name="duree" mode="decimal" [min]="1" [required] =true></p-inputNumber>
+                            <small *ngIf ="duree.invalid && (duree.dirty || duree.touched)" class="bloc p-error">
+                                <div *ngIf ="duree.errors?.['required']">La durée du service est obligatoire.</div>
+                            </small>
+                        </div>
+                        <div class="field col">
+                            <label for="commission">Commission</label>
+                            <p-inputNumber id="commission" #commission="ngModel" [(ngModel)]="unService.commission" name="commission" mode="decimal" [min]="1" [required] =true></p-inputNumber>
+                            <small *ngIf ="commission.invalid && (commission.dirty || commission.touched)" class="bloc p-error">
+                                <div *ngIf ="commission.errors?.['required']">La commission du service est obligatoire.</div>
+                            </small>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <button pButton type="submit" icon="pi pi-check" label="Enregistrer" iconPos="right" class="p-button-outlined p-button-success"></button>
+                    <div class="grid">
+                        <div class="col-6">
+                            <button pButton  icon="pi pi-times" label="Annuler" iconPos="left" class=" p-button-danger p-button-outlined" (click)="hideDialog()"></button>
+                        </div>
+                        <div class="col-6">
+                            <button pButton type="submit" icon="pi pi-check" label="Enregistrer" iconPos="right" class="p-button-outlined p-button-success"></button>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </p-dialog>
+                </form>
+            </p-dialog>
+        </div>
     </div>
 </div>
