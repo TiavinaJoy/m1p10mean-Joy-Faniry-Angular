@@ -1,5 +1,5 @@
 import { Component, NgModule, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SelectItem } from 'primeng/api';
 import { CountryService } from 'src/app/demo/service/country.service';
 
@@ -22,7 +22,11 @@ export class PersonalComponent implements OnInit {
 
     selectedDrop: SelectItem = { value: '' };
 
-	constructor(private countryService: CountryService,private router: Router) { }	
+	constructor(
+        private countryService: CountryService,
+        private route: ActivatedRoute,
+        private router: Router
+    ) { }	
 
 	ngOnInit() {
 

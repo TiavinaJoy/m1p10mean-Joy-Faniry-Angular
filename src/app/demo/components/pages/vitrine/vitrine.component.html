@@ -93,26 +93,29 @@
                         </div>
                     </div>
                     <div class="grid">
-                        <div class="col-6 mb-4">
+                        <div class="col-4 mb-4">
                             {{ service.categorie.intitule }}
                         </div>
-                        <div class="col-6 mb-4 ">
+                        <div class="col-4 mb-4 ">
                             {{ service.prix | currency: "MGA" }}
                         </div>
                     </div>
                     <div class="grid">
-                        <div class="col-6 mb-4 ">
+                        <div class="col-4 mb-4 ">
                                 <b>Durée:</b>
                         </div>
-                        <div class="col-6 mb-4 ">
+                        <div class="col-4 mb-4 ">
                             {{ service.duree }}h
+                        </div>
+                        <div class="col-4 mb-4 ">
+                            <button pButton pRipple label="Programmer" class="p-button-success mr-2" (click)="prendreRdv(service._id)"></button>
                         </div>
                     </div>
                     <div class="grid formgrid">
-                        <div class="col-6 mb-4 ">
+                        <div class="col-4 mb-4 ">
                                 <b>Commission:</b>
                         </div>
-                        <div class="col-6 mb-4 ">
+                        <div class="col-4 mb-4 ">
                             {{ service.commission }}%
                         </div>
                     </div>

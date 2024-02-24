@@ -4,13 +4,26 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interaction from "@fullcalendar/interaction";
+import { RendezVous } from 'src/app/demo/interfaces/rendezVous';
+import { MessageService } from 'primeng/api';
+import { RendezVousService } from 'src/app/demo/service/rendezVous/rendez-vous.service';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
+import { TokenService } from 'src/app/demo/service/token/token.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { NgForm } from '@angular/forms';
+import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 
 @Component({
   selector: 'app-liste-rdv-client',
   templateUrl: './liste-rdv-client.component.html',
+  providers:[MessageService]
 })
 export class ListeRdvClientComponent implements OnInit{
-
+  page:Number;
+  perPage:Number;
+  totalData:Number;
+  clientId: string = this.tokenService.decodeToken(localStorage.getItem("token")).sub;
+  lesRdv: RendezVous[];
   selectedCountry!: any;
   countries!: any;
   afficherAjoutModal: boolean = false;
@@ -37,14 +50,18 @@ export class ListeRdvClientComponent implements OnInit{
         month:'Mois',
         list:'Liste'
     },
-    events:  this.listeEvent(),
     eventClick: this.modalFicheJourLibre.bind(this),
     handleWindowResize: true
   }
     
-  constructor() { }
+  constructor(
+    private messageService:MessageService,
+    private rdvService: RendezVousService,
+    private tokenService: TokenService
+  ) { }
 
   ngOnInit() {
+    this.listeRdvClient(null,0, 10);
     this.countries = [
       { name: 'Australia', code: 'AU' },
       { name: 'Brazil', code: 'BR' },
@@ -80,7 +97,40 @@ export class ListeRdvClientComponent implements OnInit{
     ]
   }
   
+  onPageChange(event: PageEvent,filtreRdvClient: NgForm) {
+        
+    this.listeRdvClient(filtreRdvClient,event.page,4);
+}
   /*Function appel API pour la gestion des horaires: ajout,fiche,modification,annularion */
+
+  public listeRdvClient(filtreRdvClient: NgForm,pageP:Number, perPageP: Number): RendezVous[] {
+
+    if(pageP === undefined || perPageP === undefined){
+      pageP = 0; 
+      perPageP = 10;
+    } 
+
+    this.rdvService.listeRdvClient(null,0,10,this.clientId).subscribe(
+      (response:CustomResponse) => {
+        if(response.status == 200) {
+
+          var data = response.data;
+          var rdv = [];
+          data.forEach(daty => {
+            rdv.push({ start: daty.dateRendezVous, end: daty.dateFin }) 
+          })
+          this.calendarOptions.events = rdv;
+          /*this.lesHorairesPers = response.data.docs;
+          this.totalData = response.data.totalDocs;
+          this.perPage = response.data.limit; */
+        }
+      },
+      (error:HttpErrorResponse) => {
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+      }
+    )
+    return this.lesRdv;
+  }
 
   ficheLibre(data) {
     this.afficherFicheModal = false;

@@ -116,6 +116,10 @@ export class VitrineComponent implements OnInit {
         this.listeService(null,0,10);
     }
 
+    prendreRdv(servId: string) {
+        this.route.navigate(['pages/rdv',servId]);
+    }
+
     onPageChange(event: PageEvent,serviceSearch: NgForm) {
         
         this.listeService(serviceSearch,event.page,10);

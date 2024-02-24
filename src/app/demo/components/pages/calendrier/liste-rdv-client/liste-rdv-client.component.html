@@ -1,6 +1,30 @@
 <div class="card">
 	<div class="col-12">
+        <p-toast></p-toast>
         <h3>Liste des rendez-vous du client</h3>
+        <div class="search">
+            <form #filtreRdvClient="ngForm" (ngSubmit) = "listeRdvClient(filtreRdvClient,page,perPage)">
+                <div class="grid">
+                    <div class="field col-6">
+                        <label for="dateRendezVousMin">Date debut Min:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" #dateRendezVousMin ="ngModel" [(ngModel)] = "filtreRdvClient.dateRendezVousMin" name="dateRendezVousMin"  styleClass="w-full"  ></p-calendar>
+                    </div>
+                    <div class="field col-6">
+                        <label for="dateRendezVousMax">Date debut Max:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24"  #dateRendezVousMax="ngModel" [(ngModel)] = "filtreRdvClient.dateRendezVousMax" name="dateRendezVousMax"  styleClass="w-full"  ></p-calendar>
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="field col-4">
+                        <label for="categorie"></label>
+                        <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
+                    </div>
+                </div>
+            </form>
+            <!--<div class="card flex justify-content-center">--> 
+                <p-paginator (onPageChange)="onPageChange($event,filtreRdvClient)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
+            <!--</div>--> 
+        </div>
 		<full-calendar [options]="calendarOptions"></full-calendar>
 
         <!--Affichage fiche rdv-->
