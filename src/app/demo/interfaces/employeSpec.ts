@@ -10,5 +10,5 @@ export interface EmployeSpec {
     dateEmbauche: Date;
     finContrat:Date;
     salaire: Number;
-    service: []
+    service: [] | string[]
 }

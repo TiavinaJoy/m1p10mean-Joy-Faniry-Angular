@@ -1,7 +1,7 @@
 import { Categorie } from "./categorie";
 
 export interface Service {
-    id: string;
+    _id?: string;
 	nom:string;
 	prix:Number;
     commission:Number;

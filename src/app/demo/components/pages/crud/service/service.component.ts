@@ -71,7 +71,6 @@ export class ServiceComponent implements OnDestroy,OnInit {
     };
 
     unService: Service = {
-        id: '',
         nom: '',
         prix: 0,
         commission: 0,
@@ -291,10 +290,9 @@ export class ServiceComponent implements OnDestroy,OnInit {
         )
     }
 
-    public updateService(service: any): void{
+    public updateService(service: Service): void{
 
-
-        this.unService.id = service._id;
+        this.unService._id = service._id;
         this.unService.nom =  service.nom;
         this.unService.prix =   service.prix;
         this.unService.commission =  service.commission;
