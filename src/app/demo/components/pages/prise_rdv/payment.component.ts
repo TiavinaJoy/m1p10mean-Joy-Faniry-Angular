@@ -1,16 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 
 @Component({
 	templateUrl:'./payment.component.html',
 })
-export class PaymentComponent {
+export class PaymentComponent implements OnInit{
 
+	rdvId: string;
 	constructor(private router: Router,private messageService: MessageService) { }
+	ngOnInit(): void {
+		this.rdvId = this.router.url.split('/')[3];
+	}
 
 	prevPage() {
-		this.router.navigate(['pages/rdv/confirmation']);
+		this.router.navigate(['pages/rdv/'+this.rdvId+'/confirmation']);
+		//this.router.navigate(['pages/rdv/confirmation']);
 	}
 
 	valider(){

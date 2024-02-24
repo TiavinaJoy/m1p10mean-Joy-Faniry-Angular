@@ -15,6 +15,7 @@ import { MessageService } from 'primeng/api';
     providers: [MessageService]
 })
 export class CalendrierClientComponent implements OnInit {
+  rdvId: string;
   draggedService: Service;
   services:Service[];
     submitte: Boolean = false;
@@ -59,7 +60,7 @@ export class CalendrierClientComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-
+      this.rdvId = this.router.url.split('/')[3];
       this.lesServices();
         this.countries = [
             { name: 'Australia', code: 'AU' },
@@ -168,11 +169,12 @@ export class CalendrierClientComponent implements OnInit {
 
             return;
         }*/
-        this.router.navigate(['pages/rdv/confirmation']);
+        this.router.navigate(['pages/rdv/'+this.rdvId+'/confirmation']);
         this.submitte = true;
     }
 
     prevPage() {
-      this.router.navigate(['pages/rdv/personal']);
+      this.router.navigate(['pages/rdv/'+this.rdvId+'/personal']);
+      //this.router.navigate(['pages/rdv/personal']);
     }
 }

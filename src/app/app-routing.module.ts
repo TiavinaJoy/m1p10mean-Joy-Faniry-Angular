@@ -29,7 +29,7 @@ import { AuthGuard } from './demo/guard/auth.guard';
                     { path: 'dashboard',component: DashboardComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'services', component:ServiceComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'employes', component: EmployeComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard] },
-                    { path: 'rdv', loadChildren: () => import('./demo/components/pages//prise_rdv/rdvClient.module').then(m => m.RdvClientModule), data: { requiredRole: 'client' } , canActivate: [AuthGuard]},
+                    { path: 'rdv/:servId', loadChildren: () => import('./demo/components/pages//prise_rdv/rdvClient.module').then(m => m.RdvClientModule), data: { requiredRole: 'client' } , canActivate: [AuthGuard]},
                     { path: 'profil',component: ProfilComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard]},
                     { path: 'rdv/client',component: ListeRdvClientComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
                     { path: 'vitrine',  component: VitrineComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},

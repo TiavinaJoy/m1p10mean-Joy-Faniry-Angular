@@ -12,13 +12,32 @@ import { TokenService } from 'src/app/demo/service/token/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
+import { RendezVousSpec } from 'src/app/demo/interfaces/rendezVousSpec';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-liste-rdv-client',
   templateUrl: './liste-rdv-client.component.html',
-  providers:[MessageService]
+  providers:[MessageService,DatePipe]
 })
 export class ListeRdvClientComponent implements OnInit{
+  dateRdv: Date;
+  fiche:RendezVous = {
+    client: '',
+    dateRendezVous: '',
+    dateFin: '',
+    personnal: '',
+    service: '',
+    statut: ''
+  };
+  filtreRdvClient: RendezVousSpec={
+    client: '',
+    dateMin: '',
+    dateMax: '',
+    personnal: '',
+    service: '',
+    statut: ''
+  }
   page:Number;
   perPage:Number;
   totalData:Number;
@@ -57,7 +76,8 @@ export class ListeRdvClientComponent implements OnInit{
   constructor(
     private messageService:MessageService,
     private rdvService: RendezVousService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit() {
@@ -78,9 +98,8 @@ export class ListeRdvClientComponent implements OnInit{
 
   /*Ouverture du formulaire des fiches jours libres */
   modalFicheJourLibre(arg) {
+    this.ficheRdv(arg.event.id);
     this.afficherFicheModal = true;
-    this.dateDebut = arg.date;
-    alert(arg);
   }
 
   /*Fermeture du formulaire des fiches jours libres */
@@ -89,13 +108,6 @@ export class ListeRdvClientComponent implements OnInit{
     this.submitted = false;
   }
 
-  /*Liste des evenements */
-  listeEvent() {
-    return this.rdv = [
-      { title: 'event 1', date: '2024-02-13 10:00' },
-      { title: 'event 2', date: '2024-02-12 11:00' }
-    ]
-  }
   
   onPageChange(event: PageEvent,filtreRdvClient: NgForm) {
         
@@ -110,16 +122,17 @@ export class ListeRdvClientComponent implements OnInit{
       perPageP = 10;
     } 
 
-    this.rdvService.listeRdvClient(null,0,10,this.clientId).subscribe(
+    this.rdvService.listeRdvClient(filtreRdvClient ? filtreRdvClient.value : this.filtreRdvClient,0,10,this.clientId).subscribe(
       (response:CustomResponse) => {
         if(response.status == 200) {
 
           var data = response.data;
           var rdv = [];
           data.forEach(daty => {
-            rdv.push({ start: daty.dateRendezVous, end: daty.dateFin }) 
+            rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
           })
           this.calendarOptions.events = rdv;
+          this.lesRdv = data;
           /*this.lesHorairesPers = response.data.docs;
           this.totalData = response.data.totalDocs;
           this.perPage = response.data.limit; */
@@ -130,6 +143,23 @@ export class ListeRdvClientComponent implements OnInit{
       }
     )
     return this.lesRdv;
+  }
+
+  public ficheRdv(rendezVousId: string): RendezVous {
+
+    this.rdvService.detailsRdv(rendezVousId).subscribe(
+      (response:CustomResponse) => {
+        if(response.status == 200) {
+          console.log(response.data);
+          this.fiche = response.data;
+          this.dateRdv = new Date(this.datePipe.transform(response.data.dateRendezVous,'yyyy-MM-dd HH:mm:ss','GMT'));
+        }
+      },
+      (error:HttpErrorResponse) => {
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+      }
+    )
+    return this.fiche;
   }
 
   ficheLibre(data) {

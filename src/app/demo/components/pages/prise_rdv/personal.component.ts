@@ -10,6 +10,7 @@ import { CountryService } from 'src/app/demo/service/country.service';
 
 export class PersonalComponent implements OnInit {
     
+    rdvId: string;
     submitted: Boolean = false;
 
     selectedList: SelectItem = { value: '' };
@@ -29,7 +30,8 @@ export class PersonalComponent implements OnInit {
     ) { }	
 
 	ngOnInit() {
-
+        
+        this.rdvId = this.router.url.split('/')[3];
 		this.countryService.getCountries().then(countries => {
             this.countries = countries;
         });
@@ -50,7 +52,7 @@ export class PersonalComponent implements OnInit {
 
             return;
         }*/
-        this.router.navigate(['pages/rdv/calendar']);
+        this.router.navigate(['pages/rdv/'+this.rdvId+'/calendar']);
         this.submitted = true;
     }
 }
