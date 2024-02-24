@@ -1,0 +1,90 @@
+<div class="card">
+	<div class="col-12">
+        <h5>Gestion des horaires du personnel</h5>
+        <p-toast></p-toast>
+        <div class="search">
+            <form #filtreHorairePers="ngForm" (ngSubmit) = "listeHorairePersonnel(filtreHorairePers,page,perPage)">
+                <div class="grid">
+                    <div class="field col-6">
+                        <label for="dateDebutMin">Date debut Min:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" #dateDebutMin ="ngModel" [(ngModel)] = "horaireSearch.dateDebutMin" name="dateDebutMin"  styleClass="w-full"  ></p-calendar>
+                    </div>
+                    <div class="field col-6">
+                        <label for="dateDebutMax">Date debut Max:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24"  #dateDebutMax="ngModel" [(ngModel)] = "horaireSearch.dateDebutMax" name="dateDebutMax"  styleClass="w-full"  ></p-calendar>
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="field col-6">
+                        <label for="dateFinMin">Date fin Min:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24"  #dateFinMin="ngModel" [(ngModel)] = "horaireSearch.dateFinMin" name="dateFinMin"  styleClass="w-full"   ></p-calendar>
+                    </div>
+                    <div class="field col-6">
+                        <label for="dateFinMax">Date fin Max:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24"  #dateFinMax="ngModel" [(ngModel)] = "horaireSearch.dateFinMax" name="dateFinMax"  styleClass="w-full"   ></p-calendar>
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="field col-4">
+                        <label for="categorie"></label>
+                        <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
+                    </div>
+                </div>
+            </form>
+            <!--<div class="card flex justify-content-center">--> 
+                <p-paginator (onPageChange)="onPageChange($event,filtreHorairePers)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
+            <!--</div>--> 
+        </div>
+        <full-calendar [options]="calendarOptions"></full-calendar>
+		
+
+		<!--Ajout des jours libre du personnel-->
+		<p-dialog [(visible)]="afficherAjoutModal"  header="Ajout des heures libres de l'employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+
+                <form #horaireEmp="ngForm" (ngSubmit) = "addHoraire(horaireEmp)">                
+                    <div class="field">
+                        <label for="datyDebut">Date début</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="horaireAdd.dateDebut" #datyDebut = "ngModel" name="datyDebut"> </p-calendar>
+                        <div *ngIf="dateDebutError" class="bloc p-error"> {{ dateDebutError }} </div>
+                    </div>
+                    <div class="field">
+                        <label for="datyFin">Date fin</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="horaireAdd.dateFin" #datyFin = "ngModel" name="datyFin"> </p-calendar>
+                        <div *ngIf="dateFinError" class="bloc p-error"> {{ dateFinError }} </div>
+                    </div>
+                    <div class="grid">
+                        <div class="col-6">
+                            <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="fermerAjoutModal()"></button>
+                        </div>
+                        <div class="col-6">
+                            <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-outlined p-button-success" type="submit"></button>
+                        </div>
+                    </div>
+                </form>
+
+        </p-dialog>
+		<!--Fin de l'ajout des jours libre du personnel-->
+
+        <!--Affichage fiche rdv-->
+        <!--<p-dialog [(visible)]="afficherFicheModal"  header="Fiche des heures libres" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+            <ng-template pTemplate="content">
+
+                <div class="field">
+                    <label for="dateDebut">Date début</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
+                </div>
+                <div class="field">
+                    <label for="dateFin">Date fin</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateFin" > </p-calendar>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerFicheModal()"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-text" (click)="modifierLibre()"></button>
+            </ng-template>
+            
+        </p-dialog>-->
+        <!--Fin affichage fiche rdv-->
+	</div>
+</div>
