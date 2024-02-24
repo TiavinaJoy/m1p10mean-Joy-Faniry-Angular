@@ -8,7 +8,7 @@ import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { CategorieService } from 'src/app/demo/service/categorie/categorie.service';
 import { Categorie } from 'src/app/demo/interfaces/categorie';
 import { FormBuilder, FormGroup, NgForm,  Validators  } from '@angular/forms';
-import { BehaviorSubject, Observable,  distinctUntilChanged, of,  switchMap } from 'rxjs';
+import { BehaviorSubject, Observable,  Subject,  distinctUntilChanged, of,  switchMap } from 'rxjs';
 import { Statut } from 'src/app/demo/interfaces/statut';
 import { ServiceSearch } from 'src/app/demo/interfaces/serviceSearch';
 import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
@@ -112,6 +112,8 @@ export class ServiceComponent implements OnDestroy,OnInit {
     get categorie() {
         return this.serviceForm.controls['categorie'];
     }
+
+    private serviceSubject= new Subject<Service[]>();
 
     constructor(
         private messageService: MessageService,
@@ -256,6 +258,9 @@ export class ServiceComponent implements OnDestroy,OnInit {
               if(response.status === 200) {
                   this.service = response.data;
                   //this.refreshServices$.next(null);
+                
+                this.services.push(this.unService);
+                this.serviceSubject.next(this.services);
                   this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
               }
             },
@@ -281,6 +286,8 @@ export class ServiceComponent implements OnDestroy,OnInit {
                 if(response.status == 201) {
                     this.serviceForm.reset();
                     this.serviceDialog = false;
+                this.services.push(this.unService);
+                this.serviceSubject.next(this.services);
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },
@@ -311,6 +318,8 @@ export class ServiceComponent implements OnDestroy,OnInit {
                 this.unService.categorie = this.updateCategorie;
                 if(response.status == 200) {
                     this.ficheServiceDialog = false;
+                this.services.push(this.unService);
+                this.serviceSubject.next(this.services);
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },
