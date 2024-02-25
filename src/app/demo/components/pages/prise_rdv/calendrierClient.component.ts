@@ -10,6 +10,7 @@ import { ServiceService } from 'src/app/demo/service/service/service.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { DatePipe } from '@angular/common';
+import { RendezVousService } from 'src/app/demo/service/rendezVous/rendez-vous.service';
 
 @Component({
     templateUrl: './calendrierClient.component.html',
@@ -58,11 +59,15 @@ export class CalendrierClientComponent implements OnInit {
       private router: Router,
       private serviceService: ServiceService,
       private messageService: MessageService,
-      private datePipe: DatePipe
+      private datePipe: DatePipe,
+      private rdvService: RendezVousService
     ) { }
 
     ngOnInit() {
       this.rdvId = this.router.url.split('/')[3];
+      if(localStorage.getItem("dateRendezVous") != null) {
+        this.calendarOptions.events = [ {start: localStorage.getItem("dateRendezVous") } ];
+      }
       this.lesServices();
         this.countries = [
             { name: 'Australia', code: 'AU' },
@@ -137,13 +142,6 @@ export class CalendrierClientComponent implements OnInit {
         this.submitted = false;
       }
   
-      /*Liste des evenements */
-      listeEvent() {
-        return this.rdv = [
-          { title: 'event 1', date: '2024-02-10 10:00' },
-          { title: 'event 2', date: '2024-02-09 10:00' }
-        ]
-      }
       
       /*Function appel API pour la gestion des horaires: ajout,fiche,modification,annularion */
   

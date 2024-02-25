@@ -91,7 +91,7 @@ export class GestionHoraireComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-      this.listeHorairePersonnel(null,0,1);
+      this.listeHorairePersonnel(null,0,10);
     }
 
     public listeHorairePersonnel(filtreHorairePers: NgForm,pageP: Number,perPageP: Number): HorairePersonnel[] {

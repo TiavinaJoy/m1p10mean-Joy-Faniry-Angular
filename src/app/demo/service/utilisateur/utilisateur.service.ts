@@ -90,7 +90,7 @@ export class UtilisateurService {
     if(employe.nom) queryParams= queryParams.append("nom",employe.nom ?? '');
     if(employe.prenom) queryParams= queryParams.append("prenom",employe.prenom ?? '');
     if(employe.mail) queryParams= queryParams.append("mail",employe.mail ?? '');
-    if(employe.statut) queryParams= queryParams.append("statut",employe.statut ?? '');
+    if(employe.statut == '0' || employe.statut == '1') queryParams= queryParams.append("statut",employe.statut.toString());
     if(employe.role) queryParams= queryParams.append("role",employe.role  );
     if(employe.service) queryParams= queryParams.append("service",employe.service ?? '');
 

@@ -116,8 +116,9 @@ export class VitrineComponent implements OnInit {
         this.listeService(null,0,10);
     }
 
-    prendreRdv(servId: string) {
-        this.route.navigate(['pages/rdv',servId]);
+    prendreRdv(serv: Service) {
+        localStorage.setItem("service",serv.nom);
+        this.route.navigate(['pages/rdv',serv._id]);
     }
 
     onPageChange(event: PageEvent,serviceSearch: NgForm) {

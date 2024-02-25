@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { PathLocationStrategy, LocationStrategy, CommonModule } from '@angular/common';
+import { PathLocationStrategy, LocationStrategy, CommonModule, DatePipe } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
@@ -127,7 +127,8 @@ import { AccessComponent } from './demo/components/AuthPage/access/access.compon
         NodeService,
         PhotoService,
         ProductService,
-        LocalStorageService
+        LocalStorageService,
+        DatePipe
     ],
     bootstrap: [AppComponent],
 })

@@ -32,7 +32,7 @@ import { AccessComponent } from './demo/components/AuthPage/access/access.compon
                     { path: 'employes', component: EmployeComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard] },
                     { path: 'rdv/:servId', loadChildren: () => import('./demo/components/pages//prise_rdv/rdvClient.module').then(m => m.RdvClientModule), data: { requiredRole: 'client' } , canActivate: [AuthGuard]},
                     { path: 'profil',component: ProfilComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard]},
-                    { path: 'rdv/client',component: ListeRdvClientComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
+                    { path: 'rendezVous/client',component: ListeRdvClientComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
                     { path: 'vitrine',  component: VitrineComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
                     { path: 'horaire',  component: GestionHoraireComponent, data: { requiredRole: 'employe' } , canActivate: [AuthGuard]},
                     { path: 'employe/rdv',  component: RdvEmpComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard] },

@@ -5,37 +5,39 @@ import { CustomResponse } from '../../interfaces/customResponse';
 import { Observable } from 'rxjs';
 import { RendezVousSpec } from '../../interfaces/rendezVousSpec';
 import { RendezVous } from '../../interfaces/rendezVous';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RendezVousService {
   private apiServerUrl = environment.apiBaseUrl;
   private headers : HttpHeaders;
+  private data:any;
   
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private datePipe: DatePipe) { }
 
   public listeRdvClient(filtreRdvClient:RendezVousSpec,page: Number, perPage: Number, clientId:string): Observable<CustomResponse> {
     
     let queryParams = new HttpParams();
+console.log(page," ",perPage)
+      if(filtreRdvClient.dateRendezVousMin || filtreRdvClient.dateRendezVousMax){
+        if(filtreRdvClient.dateRendezVousMin && filtreRdvClient.dateRendezVousMax) {
 
-      if(filtreRdvClient.dateMin || filtreRdvClient.dateMax){
-        if(filtreRdvClient.dateMin && filtreRdvClient.dateMax) {
-
-          queryParams= queryParams.append("dateRendezVousMin", filtreRdvClient.dateMin ?? '');
-          queryParams= queryParams.append("dateRendezVousMax", filtreRdvClient.dateMax ?? '');
+          queryParams= queryParams.append("dateRendezVousMin", filtreRdvClient.dateRendezVousMin ?? '');
+          queryParams= queryParams.append("dateRendezVousMax", filtreRdvClient.dateRendezVousMax ?? '');
 
         }
-        else if (filtreRdvClient.dateMin && !filtreRdvClient.dateMax) queryParams= queryParams.append("dateRendezVousMin", filtreRdvClient.dateMin ?? '');
-        else if (!filtreRdvClient.dateMin && filtreRdvClient.dateMax) queryParams= queryParams.append("dateRendezVousMax", filtreRdvClient.dateMax ?? '');
+        else if (filtreRdvClient.dateRendezVousMin && !filtreRdvClient.dateRendezVousMax) queryParams= queryParams.append("dateRendezVousMin", filtreRdvClient.dateRendezVousMin ?? '');
+        else if (!filtreRdvClient.dateRendezVousMin && filtreRdvClient.dateRendezVousMax) queryParams= queryParams.append("dateRendezVousMax", filtreRdvClient.dateRendezVousMax ?? '');
     }
     queryParams= queryParams.append("page", page.toString() ?? '0');
     queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
      
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<CustomResponse>(`${this.apiServerUrl}/rendezVous/client/${clientId}`,{
-      headers:this.headers
-      //params: queryParams
+      headers:this.headers,
+      params: queryParams
     });
     
   }
@@ -44,24 +46,31 @@ export class RendezVousService {
   public listeRdvPerso(filtreRdvPerso:RendezVousSpec,page: Number, perPage: Number, personnelId:string): Observable<CustomResponse> {
     
     let queryParams = new HttpParams();
+      
+      filtreRdvPerso.dateRendezVousMin = this.datePipe.transform(filtreRdvPerso? filtreRdvPerso.dateRendezVousMin : '','yyyy-MM-dd HH:mm','GMT+3');
+      filtreRdvPerso.dateRendezVousMax = this.datePipe.transform(filtreRdvPerso? filtreRdvPerso.dateRendezVousMax : '','yyyy-MM-dd HH:mm','GMT+3');
 
-      if(filtreRdvPerso.dateMin || filtreRdvPerso.dateMax){
-        if(filtreRdvPerso.dateMin && filtreRdvPerso.dateMax) {
+      if(filtreRdvPerso.dateRendezVousMin || filtreRdvPerso.dateRendezVousMax){
 
-          queryParams= queryParams.append("dateRendezVousMin", filtreRdvPerso.dateMin ?? '');
-          queryParams= queryParams.append("dateRendezVousMax", filtreRdvPerso.dateMax ?? '');
+        filtreRdvPerso.dateRendezVousMin = filtreRdvPerso ? (filtreRdvPerso.dateRendezVousMin).toString() : '';
+        filtreRdvPerso.dateRendezVousMax = filtreRdvPerso ? (filtreRdvPerso.dateRendezVousMax).toString() : '';
+
+        if(filtreRdvPerso.dateRendezVousMin && filtreRdvPerso.dateRendezVousMax) {
+
+          queryParams= queryParams.append("dateRendezVousMin", filtreRdvPerso.dateRendezVousMin ?? '');
+          queryParams= queryParams.append("dateRendezVousMax", filtreRdvPerso.dateRendezVousMax ?? '');
 
         }
-        else if (filtreRdvPerso.dateMin && !filtreRdvPerso.dateMax) queryParams= queryParams.append("dateRendezVousMin", filtreRdvPerso.dateMin ?? '');
-        else if (!filtreRdvPerso.dateMin && filtreRdvPerso.dateMax) queryParams= queryParams.append("dateRendezVousMax", filtreRdvPerso.dateMax ?? '');
+        else if (filtreRdvPerso.dateRendezVousMin && !filtreRdvPerso.dateRendezVousMax) queryParams= queryParams.append("dateRendezVousMin", filtreRdvPerso.dateRendezVousMin ?? '');
+        else if (!filtreRdvPerso.dateRendezVousMin && filtreRdvPerso.dateRendezVousMax) queryParams= queryParams.append("dateRendezVousMax", filtreRdvPerso.dateRendezVousMax ?? '');
     }
     queryParams= queryParams.append("page", page.toString() ?? '0');
     queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
-     
+  
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<CustomResponse>(`${this.apiServerUrl}/rendezVous/personnel/${personnelId}`,{
-      headers:this.headers
-      //params: queryParams
+      headers:this.headers,
+      params: queryParams
     });
     
   }
@@ -79,4 +88,13 @@ export class RendezVousService {
     return this.http.post<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rdv.client}`,rdv,{headers:this.headers});
     
   }
+
+  public setData(data: any) {
+    this.data = data;
+  } 
+
+  public getData():any {
+    return this.data
+  }
+
 }

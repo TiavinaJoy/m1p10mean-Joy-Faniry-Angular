@@ -43,7 +43,6 @@ export class PersonalComponent implements OnInit {
         console.log(this.selectedEmploye)
         localStorage.setItem('employe',this.selectedEmploye._id);
         localStorage.setItem('nomEmploye',this.selectedEmploye.nom);
-        localStorage.setItem('service','service');
         localStorage.setItem('serviceId',this.rdvId);
         this.router.navigate(['pages/rdv/'+this.rdvId+'/calendar']);
         this.submitted = true;

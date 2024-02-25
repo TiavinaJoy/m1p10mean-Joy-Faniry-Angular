@@ -19,8 +19,8 @@ export class AppMenuComponent implements OnInit {
                 role: 'client',
                 items: [
                     { label: 'Liste des services', icon: 'pi pi-fw pi-list', routerLink: ['vitrine'], role: 'client' },
-                    { label: 'Prise de rendez-vous du client', icon: 'pi pi-fw pi-calendar', routerLink: ['rdv'],  role: 'client' },
-                    { label: 'Historique des rendez-vous', icon: 'pi pi-fw pi-history', routerLink: ['rdv/client'], role: 'client' },
+                    //{ label: 'Prise de rendez-vous du client', icon: 'pi pi-fw pi-calendar', routerLink: ['rdv'],  role: 'client' },
+                    { label: 'Historique des rendez-vous', icon: 'pi pi-fw pi-history', routerLink: ['rendezVous/client'], role: 'client' },
                 ]
             },
             {

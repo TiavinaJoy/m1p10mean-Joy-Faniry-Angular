@@ -39,11 +39,11 @@ export class RdvEmpComponent implements OnInit{
     lesRdv: RendezVous[];
     filtreRdvPerso: RendezVousSpec= {
       client: '',
-      dateMin: '',
-      dateMax: '',
       personnal: '',
       service: '',
-      statut: ''
+      statut: '',
+      dateRendezVousMin: '',
+      dateRendezVousMax: ''
     }
     selectedCountry!: any;
     countries!: any;
@@ -126,11 +126,11 @@ export class RdvEmpComponent implements OnInit{
         perPageP = 10;
       } 
   
-      this.rdvService.listeRdvPerso(filtreRdvPerso ? filtreRdvPerso.value : this.filtreRdvPerso,0,10,this.persoId).subscribe(
+      this.rdvService.listeRdvPerso(filtreRdvPerso ? filtreRdvPerso.value : this.filtreRdvPerso,pageP,perPageP,this.persoId).subscribe(
         (response:CustomResponse) => {
           if(response.status == 200) {
   
-            var data = response.data;
+            var data = response.data.docs;
             var rdv = [];
             data.forEach(daty => {
               rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
@@ -138,9 +138,10 @@ export class RdvEmpComponent implements OnInit{
             console.log(data);
             this.calendarOptions.events = rdv;
             this.lesRdv = data;
-            /*this.lesHorairesPers = response.data.docs;
             this.totalData = response.data.totalDocs;
-            this.perPage = response.data.limit; */
+            this.perPage = response.data.limit;
+            /*this.lesHorairesPers = response.data.docs;
+             */
           }
         },
         (error:HttpErrorResponse) => {

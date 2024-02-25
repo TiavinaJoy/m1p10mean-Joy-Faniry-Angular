@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
+import { Facture } from 'src/app/demo/interfaces/facture';
 import { RendezVous } from 'src/app/demo/interfaces/rendezVous';
 import { RendezVousService } from 'src/app/demo/service/rendezVous/rendez-vous.service';
 import { TokenService } from 'src/app/demo/service/token/token.service';
@@ -13,6 +14,7 @@ import { TokenService } from 'src/app/demo/service/token/token.service';
 })
 export class ConfirmationComponent implements OnInit{
 
+  facture: Facture;
   clientId: string = this.tokenService.decodeToken(localStorage.getItem("token")).sub;
   rdv:RendezVous = {
     client: '',
@@ -61,6 +63,7 @@ export class ConfirmationComponent implements OnInit{
     this.rdv.personnel = localStorage.getItem("employe");
     this.rdv.service = localStorage.getItem("serviceId");
 console.log(this.rdv);
+
     this.rdvService.addRdv(this.rdv).subscribe(
       (response:CustomResponse) => {
 
@@ -70,6 +73,7 @@ console.log(this.rdv);
         localStorage.removeItem('nomEmploye');
         localStorage.removeItem('serviceId');
         console.log(response.data);
+        this.facture = response.data;
         this.isConfirmed = false;
         this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
       },(error:HttpErrorResponse) => {
@@ -85,7 +89,7 @@ console.log(this.rdv);
 
         return;
     }*/
-    
+    this.rdvService.setData(this.facture);
     this.router.navigate(['pages/rdv/'+this.rdvId+'/payment']);
     this.submitted = true;
   }

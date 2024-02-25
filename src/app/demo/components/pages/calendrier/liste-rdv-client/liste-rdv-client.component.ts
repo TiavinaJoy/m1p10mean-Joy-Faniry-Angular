@@ -32,11 +32,11 @@ export class ListeRdvClientComponent implements OnInit{
   };
   filtreRdvClient: RendezVousSpec={
     client: '',
-    dateMin: '',
-    dateMax: '',
     personnal: '',
     service: '',
-    statut: ''
+    statut: '',
+    dateRendezVousMin: '',
+    dateRendezVousMax: ''
   }
   page:Number;
   perPage:Number;
@@ -110,8 +110,8 @@ export class ListeRdvClientComponent implements OnInit{
 
   
   onPageChange(event: PageEvent,filtreRdvClient: NgForm) {
-        
-    this.listeRdvClient(filtreRdvClient,event.page,4);
+        console.log(event.page)
+    this.listeRdvClient(filtreRdvClient,event.page,10);
 }
   /*Function appel API pour la gestion des horaires: ajout,fiche,modification,annularion */
 
@@ -122,17 +122,20 @@ export class ListeRdvClientComponent implements OnInit{
       perPageP = 10;
     } 
 
-    this.rdvService.listeRdvClient(filtreRdvClient ? filtreRdvClient.value : this.filtreRdvClient,0,10,this.clientId).subscribe(
+    this.rdvService.listeRdvClient(filtreRdvClient ? filtreRdvClient.value : this.filtreRdvClient,pageP,perPageP,this.clientId).subscribe(
       (response:CustomResponse) => {
         if(response.status == 200) {
 
-          var data = response.data;
+          var data = response.data.docs;
           var rdv = [];
+          console.log(data)
           data.forEach(daty => {
             rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
           })
           this.calendarOptions.events = rdv;
           this.lesRdv = data;
+          this.totalData = response.data.totalDocs;
+          this.perPage = response.data.limit; 
           /*this.lesHorairesPers = response.data.docs;
           this.totalData = response.data.totalDocs;
           this.perPage = response.data.limit; */
