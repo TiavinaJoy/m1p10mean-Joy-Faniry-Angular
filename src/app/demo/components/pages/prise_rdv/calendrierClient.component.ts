@@ -9,10 +9,11 @@ import { Service } from 'src/app/demo/interfaces/service';
 import { ServiceService } from 'src/app/demo/service/service/service.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
+import { DatePipe } from '@angular/common';
 
 @Component({
     templateUrl: './calendrierClient.component.html',
-    providers: [MessageService]
+    providers: [MessageService,DatePipe]
 })
 export class CalendrierClientComponent implements OnInit {
   rdvId: string;
@@ -25,11 +26,12 @@ export class CalendrierClientComponent implements OnInit {
     afficherFicheModal: boolean = false;
     submitted: boolean = false; 
     dateDebut: Date;
+    dateRdv:Date;
     dateFin: Date;
     rdv: any;
 
     calendarOptions: CalendarOptions = {
-        initialView: 'dayGridMonth', 
+        initialView: 'timeGridWeek', 
         plugins: [dayGridPlugin,timeGridPlugin,listPlugin,interaction ],
         locale: 'fr',
         headerToolbar:{
@@ -47,7 +49,6 @@ export class CalendrierClientComponent implements OnInit {
           list:'Liste'
       },
       dateClick: this.modalJourLibre.bind(this),
-      events:  this.listeEvent(),
       eventClick: this.modalFicheJourLibre.bind(this),
       handleWindowResize: true
 
@@ -56,7 +57,8 @@ export class CalendrierClientComponent implements OnInit {
     constructor(
       private router: Router,
       private serviceService: ServiceService,
-      private messageService: MessageService
+      private messageService: MessageService,
+      private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
@@ -102,18 +104,18 @@ export class CalendrierClientComponent implements OnInit {
     dragEnd() {
       this.draggedService = null;
     }
-    /*DRAG AND DROP */
     /*Ouverture du formulaire d'ajout des jours libre */
     modalJourLibre(arg) {
       const today = new Date();
       const clickedDate = arg.date;
-      today.setHours(0,0,0,0);
+      today.setHours(today.getHours(),today.getMinutes(),0,0);
         if( today> clickedDate) {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Veuillez choisir une date et une heure supérieure à la date et heure du jour', life: 3000 });
           this.afficherAjoutModal = false;
         }else {
           this.afficherAjoutModal = true;
         }
-        this.dateDebut = arg.date;
+        this.dateRdv = arg.date;
       }
       
       /*Fermeture du formulaire d'ajout jour libre */
@@ -147,7 +149,9 @@ export class CalendrierClientComponent implements OnInit {
   
       ajoutLibre() {
         this.afficherAjoutModal = false;
-        alert("Ajout libre");
+        const date = this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT+3');
+        localStorage.setItem('dateRendezVous',date);
+        this.calendarOptions.events = [{ start: date }];
       }
   
       ficheLibre(data) {
@@ -174,7 +178,7 @@ export class CalendrierClientComponent implements OnInit {
     }
 
     prevPage() {
+      
       this.router.navigate(['pages/rdv/'+this.rdvId+'/personal']);
-      //this.router.navigate(['pages/rdv/personal']);
     }
 }

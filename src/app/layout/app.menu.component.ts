@@ -28,7 +28,7 @@ export class AppMenuComponent implements OnInit {
                 role: 'employe',
                 items: [
                     { label: 'Gestion des horaires de l\'employé', icon: 'pi pi-fw pi-clock', routerLink: ['horaire'], role: 'employe' },
-                    { label: 'Les rendez-vous de l\'employé', icon: 'pi pi-fw pi-calendar', routerLink: ['rdv/emp'], role: 'employe' },
+                    { label: 'Les rendez-vous de l\'employé', icon: 'pi pi-fw pi-calendar', routerLink: ['employe/rdv'], role: 'employe' },
                     {
                         label: 'Gestion des profils',
                         icon: 'pi pi-fw pi-user-edit',

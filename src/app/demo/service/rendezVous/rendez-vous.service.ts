@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { CustomResponse } from '../../interfaces/customResponse';
 import { Observable } from 'rxjs';
 import { RendezVousSpec } from '../../interfaces/rendezVousSpec';
+import { RendezVous } from '../../interfaces/rendezVous';
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +70,13 @@ export class RendezVousService {
 
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rendezVousId}`,{headers:this.headers});
+    
+  }
+
+  public addRdv(rdv:RendezVous):Observable<CustomResponse> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.post<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rdv.client}`,rdv,{headers:this.headers});
     
   }
 }

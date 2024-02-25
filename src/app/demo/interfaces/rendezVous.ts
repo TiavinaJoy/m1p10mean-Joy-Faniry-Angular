@@ -7,7 +7,7 @@ export interface RendezVous {
     client:Utilisateur | string,
     dateRendezVous:Date | string,
     dateFin: Date | string,
-    personnal: Utilisateur | string,
+    personnel: Utilisateur | string,
     service: Service | string,
     statut: StatutRendezVous | string
 }

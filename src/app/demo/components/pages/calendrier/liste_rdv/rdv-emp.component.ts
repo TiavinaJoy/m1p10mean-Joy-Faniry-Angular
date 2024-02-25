@@ -28,7 +28,7 @@ export class RdvEmpComponent implements OnInit{
       client: '',
       dateRendezVous: '',
       dateFin: '',
-      personnal: '',
+      personnel: '',
       service: '',
       statut: ''
     };

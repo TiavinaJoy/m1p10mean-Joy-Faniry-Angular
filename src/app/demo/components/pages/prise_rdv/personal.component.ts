@@ -1,48 +1,36 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, NgModule, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SelectItem } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
+import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { CountryService } from 'src/app/demo/service/country.service';
+import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
 
 @Component({
 	templateUrl: './personal.component.html',
+    providers:[MessageService]
 })
 
 
 export class PersonalComponent implements OnInit {
     
     rdvId: string;
+    employes: SelectItem[] = [];
+    selectedEmploye: Utilisateur;
     submitted: Boolean = false;
 
-    selectedList: SelectItem = { value: '' };
-	
-	cities: SelectItem[] = [];
-	
-	countries: any[] = [];
-	
-	selectedMulti: any[] = [];
-
-    selectedDrop: SelectItem = { value: '' };
-
 	constructor(
-        private countryService: CountryService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private utilisateurService: UtilisateurService,
+        private messageService: MessageService
     ) { }	
 
 	ngOnInit() {
         
         this.rdvId = this.router.url.split('/')[3];
-		this.countryService.getCountries().then(countries => {
-            this.countries = countries;
-        });
-
-        this.cities = [
-            { label: 'New York', value: { id: 1, name: 'New York', code: 'NY' } },
-            { label: 'Rome', value: { id: 2, name: 'Rome', code: 'RM' } },
-            { label: 'London', value: { id: 3, name: 'London', code: 'LDN' } },
-            { label: 'Istanbul', value: { id: 4, name: 'Istanbul', code: 'IST' } },
-            { label: 'Paris', value: { id: 5, name: 'Paris', code: 'PRS' } }
-        ];
+        this.listeEmploye();
     }
 
     nextPage() {
@@ -52,7 +40,27 @@ export class PersonalComponent implements OnInit {
 
             return;
         }*/
+        console.log(this.selectedEmploye)
+        localStorage.setItem('employe',this.selectedEmploye._id);
+        localStorage.setItem('nomEmploye',this.selectedEmploye.nom);
+        localStorage.setItem('service','service');
+        localStorage.setItem('serviceId',this.rdvId);
         this.router.navigate(['pages/rdv/'+this.rdvId+'/calendar']);
         this.submitted = true;
+    }
+
+    private listeEmploye(): void {
+
+        this.utilisateurService.listeEmploye().subscribe(
+            (response:CustomResponse) => {
+                const data =  response.data;
+                data.forEach(emp => {
+                    this.employes.push({ label: emp.nom, value: { _id: emp._id, nom: emp.nom, code: emp.nom }})
+                })
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        );
     }
 }

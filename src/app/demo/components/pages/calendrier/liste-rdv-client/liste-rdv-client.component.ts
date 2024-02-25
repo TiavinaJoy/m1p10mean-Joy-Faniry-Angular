@@ -26,7 +26,7 @@ export class ListeRdvClientComponent implements OnInit{
     client: '',
     dateRendezVous: '',
     dateFin: '',
-    personnal: '',
+    personnel: '',
     service: '',
     statut: ''
   };

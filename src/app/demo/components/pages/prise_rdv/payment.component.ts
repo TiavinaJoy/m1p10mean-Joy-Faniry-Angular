@@ -15,7 +15,6 @@ export class PaymentComponent implements OnInit{
 
 	prevPage() {
 		this.router.navigate(['pages/rdv/'+this.rdvId+'/confirmation']);
-		//this.router.navigate(['pages/rdv/confirmation']);
 	}
 
 	valider(){

@@ -53,6 +53,8 @@ import { PaginatorModule } from 'primeng/paginator';
 import { BadgeModule } from 'primeng/badge';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DragDropModule } from 'primeng/dragdrop';
+import { AccessRoutingModule } from './demo/components/AuthPage/access/access-routing.module';
+import { AccessComponent } from './demo/components/AuthPage/access/access.component';
 @NgModule({
     declarations: [
         AppComponent, 
@@ -66,7 +68,8 @@ import { DragDropModule } from 'primeng/dragdrop';
         ProfilComponent,
         VitrineComponent,
         RdvEmpComponent,
-        ListeRdvClientComponent
+        ListeRdvClientComponent,
+        AccessComponent
     ],
     imports: [
         CommonModule,
@@ -112,7 +115,8 @@ import { DragDropModule } from 'primeng/dragdrop';
         InputNumberModule,
         NgxWebstorageModule.forRoot({}),
         /*Login */
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        AccessRoutingModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },

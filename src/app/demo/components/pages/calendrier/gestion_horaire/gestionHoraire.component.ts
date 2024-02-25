@@ -168,6 +168,7 @@ console.log(this.horaireAdd)
       const clickedDate = arg.date;
       today.setHours(today.getHours(),today.getMinutes(),0,0);
         if( today > clickedDate) {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Veuillez choisir une date et une heure supérieure à la date et heure du jour', life: 3000 });
           this.afficherAjoutModal = false;
         }else {
           this.afficherAjoutModal = true;

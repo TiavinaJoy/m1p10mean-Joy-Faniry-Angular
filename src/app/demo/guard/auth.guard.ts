@@ -22,7 +22,6 @@ export class AuthGuard implements CanActivate {
       if (localType === routeType) {
          return true; 
       } else {
-
          this.router.navigate(["/"]); 
          return false;
       }
