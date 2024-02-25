@@ -46,15 +46,8 @@ console.log(page," ",perPage)
   public listeRdvPerso(filtreRdvPerso:RendezVousSpec,page: Number, perPage: Number, personnelId:string): Observable<CustomResponse> {
     
     let queryParams = new HttpParams();
-      
-      filtreRdvPerso.dateRendezVousMin = this.datePipe.transform(filtreRdvPerso? filtreRdvPerso.dateRendezVousMin : '','yyyy-MM-dd HH:mm','GMT+3');
-      filtreRdvPerso.dateRendezVousMax = this.datePipe.transform(filtreRdvPerso? filtreRdvPerso.dateRendezVousMax : '','yyyy-MM-dd HH:mm','GMT+3');
 
       if(filtreRdvPerso.dateRendezVousMin || filtreRdvPerso.dateRendezVousMax){
-
-        filtreRdvPerso.dateRendezVousMin = filtreRdvPerso ? (filtreRdvPerso.dateRendezVousMin).toString() : '';
-        filtreRdvPerso.dateRendezVousMax = filtreRdvPerso ? (filtreRdvPerso.dateRendezVousMax).toString() : '';
-
         if(filtreRdvPerso.dateRendezVousMin && filtreRdvPerso.dateRendezVousMax) {
 
           queryParams= queryParams.append("dateRendezVousMin", filtreRdvPerso.dateRendezVousMin ?? '');
