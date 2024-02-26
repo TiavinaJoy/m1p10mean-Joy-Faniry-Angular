@@ -16,13 +16,15 @@ import { UtilisateurSpec } from 'src/app/demo/interfaces/utilisateurSpec';
 import { Statut } from 'src/app/demo/interfaces/statut';
 import { TokenService } from 'src/app/demo/service/token/token.service';
 import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
+import { DatePipe } from '@angular/common';
 
 @Component({
     templateUrl: './employe.component.html',
-    providers: [MessageService]
+    providers: [MessageService,DatePipe]
 })
 export class EmployeComponent implements OnInit {
     /*MES VARIABLES */
+    dateFinContrat:Date;
     servId: string[] = [];
     allSelectedServices: Service[] | undefined = [];
     draggedservice: Service | undefined | null;
@@ -120,7 +122,8 @@ export class EmployeComponent implements OnInit {
         private tokenService: TokenService,
         private route: Router,
         private routes: ActivatedRoute,
-        private utilisateurService:UtilisateurService
+        private utilisateurService:UtilisateurService,
+        private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
@@ -196,7 +199,8 @@ export class EmployeComponent implements OnInit {
         this.empId = employe._id;
         this.updateEmployeDialog = true;
         this.employe.salaire = employe.infoEmploye.salaire;
-        this.employe.finContrat = employe.infoEmploye.finContrat;
+        this.dateFinContrat = new Date(this.datePipe.transform(employe.infoEmploye.finContrat,'yyyy-MM-dd HH:mm:ss','GMT'));
+        //this.employe.finContrat = employe.infoEmploye.finContrat;
     }
 
     onPageChange(event: PageEvent,employeSearch: NgForm) {

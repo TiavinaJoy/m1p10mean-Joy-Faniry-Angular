@@ -10,7 +10,7 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-4 lg:mb-4">
 				<span class="p-input-icon-right">
-					<input type="text" pInputText placeholder=""/>
+					<input type="text" ngModel pInputText #nomCarte="ngModel" [(ngModel)]="cardName" name="nomCarte"/>
 					<i class="pi pi-user"></i>
 				</span>
 			</div>
@@ -21,7 +21,7 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-4 lg:mb-4">
 				<span class="p-input-icon-right">
-					<input type="text" pInputText placeholder="XXXX XXXX XXXX"/>
+					<input type="text" ngModel pInputText placeholder="XXXX XXXX XXXX" #numCarte="ngModel" [(ngModel)]="cardNumber" name="numCarte" />
 					<i class="pi pi-money-bill"></i>
 				</span>
 			</div>
@@ -32,7 +32,7 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-3 lg:mb-4">
 				<span class="p-input-icon-right">
-					<p-calendar dateFormat="mm-y" appendTo="body"> </p-calendar>
+					<p-calendar dateFormat="mm-y" appendTo="body" ngModel #expiredDate="ngModel" [(ngModel)]="cardExpDate" name="expiredDate"> </p-calendar>
 					<i class="pi pi-calendar-times"></i>
 				</span>
 			</div>
@@ -41,7 +41,7 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-3 lg:mb-4">
 				<span class="p-input-icon-right">
-					<p-inputNumber mode="decimal"></p-inputNumber>
+					<p-inputNumber mode="decimal" #cvv="ngModel" [(ngModel)]="cvvCard" name="cvv"></p-inputNumber>
 					<i class="pi pi-id-card"></i>
 				</span>
 			</div>
@@ -53,7 +53,7 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-4 lg:mb-4">
 				<span class="p-input-icon-right">
-					4 000 000,00 Ar
+					{{ prix | number: '1.2-2'}}Ar
 				</span>
 			</div>
 		</div>
@@ -62,7 +62,7 @@
 	<ng-template pTemplate="footer">
 		<div class="flex flex-column md:flex-row md:justify-content-between">
 			<p-button label="Retour" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-			<p-button label="Valider" (onClick)="valider()" icon="pi pi-check" iconPos="right"></p-button>
+			<p-button label="Valider" (onClick)="paiement()" icon="pi pi-check" iconPos="right" class="p-button-success"></p-button>
 		</div>
 	</ng-template>
 	

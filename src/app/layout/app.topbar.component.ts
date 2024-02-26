@@ -25,6 +25,14 @@ export class AppTopBarComponent {
     deconnexion() {
         localStorage.removeItem('token');
         localStorage.removeItem('type');
+        localStorage.removeItem('employe');
+        localStorage.removeItem('dateRendezVous');
+        localStorage.removeItem('service');
+        localStorage.removeItem('nomEmploye');
+        localStorage.removeItem('serviceId');
+        localStorage.removeItem('factureId');
+        localStorage.removeItem('prix');
+        localStorage.removeItem('clientId');
         this.route.navigate(['/']);
     }
 }

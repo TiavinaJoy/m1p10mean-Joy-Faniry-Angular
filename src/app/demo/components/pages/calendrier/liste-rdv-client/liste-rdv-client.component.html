@@ -1,37 +1,70 @@
 <div class="card">
 	<div class="col-12">
+        <p-toast></p-toast>
         <h3>Liste des rendez-vous du client</h3>
+        <div class="search">
+            <form #filtreRdvClient="ngForm" (ngSubmit) = "listeRdvClient(filtreRdvClient,page,perPage)">
+                <div class="grid">
+                    <div class="field col-6">
+                        <label for="dateRendezVousMin">Date debut Min:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" #dateRendezVousMin ="ngModel" [(ngModel)] = "filtreRdvClient.dateRendezVousMin" name="dateRendezVousMin"  styleClass="w-full"  ></p-calendar>
+                    </div>
+                    <div class="field col-6">
+                        <label for="dateRendezVousMax">Date debut Max:</label>
+                        <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24"  #dateRendezVousMax="ngModel" [(ngModel)] = "filtreRdvClient.dateRendezVousMax" name="dateRendezVousMax"  styleClass="w-full"  ></p-calendar>
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="field col-4">
+                        <label for="categorie"></label>
+                        <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
+                    </div>
+                </div>
+            </form>
+            <!--<div class="card flex justify-content-center">--> 
+                <p-paginator (onPageChange)="onPageChange($event,filtreRdvClient)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
+            <!--</div>--> 
+        </div>
 		<full-calendar [options]="calendarOptions"></full-calendar>
 
         <!--Affichage fiche rdv-->
-        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche des rendez-vous" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+        <p-dialog [(visible)]="afficherFicheModal"  header="Fiche du rendez-vous" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
             <ng-template pTemplate="content">
                 
                 <div class="field">
-					<span>Employe: </span> RASOLOFONIRINA Jeanne
+					<span>Employe: </span> {{ fiche ? fiche.personnel.nom : '' }}
                 </div>
                 <div class="field">
-                    <span>Client: </span> RASOLOFONIRINA Jeanne
+                    <span>Client: </span> {{ fiche ? fiche.client.nom : '' }}
                 </div>
                 <div class="field">
                     <label for="service">Service: </label>
-                    <p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [listStyle]="{ 'max-height': '250px' }" [style]="{ width: '15rem' }" [listStyle]="{'max-height': '220px'}">
+                    {{ fiche ? fiche.service.nom : '' }}
+                    <!--<p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [listStyle]="{ 'max-height': '250px' }" [style]="{ width: '15rem' }" [listStyle]="{'max-height': '220px'}">
                         <ng-template let-country pTemplate="item">
                             <div class="flex align-items-center gap-2">
                                 <div>{{ country.name }}</div>
                             </div>
                         </ng-template>
-                    </p-listbox>
+                    </p-listbox>--> 
                 </div>
                 <div class="field">
-                    <label for="dateDebut">Date début</label>
-					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
+                    <label for="service">Montant: </label>
+                    {{ fiche.service.prix | number: '1.2-2' }}Ar
+                </div>
+                <div class="field">
+                    <label for="service">Durée: </label>
+                    {{ fiche.service.duree }}mn
+                </div>
+                <div class="field">
+                    <label for="dateRendezVous">Date début</label>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateRdv" name="dateRendezVous" #dateRendezVous="ngModel"></p-calendar>
                 </div>
 
             </ng-template>
             <ng-template pTemplate="footer">
-                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerFicheModal()"></button>
-                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-text" (click)="modifierLibre()"></button>
+                <button pButton pRipple label="Annuler rendez-vous" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="annulerRdv(fiche)"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierLibre()"></button>
             </ng-template>
             
         </p-dialog>
