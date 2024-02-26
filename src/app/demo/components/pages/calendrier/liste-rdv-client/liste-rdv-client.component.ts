@@ -23,6 +23,7 @@ import { StatutRendezVous } from 'src/app/demo/interfaces/statutRendezVous';
 })
 export class ListeRdvClientComponent implements OnInit{
   statutRdvAnnulerId: string;
+  dataUpdate: RendezVous;
   lesStatutsRdv: StatutRendezVous[];
   dateRdv: Date;
   fiche:RendezVous = {
@@ -198,8 +199,21 @@ export class ListeRdvClientComponent implements OnInit{
     return this.fiche;
   }
 
-  public updateRdv() {
-    
+  public updateRdv(rdv:RendezVous): void {
+
+    this.dataUpdate.dateRendezVous = rdv.dateRendezVous;
+    this.dataUpdate.personnel = rdv.personnel;
+console.log(this.updateRdv);
+    this.rdvService.updateRdv(this.dataUpdate).subscribe(
+      (response:CustomResponse) => {
+        if(response.status == 200) {
+          console.log(response.data);
+        }
+      },
+      (error:HttpErrorResponse) => {
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+      }
+    )
   }
 
   ficheLibre(data) {
