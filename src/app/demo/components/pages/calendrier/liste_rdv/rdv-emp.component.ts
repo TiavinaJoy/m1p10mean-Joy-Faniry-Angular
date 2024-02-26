@@ -133,7 +133,8 @@ export class RdvEmpComponent implements OnInit{
             var data = response.data.docs;
             var rdv = [];
             data.forEach(daty => {
-              rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
+              //rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
+              rdv.push({start:this.datePipe.transform(daty.dateRendezVous,'yyyy-MM-dd HH:mm:ss','GMT'),end:this.datePipe.transform(daty.dateFin,'yyyy-MM-dd HH:mm:ss','GMT'),id:daty._id})
             })
             console.log(data);
             this.calendarOptions.events = rdv;

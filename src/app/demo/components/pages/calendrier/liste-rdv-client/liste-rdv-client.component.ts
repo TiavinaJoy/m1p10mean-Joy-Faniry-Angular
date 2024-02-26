@@ -126,15 +126,13 @@ export class ListeRdvClientComponent implements OnInit{
           var rdv = [];
           console.log(data)
           data.forEach(daty => {
-            rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
+            //rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
+            rdv.push({ start:  this.datePipe.transform(daty.dateRendezVous,'yyyy-MM-dd HH:mm:ss','GMT'), end: this.datePipe.transform(daty.dateFin,'yyyy-MM-dd HH:mm:ss','GMT'), id:daty._id }) 
           })
           this.calendarOptions.events = rdv;
           this.lesRdv = data;
           this.totalData = response.data.totalDocs;
           this.perPage = response.data.limit; 
-          /*this.lesHorairesPers = response.data.docs;
-          this.totalData = response.data.totalDocs;
-          this.perPage = response.data.limit; */
         }
       },
       (error:HttpErrorResponse) => {
@@ -198,6 +196,10 @@ export class ListeRdvClientComponent implements OnInit{
       }
     )
     return this.fiche;
+  }
+
+  public updateRdv() {
+    
   }
 
   ficheLibre(data) {

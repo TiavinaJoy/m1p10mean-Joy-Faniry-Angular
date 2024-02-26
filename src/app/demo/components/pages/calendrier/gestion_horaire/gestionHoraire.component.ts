@@ -108,7 +108,8 @@ export class GestionHoraireComponent implements OnInit {
             var data = response.data.docs;
             var horaires = [];
             data.forEach(daty => {
-              horaires.push({ start: daty.dateDebut, end: daty.dateFin }) 
+              //horaires.push({ start: daty.dateDebut, end: daty.dateFin })
+              horaires.push({start: this.datePipe.transform(daty.dateDebut,'yyyy-MM-dd HH:mm:ss','GMT'),end:this.datePipe.transform(daty.dateFin,'yyyy-MM-dd HH:mm:ss','GMT')}) 
             })
             this.calendarOptions.events = horaires;
             this.lesHorairesPers = response.data.docs;

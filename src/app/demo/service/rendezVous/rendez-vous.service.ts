@@ -111,5 +111,11 @@ console.log(page," ",perPage)
     return this.http.get<CustomResponse>(`${this.apiServerUrl}/rendezVous/transitions/all`,{headers:this.headers});
     
   }
-  
+
+  public updateRdv(rdv:RendezVous): Observable<CustomResponse> {
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rdv._id}`,{headers:this.headers});
+
+  }
 }
