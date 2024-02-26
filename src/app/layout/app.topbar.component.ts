@@ -30,6 +30,9 @@ export class AppTopBarComponent {
         localStorage.removeItem('service');
         localStorage.removeItem('nomEmploye');
         localStorage.removeItem('serviceId');
+        localStorage.removeItem('factureId');
+        localStorage.removeItem('prix');
+        localStorage.removeItem('clientId');
         this.route.navigate(['/']);
     }
 }

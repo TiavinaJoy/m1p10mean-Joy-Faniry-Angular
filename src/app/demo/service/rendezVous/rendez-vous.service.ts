@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { RendezVousSpec } from '../../interfaces/rendezVousSpec';
 import { RendezVous } from '../../interfaces/rendezVous';
 import { DatePipe } from '@angular/common';
+import { Facture } from '../../interfaces/facture';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +42,6 @@ console.log(page," ",perPage)
     });
     
   }
-
 
   public listeRdvPerso(filtreRdvPerso:RendezVousSpec,page: Number, perPage: Number, personnelId:string): Observable<CustomResponse> {
     
@@ -90,4 +90,10 @@ console.log(page," ",perPage)
     return this.data
   }
 
+  public paiement(factureId:string,clientId:string,facture:any): Observable<CustomResponse> {
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.post<CustomResponse>(`${this.apiServerUrl}/paiement/facture/${factureId}/client/${clientId}`,facture,{headers:this.headers});
+    
+  }
 }

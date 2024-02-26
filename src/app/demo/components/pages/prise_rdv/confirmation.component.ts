@@ -62,33 +62,26 @@ export class ConfirmationComponent implements OnInit{
     this.rdv.dateRendezVous = localStorage.getItem("dateRendezVous");
     this.rdv.personnel = localStorage.getItem("employe");
     this.rdv.service = localStorage.getItem("serviceId");
-console.log(this.rdv);
 
     this.rdvService.addRdv(this.rdv).subscribe(
       (response:CustomResponse) => {
 
-        localStorage.removeItem('employe');
-        localStorage.removeItem('dateRendezVous');
-        localStorage.removeItem('service');
-        localStorage.removeItem('nomEmploye');
-        localStorage.removeItem('serviceId');
-        console.log(response.data);
+        localStorage.setItem("factureId",response.data.facture._id);
+        localStorage.setItem("prix",response.data.facture.prix);
+        localStorage.setItem("clientId",response.data.facture.client._id);
+        localStorage.setItem('employe',response.data.facture.rendezVous.personnel._id);
+        localStorage.setItem('dateRendezVous',response.data.facture.rendezVous.dateRendezVous);
+        localStorage.setItem('serviceId',response.data.facture.rendezVous.service._id);
+      
         this.facture = response.data;
         this.isConfirmed = false;
         this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
       },(error:HttpErrorResponse) => {
-        console.log(error);
         this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
       }
     )
   }
-  nextPage() {
-    /*if (this.personalInformation.firstname && this.personalInformation.lastname && this.personalInformation.age) {
-        this.ticketService.ticketInformation.personalInformation = this.personalInformation;
-       this.router.navigate(['pages/rdv/calendar']);
-
-        return;
-    }*/
+  nextPage() {    
     this.rdvService.setData(this.facture);
     this.router.navigate(['pages/rdv/'+this.rdvId+'/payment']);
     this.submitted = true;

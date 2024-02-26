@@ -17,6 +17,7 @@ export class PersonalComponent implements OnInit {
     
     rdvId: string;
     employes: SelectItem[] = [];
+    //employes:Utilisateur[];
     selectedEmploye: Utilisateur;
     submitted: Boolean = false;
 
@@ -53,6 +54,7 @@ export class PersonalComponent implements OnInit {
         this.utilisateurService.listeEmploye().subscribe(
             (response:CustomResponse) => {
                 const data =  response.data;
+                //this.employes = data;
                 data.forEach(emp => {
                     this.employes.push({ label: emp.nom, value: { _id: emp._id, nom: emp.nom, code: emp.nom }})
                 })
