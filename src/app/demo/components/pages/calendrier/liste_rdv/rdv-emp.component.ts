@@ -16,6 +16,7 @@ import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { DatePipe } from '@angular/common';
 import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { Service } from 'src/app/demo/interfaces/service';
+import { StatutRendezVous } from 'src/app/demo/interfaces/statutRendezVous';
 
 @Component({
   selector: 'app-rdv-emp',
@@ -23,6 +24,9 @@ import { Service } from 'src/app/demo/interfaces/service';
   providers:[MessageService,DatePipe]
 })
 export class RdvEmpComponent implements OnInit{
+    statutRdvClicked: string;
+    statutRdv:string;
+    modalChangeRdvStatus:boolean = false;
     dateRdv: Date;
     fiche:RendezVous = {
       client: '',
@@ -45,8 +49,9 @@ export class RdvEmpComponent implements OnInit{
       dateRendezVousMin: '',
       dateRendezVousMax: ''
     }
-    selectedCountry!: any;
-    countries!: any;
+    lesStatuts: StatutRendezVous[] = [];
+    selectedStatut: StatutRendezVous;
+
     afficherAjoutModal: boolean = false;
     afficherFicheModal: boolean = false;
     submitted: boolean = false; 
@@ -85,18 +90,7 @@ export class RdvEmpComponent implements OnInit{
 
     ngOnInit() {
       this.listeRdvPerso(null,0,10);
-      this.countries = [
-        { name: 'Australia', code: 'AU' },
-        { name: 'Brazil', code: 'BR' },
-        { name: 'China', code: 'CN' },
-        { name: 'Egypt', code: 'EG' },
-        { name: 'France', code: 'FR' },
-        { name: 'Germany', code: 'DE' },
-        { name: 'India', code: 'IN' },
-        { name: 'Japan', code: 'JP' },
-        { name: 'Spain', code: 'ES' },
-        { name: 'United States', code: 'US' }
-    ];
+      this.statutRdv = 'test';
     }
 
     /*Ouverture du formulaire des fiches jours libres */
@@ -110,12 +104,18 @@ export class RdvEmpComponent implements OnInit{
       this.afficherFicheModal = false;
       this.submitted = false;
     }
-
     
+    changerStatutRdv(fiche: any){
+      console.log(fiche);
+      this.fiche = fiche;
+      this.listeStatutRdv();
+      this.modalChangeRdvStatus = true;
+    }
+
     onPageChange(event: PageEvent,filtreRdvClient: NgForm) {
         
       this.listeRdvPerso(filtreRdvClient,event.page,4);
-  }
+    }
     
     /*Function appel API pour la gestion des horaires: ajout,fiche,modification,annularion */
 
@@ -158,6 +158,9 @@ export class RdvEmpComponent implements OnInit{
           if(response.status == 200) {
             console.log(response.data);
             this.fiche = response.data;
+
+            this.statutRdvClicked =  response.data.statut.intitule;
+
             this.dateRdv = new Date(this.datePipe.transform(response.data.dateRendezVous,'yyyy-MM-dd HH:mm:ss','GMT'));
           }
         },
@@ -167,6 +170,53 @@ export class RdvEmpComponent implements OnInit{
       )
       return this.fiche;
     }
+
+    public listeStatutRdv(): void {
+      console.log(this.statutRdvClicked);
+      this.rdvService.listeStatutRdv().subscribe(
+        (response:CustomResponse) => {
+          if(response.status == 200) {
+            const annulerStat = this.fiche.statut;
+            console.log(annulerStat);
+            response.data.forEach(statut => {
+              console.log("Les statuts ", response.data);
+              if(statut.intitule != "Nouveau" && statut.intitule != "Reporté") {
+                if(this.statutRdvClicked != 'Annuler') {
+                  this.lesStatuts = response.data.filter(statut => (statut.intitule != "Nouveau" && statut.intitule != "Reporté") )
+                }
+              }
+              return this.lesStatuts;
+            })
+          }
+        },
+        (error:HttpErrorResponse) => {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+        }
+      )
+      //return this.lesStatuts;
+
+    }
+
+    public modifierStatut(fiche:RendezVous): void {
+      console.log(fiche)
+      this.rdvService.annulationRdv(fiche._id,this.statutRdv).subscribe(
+        (response:CustomResponse) => {
+          if(response.status == 200) {
+            console.log(response.data)
+            this.modalChangeRdvStatus = false;
+            this.afficherFicheModal = false;
+            this.submitted = false;
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+          }
+        },
+        (error:HttpErrorResponse) => {
+          console.log(error);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+        }
+      )
+
+    }
+
     ficheLibre(data) {
       this.afficherFicheModal = false;
     }

@@ -14,6 +14,7 @@ import { NgForm } from '@angular/forms';
 import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { RendezVousSpec } from 'src/app/demo/interfaces/rendezVousSpec';
 import { DatePipe } from '@angular/common';
+import { StatutRendezVous } from 'src/app/demo/interfaces/statutRendezVous';
 
 @Component({
   selector: 'app-liste-rdv-client',
@@ -21,6 +22,8 @@ import { DatePipe } from '@angular/common';
   providers:[MessageService,DatePipe]
 })
 export class ListeRdvClientComponent implements OnInit{
+  statutRdvAnnulerId: string;
+  lesStatutsRdv: StatutRendezVous[];
   dateRdv: Date;
   fiche:RendezVous = {
     client: '',
@@ -82,6 +85,7 @@ export class ListeRdvClientComponent implements OnInit{
 
   ngOnInit() {
     this.listeRdvClient(null,0, 10);
+    this.statutRdvAnnuler();
     this.countries = [
       { name: 'Australia', code: 'AU' },
       { name: 'Brazil', code: 'BR' },
@@ -101,19 +105,11 @@ export class ListeRdvClientComponent implements OnInit{
     this.ficheRdv(arg.event.id);
     this.afficherFicheModal = true;
   }
-
-  /*Fermeture du formulaire des fiches jours libres */
-  fermerFicheModal() {
-    this.afficherFicheModal = false;
-    this.submitted = false;
-  }
-
   
   onPageChange(event: PageEvent,filtreRdvClient: NgForm) {
         console.log(event.page)
     this.listeRdvClient(filtreRdvClient,event.page,10);
 }
-  /*Function appel API pour la gestion des horaires: ajout,fiche,modification,annularion */
 
   public listeRdvClient(filtreRdvClient: NgForm,pageP:Number, perPageP: Number): RendezVous[] {
 
@@ -146,6 +142,45 @@ export class ListeRdvClientComponent implements OnInit{
       }
     )
     return this.lesRdv;
+  }
+
+  public annulerRdv(fiche:RendezVous):void {
+
+    this.rdvService.annulationRdv(fiche._id,this.statutRdvAnnulerId).subscribe(
+      (response:CustomResponse) => {
+        if(response.status == 200) {
+          console.log(response.data)
+          this.afficherFicheModal = false;
+          this.submitted = false;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+        }
+      },
+      (error:HttpErrorResponse) => {
+        console.log(error);
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+      }
+    )
+  }
+
+  public statutRdvAnnuler(): string {
+
+    this.rdvService.listeStatutRdv().subscribe(
+      (response:CustomResponse) => {
+        if(response.status == 200) {
+          this.lesStatutsRdv = response.data;
+          this.lesStatutsRdv.forEach(statut => {
+            if(statut.intitule === 'Annuler' || statut.intitule === 'annuler' ) {
+              this.statutRdvAnnulerId = statut._id
+            } 
+          })
+          
+        }
+      },
+      (error:HttpErrorResponse) => {
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+      }
+    )
+    return this.statutRdvAnnulerId;
   }
 
   public ficheRdv(rendezVousId: string): RendezVous {

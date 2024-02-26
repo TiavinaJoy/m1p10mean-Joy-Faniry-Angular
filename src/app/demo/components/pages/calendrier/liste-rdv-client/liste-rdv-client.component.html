@@ -63,8 +63,8 @@
 
             </ng-template>
             <ng-template pTemplate="footer">
-                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerFicheModal()"></button>
-                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-text" (click)="modifierLibre()"></button>
+                <button pButton pRipple label="Annuler rendez-vous" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="annulerRdv(fiche)"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierLibre()"></button>
             </ng-template>
             
         </p-dialog>

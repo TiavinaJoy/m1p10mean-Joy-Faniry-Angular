@@ -96,4 +96,20 @@ console.log(page," ",perPage)
     return this.http.post<CustomResponse>(`${this.apiServerUrl}/paiement/facture/${factureId}/client/${clientId}`,facture,{headers:this.headers});
     
   }
+
+  public annulationRdv(rendezVousId:string,statutId:string): Observable<CustomResponse> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rendezVousId}/transition/${statutId}`,{headers:this.headers});
+    
+
+  }
+
+  public listeStatutRdv(): Observable<CustomResponse> {
+         
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<CustomResponse>(`${this.apiServerUrl}/rendezVous/transitions/all`,{headers:this.headers});
+    
+  }
+  
 }

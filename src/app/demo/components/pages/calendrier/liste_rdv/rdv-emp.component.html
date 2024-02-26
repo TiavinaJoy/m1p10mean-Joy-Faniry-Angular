@@ -1,5 +1,6 @@
 <div class="card">
 	<div class="col-12">
+        <p-toast></p-toast>
         <h3>Liste des rendez-vous du personnel</h3>
         <div class="search">
             <form #filtreRdvPerso="ngForm" (ngSubmit) = "listeRdvPerso(filtreRdvPerso,page,perPage)">
@@ -26,10 +27,10 @@
 
         <!--Affichage fiche rdv-->
         <p-dialog [(visible)]="afficherFicheModal"  header="Fiche rendez-vous" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+            <button pButton *ngIf="statutRdvClicked != 'Annuler' " pRipple label="Changer de statut"  class="p-button-outlined p-button-info" (click)="changerStatutRdv(fiche)" class="w-full mb-4"></button>
             <ng-template pTemplate="content">
-                
                 <div class="field">
-					<span>Employe: </span> {{ fiche ? fiche.personnel.nom : '' }}
+					<span>Employe: </span> {{ fiche ? fiche.personnel.nom : '' }} {{ statutRdvClicked }}
                 </div>
                 <div class="field">
                     <span>Client: </span> {{ fiche ? fiche.client.nom : '' }}
@@ -37,13 +38,6 @@
                 <div class="field">
                     <label for="service">Service: </label>
                     {{ fiche ? fiche.service.nom : '' }}
-                    <!--<p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [listStyle]="{ 'max-height': '250px' }" [style]="{ width: '15rem' }" [listStyle]="{'max-height': '220px'}">
-                        <ng-template let-country pTemplate="item">
-                            <div class="flex align-items-center gap-2">
-                                <div>{{ country.name }}</div>
-                            </div>
-                        </ng-template>
-                    </p-listbox>--> 
                 </div>
                 <div class="field">
                     <label for="service">Montant: </label>
@@ -60,11 +54,26 @@
 
             </ng-template>
             <ng-template pTemplate="footer">
-                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerFicheModal()"></button>
-                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-text" (click)="modifierLibre()"></button>
+                <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="fermerFicheModal()"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierLibre()"></button>
             </ng-template>
             
         </p-dialog>
         <!--Fin affichage fiche rdv-->
+
+        <!--Changement statut rdv-->
+        <p-dialog [(visible)]="modalChangeRdvStatus" header="Changer le statut du rendez-vous" [modal]="true" [style]="{width:'450px'}" [contentStyle]="{'overflow': 'visible'}">
+            <p-dropdown  [options]="lesStatuts" #statut="ngModel" name="statut"  styleClass="w-full" [(ngModel)]="statutRdv"  optionLabel="intitule" optionValue="_id">
+                <!--<ng-template let-option pTemplate="item">
+                    <div *ngIf="fiche.statut.intitule != 'Annuler'">
+                        {{ option.intitule }}
+                    </div>
+                </ng-template>--> 
+            </p-dropdown>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-check" class="p-button-success p-button-outlined" label="Confirmer" (click) ="modifierStatut(fiche)"></button>
+            </ng-template>
+        </p-dialog>
+        <!--Fin changement statut rdv-->
 	</div>
 </div>
