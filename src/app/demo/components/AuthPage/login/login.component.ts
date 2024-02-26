@@ -69,13 +69,14 @@ export class LoginComponent {
           typeUser = removeAccents(response.data.type).toLocaleLowerCase();
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('type', typeUser);
-          
+          console.log("Fa ahoana ",response.data);
+          console.log(typeUser)
           if(typeUser == 'client') {  
             this.route.navigate(['pages/vitrine']);
           } else if(typeUser== 'manager') {
             this.route.navigate(['pages/dashboard']);
           } else if (typeUser == 'employe') {
-            this.route.navigate(['pages/rdv/emp']);
+            this.route.navigate(['pages/employe/rdv']);
           }
 
         }

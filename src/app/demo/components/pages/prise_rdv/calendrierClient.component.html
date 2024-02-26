@@ -1,19 +1,6 @@
 <p-card>
+    <p-toast></p-toast>
     <ng-template pTemplate="content">
-        <!--<div class="grid">
-            <div class="col-3">
-                <div class="p-2 border-1 surface-border border-round w-15rem">
-                    <ul class="list-none flex flex-column gap-2 p-0 m-0">
-                        <li *ngFor="let service of services" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStart(service)" (onDragEnd)="dragEnd()">
-                            {{service.nom}}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-9">
-                
-            </div>
-        </div>-->
         <full-calendar [options]="calendarOptions"></full-calendar>
 
 		<!--Ajout des rendez-vous-->
@@ -22,14 +9,14 @@
 
                 <div class="field">
                     <label for="dateDebut">Date début</label>
-					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateDebut" > </p-calendar>
+					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateRdv" #dateDebut="ngModel"  name="dateDebut"> </p-calendar>
                 </div>
             
             </ng-template>
 
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="fermerAjoutModal()"></button>
-                <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-text" (click)="ajoutLibre()"></button>
+                <button pButton pRipple label="Valider" icon="pi pi-check" class="p-button-text" (click)="ajoutLibre(dateDebut)"></button>
             </ng-template>
         </p-dialog>
 		<!--Fin de l'ajout des rendez-vous-->

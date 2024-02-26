@@ -19,8 +19,8 @@ export class AppMenuComponent implements OnInit {
                 role: 'client',
                 items: [
                     { label: 'Liste des services', icon: 'pi pi-fw pi-list', routerLink: ['vitrine'], role: 'client' },
-                    { label: 'Prise de rendez-vous du client', icon: 'pi pi-fw pi-calendar', routerLink: ['rdv'],  role: 'client' },
-                    { label: 'Historique des rendez-vous', icon: 'pi pi-fw pi-history', routerLink: ['rdv/client'], role: 'client' },
+                    //{ label: 'Prise de rendez-vous du client', icon: 'pi pi-fw pi-calendar', routerLink: ['rdv'],  role: 'client' },
+                    { label: 'Historique des rendez-vous', icon: 'pi pi-fw pi-history', routerLink: ['rendezVous/client'], role: 'client' },
                 ]
             },
             {
@@ -28,7 +28,7 @@ export class AppMenuComponent implements OnInit {
                 role: 'employe',
                 items: [
                     { label: 'Gestion des horaires de l\'employé', icon: 'pi pi-fw pi-clock', routerLink: ['horaire'], role: 'employe' },
-                    { label: 'Les rendez-vous de l\'employé', icon: 'pi pi-fw pi-calendar', routerLink: ['rdv/emp'], role: 'employe' },
+                    { label: 'Les rendez-vous de l\'employé', icon: 'pi pi-fw pi-calendar', routerLink: ['employe/rdv'], role: 'employe' },
                     {
                         label: 'Gestion des profils',
                         icon: 'pi pi-fw pi-user-edit',

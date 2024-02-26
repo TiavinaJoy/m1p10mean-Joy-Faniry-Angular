@@ -54,8 +54,8 @@ export class ServiceService {
     if(service.statut == 0 || service.statut == 1) queryParams= queryParams.append("statut",service.statut.toString());
     if(service.categorie) queryParams= queryParams.append("categorie",service.categorie ?? '');
 
-    queryParams= queryParams.append("page", page.toString() ?? '');
-    queryParams= queryParams.append("perPage", perPage.toString() ?? '');
+    queryParams= queryParams.append("page", page.toString() ?? '0');
+    queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
 
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<Service[]>(`${this.apiServerUrl}/service`,{
