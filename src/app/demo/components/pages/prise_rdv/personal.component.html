@@ -4,7 +4,8 @@
 	</ng-template>
 	
 	<ng-template pTemplate="content">
-		<p-listbox [options]="cities" [(ngModel)]="selectedList" [filter]="true"></p-listbox>
+		<p-listbox [options]="employes" [(ngModel)]="selectedEmploye" ></p-listbox><!--[filter]="true"-->
+		<!--<p-dropdown [options]="employes" #emp="ngModel" name="emp" [(ngModel)] = "selectedEmploye" styleClass="w-full"  optionLabel="nom" optionValue="_id"></p-dropdown>-->
 	</ng-template>
 	
 	<ng-template pTemplate="footer">

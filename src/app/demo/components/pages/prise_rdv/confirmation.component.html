@@ -1,4 +1,5 @@
 <p-card>
+	<p-toast></p-toast>
 	<ng-template pTemplate="title">
 		Confirmation des informations
 	</ng-template>
@@ -10,7 +11,7 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-4 lg:mb-4">
 				<span class="p-input-icon-left">
-				Brushing
+				{{service}}
 				</span>
 			</div>
 		</div>
@@ -20,7 +21,7 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-4 lg:mb-4">
 				<span class="p-input-icon-left">
-				RASOLOFONIRINA Jeanne
+				{{personnel}}
 				</span>
 			</div>
 		</div>
@@ -30,8 +31,11 @@
 			</div>
 			<div class="col-12 mb-2 lg:col-4 lg:mb-4">
 				<span class="p-input-icon-left">
-					  20 Janvier 2023 à 19h
+					  {{dateRdv}}
 				</span>
+			</div>
+			<div class="col-12 mb-2 lg:col-4 lg:mb-4">
+				<button pButton pRipple label="Confirmer" class="p-button-success mr-2" (click)="confirmationInfo()"></button>
 			</div>
 		</div>
 	</ng-template>
@@ -39,8 +43,20 @@
 	<ng-template pTemplate="footer">
 		<div class="flex flex-column md:flex-row md:justify-content-between">
 			<p-button label="Retour" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-			<p-button label="Suivant" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+			<p-button label="Suivant" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right" [disabled] = "isConfirmed"></p-button>
 		</div>
 	</ng-template>
 	
+
+	<!--Confirmation rdv-->
+	<p-dialog [(visible)]="modalConfirmerRdv" header="Confirmation" [modal]="true" [style]="{width:'450px'}">
+		<div class="flex align-items-center justify-content-center">
+			<i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+			<span >Les informations que vous avez entrées vont être enregistrées. Aprés confirmation, il n'y aura plus de retour en arrière </span>
+		</div>
+		<ng-template pTemplate="footer">
+			<button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger p-button-outlined" (click)="hideDialog()"></button>
+			<button pButton pRipple icon="pi pi-check" class="p-button-success p-button-outlined" label="Confirmer" (click) ="addRdv()"></button>
+		</ng-template>
+	</p-dialog>
 </p-card>

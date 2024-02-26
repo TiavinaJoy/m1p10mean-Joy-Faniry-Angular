@@ -31,6 +31,7 @@ import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DragDropModule } from 'primeng/dragdrop';
+import { ToastModule } from 'primeng/toast';
 @NgModule({
 	imports: [
 		CommonModule,
@@ -48,6 +49,7 @@ import { DragDropModule } from 'primeng/dragdrop';
 		/*Calendrier */
 		FullCalendarModule,
 		DragDropModule,
+		ToastModule,
 		/*Personal */
 		FormsModule,
 		ListboxModule,

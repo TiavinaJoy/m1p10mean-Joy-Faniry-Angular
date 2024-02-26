@@ -13,6 +13,7 @@ import { VitrineComponent } from './demo/components/pages/vitrine/vitrine.compon
 import { RdvEmpComponent } from './demo/components/pages/calendrier/liste_rdv/rdv-emp.component';
 import { ListeRdvClientComponent } from './demo/components/pages/calendrier/liste-rdv-client/liste-rdv-client.component';
 import { AuthGuard } from './demo/guard/auth.guard';
+import { AccessComponent } from './demo/components/AuthPage/access/access.component';
 
 @NgModule({ 
     imports: [
@@ -29,16 +30,17 @@ import { AuthGuard } from './demo/guard/auth.guard';
                     { path: 'dashboard',component: DashboardComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'services', component:ServiceComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'employes', component: EmployeComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard] },
-                    { path: 'rdv',  loadChildren: () => import('./demo/components/pages//prise_rdv/rdvClient.module').then(m => m.RdvClientModule), data: { requiredRole: 'client' } , canActivate: [AuthGuard]},
+                    { path: 'rdv/:servId', loadChildren: () => import('./demo/components/pages//prise_rdv/rdvClient.module').then(m => m.RdvClientModule), data: { requiredRole: 'client' } , canActivate: [AuthGuard]},
                     { path: 'profil',component: ProfilComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard]},
-                    { path: 'rdv/client',component: ListeRdvClientComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
+                    { path: 'rendezVous/client',component: ListeRdvClientComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
                     { path: 'vitrine',  component: VitrineComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
                     { path: 'horaire',  component: GestionHoraireComponent, data: { requiredRole: 'employe' } , canActivate: [AuthGuard]},
-                    { path: 'rdv/emp',  component: RdvEmpComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard] },
+                    { path: 'employe/rdv',  component: RdvEmpComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard] },
                 ]
             },
             { path: 'notfound', component: NotfoundComponent },
             { path: '**', redirectTo: '/notfound' },
+            { path: 'denied' ,component: AccessComponent}
         ],
         { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })
     ],

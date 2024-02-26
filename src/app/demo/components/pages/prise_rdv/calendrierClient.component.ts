@@ -9,12 +9,15 @@ import { Service } from 'src/app/demo/interfaces/service';
 import { ServiceService } from 'src/app/demo/service/service/service.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
+import { DatePipe } from '@angular/common';
+import { RendezVousService } from 'src/app/demo/service/rendezVous/rendez-vous.service';
 
 @Component({
     templateUrl: './calendrierClient.component.html',
-    providers: [MessageService]
+    providers: [MessageService,DatePipe]
 })
 export class CalendrierClientComponent implements OnInit {
+  rdvId: string;
   draggedService: Service;
   services:Service[];
     submitte: Boolean = false;
@@ -24,11 +27,12 @@ export class CalendrierClientComponent implements OnInit {
     afficherFicheModal: boolean = false;
     submitted: boolean = false; 
     dateDebut: Date;
+    dateRdv:Date;
     dateFin: Date;
     rdv: any;
 
     calendarOptions: CalendarOptions = {
-        initialView: 'dayGridMonth', 
+        initialView: 'timeGridWeek', 
         plugins: [dayGridPlugin,timeGridPlugin,listPlugin,interaction ],
         locale: 'fr',
         headerToolbar:{
@@ -46,7 +50,6 @@ export class CalendrierClientComponent implements OnInit {
           list:'Liste'
       },
       dateClick: this.modalJourLibre.bind(this),
-      events:  this.listeEvent(),
       eventClick: this.modalFicheJourLibre.bind(this),
       handleWindowResize: true
 
@@ -55,11 +58,16 @@ export class CalendrierClientComponent implements OnInit {
     constructor(
       private router: Router,
       private serviceService: ServiceService,
-      private messageService: MessageService
+      private messageService: MessageService,
+      private datePipe: DatePipe,
+      private rdvService: RendezVousService
     ) { }
 
     ngOnInit() {
-
+      this.rdvId = this.router.url.split('/')[3];
+      if(localStorage.getItem("dateRendezVous") != null) {
+        this.calendarOptions.events = [ {start: localStorage.getItem("dateRendezVous") } ];
+      }
       this.lesServices();
         this.countries = [
             { name: 'Australia', code: 'AU' },
@@ -101,18 +109,18 @@ export class CalendrierClientComponent implements OnInit {
     dragEnd() {
       this.draggedService = null;
     }
-    /*DRAG AND DROP */
     /*Ouverture du formulaire d'ajout des jours libre */
     modalJourLibre(arg) {
       const today = new Date();
       const clickedDate = arg.date;
-      today.setHours(0,0,0,0);
+      today.setHours(today.getHours(),today.getMinutes(),0,0);
         if( today> clickedDate) {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Veuillez choisir une date et une heure supérieure à la date et heure du jour', life: 3000 });
           this.afficherAjoutModal = false;
         }else {
           this.afficherAjoutModal = true;
         }
-        this.dateDebut = arg.date;
+        this.dateRdv = arg.date;
       }
       
       /*Fermeture du formulaire d'ajout jour libre */
@@ -134,19 +142,14 @@ export class CalendrierClientComponent implements OnInit {
         this.submitted = false;
       }
   
-      /*Liste des evenements */
-      listeEvent() {
-        return this.rdv = [
-          { title: 'event 1', date: '2024-02-10 10:00' },
-          { title: 'event 2', date: '2024-02-09 10:00' }
-        ]
-      }
       
       /*Function appel API pour la gestion des horaires: ajout,fiche,modification,annularion */
   
       ajoutLibre() {
         this.afficherAjoutModal = false;
-        alert("Ajout libre");
+        const date = this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT+3');
+        localStorage.setItem('dateRendezVous',date);
+        this.calendarOptions.events = [{ start: date }];
       }
   
       ficheLibre(data) {
@@ -168,11 +171,12 @@ export class CalendrierClientComponent implements OnInit {
 
             return;
         }*/
-        this.router.navigate(['pages/rdv/confirmation']);
+        this.router.navigate(['pages/rdv/'+this.rdvId+'/confirmation']);
         this.submitte = true;
     }
 
     prevPage() {
-      this.router.navigate(['pages/rdv/personal']);
+      
+      this.router.navigate(['pages/rdv/'+this.rdvId+'/personal']);
     }
 }
