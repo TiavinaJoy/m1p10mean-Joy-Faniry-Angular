@@ -17,6 +17,7 @@ import { DatePipe } from '@angular/common';
 import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
 import { Service } from 'src/app/demo/interfaces/service';
 import { StatutRendezVous } from 'src/app/demo/interfaces/statutRendezVous';
+import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
 
 @Component({
   selector: 'app-rdv-emp',
@@ -24,6 +25,8 @@ import { StatutRendezVous } from 'src/app/demo/interfaces/statutRendezVous';
   providers:[MessageService,DatePipe]
 })
 export class RdvEmpComponent implements OnInit{
+    emp: Utilisateur;
+    employes: Utilisateur[];
     statutRdvClicked: string;
     statutRdv:string;
     modalChangeRdvStatus:boolean = false;
@@ -85,11 +88,13 @@ export class RdvEmpComponent implements OnInit{
       private tokenService: TokenService,
       private messageService: MessageService,
       private rdvService: RendezVousService,
+      private utilisateurService: UtilisateurService,
       private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
       this.listeRdvPerso(null,0,10);
+      this.listeEmploye();
       this.statutRdv = 'test';
     }
 
@@ -173,19 +178,17 @@ export class RdvEmpComponent implements OnInit{
     }
 
     public listeStatutRdv(): void {
-      console.log(this.statutRdvClicked);
       this.rdvService.listeStatutRdv().subscribe(
         (response:CustomResponse) => {
           if(response.status == 200) {
             const annulerStat = this.fiche.statut;
-            console.log(annulerStat);
             response.data.forEach(statut => {
-              console.log("Les statuts ", response.data);
-              if(statut.intitule != "Nouveau" && statut.intitule != "Reporté") {
-                if(this.statutRdvClicked != 'Annuler') {
-                  this.lesStatuts = response.data.filter(statut => (statut.intitule != "Nouveau" && statut.intitule != "Reporté") )
-                }
+              if(this.statutRdvClicked === 'Nouveau') {
+                this.lesStatuts = response.data.filter(statut => (statut.intitule != "Nouveau" && statut.intitule != "Reporté") )
+              }else if(this.statutRdvClicked === 'Reporté') {
+                this.lesStatuts = response.data.filter(statut => (statut.intitule == "Effectué" || statut.intitule == "Annuler") )
               }
+              //this.lesStatuts = response.data;
               return this.lesStatuts;
             })
           }
@@ -219,12 +222,45 @@ export class RdvEmpComponent implements OnInit{
 
     }
 
+    public listeEmploye(): Utilisateur[] {
+
+      this.utilisateurService.listeEmploye().subscribe(
+          (response:CustomResponse) => {
+              this.employes = response.data;
+          },
+          (error:HttpErrorResponse) => {
+              this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+          }
+      );
+      return this.employes;
+  }
+
     ficheLibre(data) {
       this.afficherFicheModal = false;
     }
 
-    modifierLibre(data) {
-      alert("Modification du jour libre");
+    public modifierRdv(rdv: RendezVous) {
+      console.log(rdv)
+      const data = {
+        personnelId: this.emp,
+        dateRendezVous: this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT+3')
+      }
+      console.log(data)
+      this.rdvService.updateRdv(rdv,data).subscribe(
+        (response:CustomResponse) => {
+          if(response.status == 200) {
+            console.log(response.data)
+            this.listeRdvPerso(null,0,10);
+            this.afficherFicheModal = false;
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+          }
+        },
+        (error:HttpErrorResponse) => {
+          console.log(error);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+        }
+      )
+
     }
 
     annulerLibre(data) {

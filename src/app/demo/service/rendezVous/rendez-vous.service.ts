@@ -34,7 +34,7 @@ console.log(page," ",perPage)
     }
     queryParams= queryParams.append("page", page.toString() ?? '0');
     queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
-     
+    console.log(queryParams)
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<CustomResponse>(`${this.apiServerUrl}/rendezVous/client/${clientId}`,{
       headers:this.headers,
@@ -59,6 +59,7 @@ console.log(page," ",perPage)
     }
     queryParams= queryParams.append("page", page.toString() ?? '0');
     queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
+    console.log(queryParams)
   
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<CustomResponse>(`${this.apiServerUrl}/rendezVous/personnel/${personnelId}`,{
@@ -112,10 +113,10 @@ console.log(page," ",perPage)
     
   }
 
-  public updateRdv(rdv:RendezVous): Observable<CustomResponse> {
+  public updateRdv(rdv:RendezVous,data:any): Observable<CustomResponse> {
 
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-    return this.http.put<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rdv._id}`,{headers:this.headers});
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rdv._id}`,data,{headers:this.headers});
 
   }
 }

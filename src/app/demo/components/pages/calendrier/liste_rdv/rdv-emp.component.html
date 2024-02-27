@@ -27,10 +27,10 @@
 
         <!--Affichage fiche rdv-->
         <p-dialog [(visible)]="afficherFicheModal"  header="Fiche rendez-vous" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
-            <button pButton *ngIf="statutRdvClicked != 'Annuler' " pRipple label="Changer de statut"  class="p-button-outlined p-button-info" (click)="changerStatutRdv(fiche)" class="w-full mb-4"></button>
+            <button pButton *ngIf="statutRdvClicked != 'Annuler' && statutRdvClicked != 'Effectué' " pRipple label="Changer de statut"  class="p-button-outlined p-button-info" (click)="changerStatutRdv(fiche)" class="w-full mb-4"></button>
             <ng-template pTemplate="content">
                 <div class="field">
-					<span>Employe: </span> {{ fiche ? fiche.personnel.nom : '' }} {{ statutRdvClicked }}
+					<span>Employe: </span> {{ fiche ? fiche.personnel.nom : '' }} 
                 </div>
                 <div class="field">
                     <span>Client: </span> {{ fiche ? fiche.client.nom : '' }}
@@ -51,11 +51,16 @@
                     <label for="dateRendezVous">Date début</label>
 					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateRdv" name="dateRendezVous" #dateRendezVous="ngModel" > </p-calendar>
                 </div>
+                <div class="field">
+                    <label for="pers">Personnel</label>
+                    <p-dropdown  [options]="employes" #statut="ngModel" name="statut"  styleClass="w-full" [(ngModel)]="emp"  optionLabel="nom" optionValue="_id">
+                    </p-dropdown>
+                </div>
 
             </ng-template>
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="fermerFicheModal()"></button>
-                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierLibre()"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierRdv(fiche)"></button>
             </ng-template>
             
         </p-dialog>

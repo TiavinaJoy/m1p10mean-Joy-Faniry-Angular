@@ -42,6 +42,8 @@ export class PersonalComponent implements OnInit {
             (response:any) => {
                 this.emp = response.data;
                 console.log(this.emp);
+                /*localStorage.setItem("employe",this.emp._id)*/
+                localStorage.setItem('nomEmploye',this.emp.nom);
             },
             (error:HttpErrorResponse) => {
                 this.messageService.add({severity:'error', summary:'Error', detail:error.error.message, life: 3000});
@@ -55,11 +57,7 @@ export class PersonalComponent implements OnInit {
         if(!this.selectedEmploye) this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Vous devez sélectionner un employé', life: 3000 });
         else {
             this.getOneEmp(this.selectedEmploye);
-            console.log(this.emp);
-            /*localStorage.setItem('employe', this.emp._id);
-            localStorage.setItem('nomEmploye', this.emp.nom);*/
-            localStorage.setItem('employe','65d35e5c86034400299419e7');
-            localStorage.setItem('nomEmploye','RANDRIAMPARANY Modif');
+            localStorage.setItem("employe",this.selectedEmploye);
             localStorage.setItem('serviceId',this.rdvId);
             this.router.navigate(['pages/rdv/'+this.rdvId+'/calendar']);
             this.submitted = true;

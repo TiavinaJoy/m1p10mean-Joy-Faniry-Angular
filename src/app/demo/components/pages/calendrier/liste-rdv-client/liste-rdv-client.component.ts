@@ -15,6 +15,8 @@ import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
 import { RendezVousSpec } from 'src/app/demo/interfaces/rendezVousSpec';
 import { DatePipe } from '@angular/common';
 import { StatutRendezVous } from 'src/app/demo/interfaces/statutRendezVous';
+import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
+import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
 
 @Component({
   selector: 'app-liste-rdv-client',
@@ -22,6 +24,8 @@ import { StatutRendezVous } from 'src/app/demo/interfaces/statutRendezVous';
   providers:[MessageService,DatePipe]
 })
 export class ListeRdvClientComponent implements OnInit{
+  employes: Utilisateur[];
+  emp: Utilisateur;
   statutRdvAnnulerId: string;
   dataUpdate: RendezVous;
   lesStatutsRdv: StatutRendezVous[];
@@ -81,12 +85,14 @@ export class ListeRdvClientComponent implements OnInit{
     private messageService:MessageService,
     private rdvService: RendezVousService,
     private tokenService: TokenService,
+    private utilisateurService: UtilisateurService,
     private datePipe: DatePipe
   ) { }
 
   ngOnInit() {
     this.listeRdvClient(null,0, 10);
     this.statutRdvAnnuler();
+    this.listeEmploye();
     this.countries = [
       { name: 'Australia', code: 'AU' },
       { name: 'Brazil', code: 'BR' },
@@ -200,21 +206,40 @@ export class ListeRdvClientComponent implements OnInit{
     return this.fiche;
   }
 
-  public updateRdv(rdv:RendezVous): void {
+  public listeEmploye(): Utilisateur[] {
 
-    this.dataUpdate.dateRendezVous = rdv.dateRendezVous;
-    this.dataUpdate.personnel = rdv.personnel;
-console.log(this.updateRdv);
-    this.rdvService.updateRdv(this.dataUpdate).subscribe(
-      (response:CustomResponse) => {
-        if(response.status == 200) {
-          console.log(response.data);
+    this.utilisateurService.listeEmploye().subscribe(
+        (response:CustomResponse) => {
+            this.employes = response.data;
+        },
+        (error:HttpErrorResponse) => {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
         }
-      },
-      (error:HttpErrorResponse) => {
-        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+    );
+    return this.employes;
+}
+
+  public updateRdv(rdv:RendezVous): void {
+    console.log(rdv)
+      const data = {
+        personnelId: this.emp,
+        dateRendezVous: this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT+3')
       }
-    )
+      console.log(data)
+      this.rdvService.updateRdv(rdv,data).subscribe(
+        (response:CustomResponse) => {
+          if(response.status == 200) {
+            console.log(response.data)
+            this.listeRdvClient(null,0,10);
+            this.afficherFicheModal = false;
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
+          }
+        },
+        (error:HttpErrorResponse) => {
+          console.log(error);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+        }
+      )
   }
 
   ficheLibre(data) {
