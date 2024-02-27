@@ -257,10 +257,7 @@ export class ServiceComponent implements OnDestroy,OnInit {
               
               if(response.status === 200) {
                   this.service = response.data;
-                  //this.refreshServices$.next(null);
-                
-                this.services.push(this.unService);
-                this.serviceSubject.next(this.services);
+                  this.listeService(null,0,10);
                   this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
               }
             },
@@ -286,8 +283,7 @@ export class ServiceComponent implements OnDestroy,OnInit {
                 if(response.status == 201) {
                     this.serviceForm.reset();
                     this.serviceDialog = false;
-                this.services.push(this.unService);
-                this.serviceSubject.next(this.services);
+                    this.listeService(null,0,10);
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },
@@ -318,8 +314,7 @@ export class ServiceComponent implements OnDestroy,OnInit {
                 this.unService.categorie = this.updateCategorie;
                 if(response.status == 200) {
                     this.ficheServiceDialog = false;
-                this.services.push(this.unService);
-                this.serviceSubject.next(this.services);
+                    this.listeService(null,0,10);
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },

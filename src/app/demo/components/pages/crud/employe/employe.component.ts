@@ -216,7 +216,8 @@ export class EmployeComponent implements OnInit {
         this.utilisateurService.updateStatutEmploye(employe._id,this.statut).subscribe(
             (response:CustomResponse) => {
 
-                this.deleteEmployeDialog = false;                
+                this.deleteEmployeDialog = false;     
+                this.listePersonnel(null,0,10);           
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {
@@ -283,6 +284,7 @@ export class EmployeComponent implements OnInit {
                     addEmploye.reset();
                     this.newEmploye = false;
                     this.allSelectedServices = null;
+                    this.listePersonnel(null,0,10);
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },
@@ -387,6 +389,7 @@ export class EmployeComponent implements OnInit {
 
                     empUpdate.reset();
                     this.updateEmployeDialog = false;
+                    this.listePersonnel(null,0,10);
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 }
             },

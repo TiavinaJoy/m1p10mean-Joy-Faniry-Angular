@@ -207,6 +207,7 @@ export class RdvEmpComponent implements OnInit{
             this.modalChangeRdvStatus = false;
             this.afficherFicheModal = false;
             this.submitted = false;
+            this.listeRdvPerso(null,0,10);
             this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
           }
         },
