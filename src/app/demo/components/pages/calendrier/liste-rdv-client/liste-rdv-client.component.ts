@@ -151,6 +151,7 @@ export class ListeRdvClientComponent implements OnInit{
           console.log(response.data)
           this.afficherFicheModal = false;
           this.submitted = false;
+          this.listeRdvClient(null,0,10);
           this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
         }
       },

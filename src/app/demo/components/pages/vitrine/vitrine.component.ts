@@ -149,7 +149,7 @@ export class VitrineComponent implements OnInit {
 
         this.preferenceService.updateStatutFavoris(this.oneFav._id,statut).subscribe(
             (response:CustomResponse) => {
-                
+                this.listeFavoris();
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 this.updateStatutFavDialog = false;
 
@@ -171,6 +171,7 @@ export class VitrineComponent implements OnInit {
             (response:CustomResponse) => {
                 updateFavorisForm.reset();
                 this.favorisUpdateDialog = false;
+                this.listeFavoris();
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {
@@ -190,6 +191,7 @@ export class VitrineComponent implements OnInit {
         this.preferenceService.ajoutFavoris(this.preferenceAdd).subscribe(
             (response:CustomResponse) => {
                 favorisForm.reset();
+                this.listeFavoris();
                 this.favorisDialog = false;
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },

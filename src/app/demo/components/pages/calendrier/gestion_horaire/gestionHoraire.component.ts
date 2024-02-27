@@ -138,6 +138,7 @@ console.log(this.horaireAdd)
           if(response.status == 200 || response.status == 201) {
             this.afficherAjoutModal = false;
             console.log(response.data);
+            this.listeHorairePersonnel(null,0,10);
             this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
           }
         },
