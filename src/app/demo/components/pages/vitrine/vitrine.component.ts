@@ -248,7 +248,20 @@ export class VitrineComponent implements OnInit {
         return this.services;
     }
 
-    private listeFavoris(): Preference[]{
+    private async listeFavoris(): Promise<Preference[]> {
+        try {
+            console.log(this.idClient);
+    
+            const response: CustomResponse = await this.preferenceService.listeFavoris(this.idClient).toPromise();
+            this.preferences = response.data;
+    
+            return this.preferences;
+        } catch (error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            throw error; // rethrow the error to propagate it to the caller
+        }
+    }
+   /* private listeFavoris(): Preference[]{
         console.log(this.idClient);
         this.preferenceService.listeFavoris(this.idClient).subscribe(
             (response:CustomResponse) => {
@@ -261,7 +274,7 @@ export class VitrineComponent implements OnInit {
             }
         );
         return this.preferences;
-    }
+    }*/
 
     private listeEmploye(): Utilisateur[] {
 

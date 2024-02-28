@@ -7,11 +7,11 @@
                 <form #commissionSearch="ngForm" (ngSubmit) = "listeCommission(commissionSearch,page,perPage)">
                     <div class="grid">
                         <div class="field col-6">
-                            <label for="dateRendezVousMin">Date d'embauche min:</label>
+                            <label for="dateRendezVousMin">Date rendez-vous min:</label>
                             <p-calendar #dateRendezVousMin="ngModel" [(ngModel)] = "rdvMin" name="dateRendezVousMin" styleClass="w-full"  dateFormat="dd.mm.y"></p-calendar>
                         </div>
                         <div class="field col-6">
-                            <label for="dateRendezVousMax">Date d'embauche max:</label>
+                            <label for="dateRendezVousMax">Date rendez-vous max:</label>
                             <p-calendar  #dateRendezVousMax="ngModel" [(ngModel)] = "rdvMax" name="dateRendezVousMax" styleClass ="w-full" dateFormat="dd.mm.y" ></p-calendar>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                 <p-table  [value]="lesCommissions ? lesCommissions.rendezVous : null" [tableStyle]="{'min-width': '50rem'}" > <!--[value]="lesEmpSearch" -->
                     <ng-template pTemplate="header">
                         <tr>
-                            <th style="width:25%">Date et durée </th>
+                            <th style="width:25%">Date</th>
                             <th style="width:25%">Service</th>
                             <th style="width:25%">Client</th>
                         </tr>

@@ -63,6 +63,7 @@ export class CommissionComponent implements OnInit{
           this.totalCommission = response.data.totalCommission;
           this.perPage = 10;
           this.totalData = response.data.nombreRendezVous;
+          console.log(this.lesCommissions);
         }
         
       },(error: HttpErrorResponse) => {

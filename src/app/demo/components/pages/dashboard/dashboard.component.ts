@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Subscription, debounceTime, take } from 'rxjs';
@@ -48,7 +49,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     barOptions: any;
 
     jours:string[] = [];
-   
+
+    anneeEnCours = new Date().getFullYear();
+
+    listeMois: string[] = [];
+
+    listeMoisCA: string[] = [];
+
     personnel:string[] = [];
 
     rdvSpec: RendezVousSpec = {
@@ -65,17 +72,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
         private layoutService: LayoutService,
         private dashService: DashboardService,
         private messageService: MessageService,
-        private utilisateurService: UtilisateurService
+        private utilisateurService: UtilisateurService,
+        private datePipe:DatePipe
     ) {
-        this.subscription = this.layoutService.configUpdate$
+        /*this.subscription = this.layoutService.configUpdate$
             .pipe(debounceTime(25))
             .subscribe((config) => {
                 this.initCharts();
-            });
+            });*/
     }
 
     ngOnInit() {
-        
         this.initCharts();
     }
 
@@ -84,39 +91,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.rdvPerMonths(rdvParMoisFilter);
     }
 
-    anneeEnCours = new Date().getFullYear();
+    
 
-    listeMois: string[] = Array.from({length: 12}, (_,i) =>  {
+    /*listeMois: string[] = Array.from({length: 12}, (_,i) =>  {
         const date = new Date(this.anneeEnCours,i,1);
         return date.toLocaleDateString('fr-FR',{month:'long'})
-    })
+    })*/
 
     
-    listeJour(): string[] {
+    /*listeJour(): string[] {
         const daty = new Date();
         for(var i = 0; i<7 ; i++) {
             daty.setDate(i+1);
             this.jours.push(daty.toLocaleDateString('fr-FR',{ weekday :'long'}))
         }
         return this.jours;
-    } 
+    } */
 
     initCharts() {
-
-        this.listeJour();
-        this.caMensuel();
-        this.rdvPerDays();
-        this.listeEmploye();
-        this.avgWorkTime();
-        this.rdvPerMonths(null);
 
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
         
+        this.caMensuel();
+        this.rdvPerDays();
+        this.listeEmploye();
+        this.avgWorkTime();
+        this.rdvPerMonths(null);
+
         this.barCaMensuel = {
-            labels: this.listeMois,
+            labels: this.listeMoisCA,
             datasets: [
                 {
                     label: "Chiffre d'affaire",
@@ -164,6 +170,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         };
 
         this.barOptions = {
+            responsive: true,
             plugins: {
                 legend: {
                     labels: {
@@ -217,39 +224,84 @@ export class DashboardComponent implements OnInit, OnDestroy {
         );
     }
     
-    public caMensuel(): void {
+    /*public caMensuel(): void {
         
         this.dashService.caMensuel().subscribe(
             (response:CustomResponse) => {
                 response.data.data.forEach(element => {
+                    var dateLabel = new Date();
+                    dateLabel.setMonth(element._id.month-1)
+                    this.listeMoisCA.push(dateLabel.toLocaleString('fr-FR',{month:'long'}));
                     this.caMensuelData.push(element.totalAmount);
                 });
             },(error:HttpErrorResponse) => {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         )
+    }*/
+
+    public async caMensuel() {
+        try{
+            const response = await this.dashService.caMensuel().toPromise();
+            response.data.data.forEach(element => {
+                var dateLabel = new Date();
+                dateLabel.setMonth(element._id.month-1)
+                this.listeMoisCA.push(dateLabel.toLocaleString('fr-FR',{month:'long'}));
+                this.caMensuelData.push(element.totalAmount);
+            });
+        }catch(error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error, life: 3000 });
+        }
     }
 
-    public rdvPerDays(): void {
+    /*public rdvPerDays(): void {
         
         this.dashService.rdvParJour().subscribe(
             (response:CustomResponse) => {
                 response.data.data.forEach(element => {
+                    var dateLabel = new Date(element._id.year,element._id.month-1,element._id.day);
+                    var setDateLabel = this.datePipe.transform(dateLabel,'yyyy-MM-dd','GMT');
+                    this.jours.push(setDateLabel)
                     this.rdvParJour.push(element.count);
                 });
-                console.log(this.rdvParJour)
             },(error:HttpErrorResponse) => {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         )
+    }*/
+
+    public async rdvPerDays(){
+        try{
+            const response = await this.dashService.rdvParJour().toPromise();
+            response.data.data.forEach(element => {
+                var dateLabel = new Date(element._id.year,element._id.month-1,element._id.day);
+                var setDateLabel = this.datePipe.transform(dateLabel,'yyyy-MM-dd','GMT');
+                this.jours.push(setDateLabel)
+                this.rdvParJour.push(element.count);
+            });
+        }catch(error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error, life: 3000 });
+        }
+        /*this.dashService.rdvParJour().subscribe(
+            (response:CustomResponse) => {
+                response.data.data.forEach(element => {
+                    var dateLabel = new Date(element._id.year,element._id.month-1,element._id.day);
+                    var setDateLabel = this.datePipe.transform(dateLabel,'yyyy-MM-dd','GMT');
+                    this.jours.push(setDateLabel)
+                    this.rdvParJour.push(element.count);
+                });
+            },(error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        )*/
     }
 
-    public avgWorkTime(): void {
+    /*public avgWorkTime(): void {
         
         this.dashService.tempsMoyenTravail().subscribe(
             (response:CustomResponse) => {
                 response.data.data.forEach(element => {
-                    
+                    console.log(element)
                     this.tempsMoyenDeTravail.push(element.averageHours);
                 });
                 console.log(this.tempsMoyenDeTravail)
@@ -257,16 +309,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         )
-    }
+    }*/
 
-    public rdvPerMonths(rdvPerMonthSearch: NgForm): void {
+    public async avgWorkTime() {
         
-        console.log(rdvPerMonthSearch? rdvPerMonthSearch.value : null);
+        try{
+            const response = await this.dashService.tempsMoyenTravail().toPromise();
+            response.data.data.forEach(element => {
+                this.tempsMoyenDeTravail.push(element.averageHours);
+            });
+        }catch(error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error, life: 3000 });
+        }
+        /*this.dashService.tempsMoyenTravail().subscribe(
+            (response:CustomResponse) => {
+                response.data.data.forEach(element => {
+                    console.log(element)
+                    this.tempsMoyenDeTravail.push(element.averageHours);
+                });
+                console.log(this.tempsMoyenDeTravail)
+            },(error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        )*/
+    }
+    /*public rdvPerMonths(rdvPerMonthSearch: NgForm): void {
         
-        console.log("filtre")
         this.dashService.rdvParMois(rdvPerMonthSearch ? rdvPerMonthSearch.value : this.rdvSpec).subscribe(
             (response:CustomResponse) => {
                 response.data.data.forEach(element => {
+                    var dateLabel = new Date(element._id.year,element._id.month-1);
+                    this.listeMois.push(dateLabel.toLocaleString('fr-FR',{month:'long'}));
                     this.rdvParMois.push(element.count);
                 });
                 console.log(this.rdvParMois)
@@ -274,5 +347,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         )
+    }*/
+
+    public async rdvPerMonths(rdvPerMonthSearch: NgForm) {
+        try {
+            const response: CustomResponse = await this.dashService.rdvParMois(rdvPerMonthSearch ? rdvPerMonthSearch.value : this.rdvSpec).toPromise();
+
+            response.data.data.forEach(element => {
+                var dateLabel = new Date(element._id.year,element._id.month-1);
+                this.listeMois.push(dateLabel.toLocaleString('fr-FR',{month:'long'}));
+                this.rdvParMois.push(element.count);
+            });
+
+        } catch (error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error, life: 3000 });
+        }
     }
 }

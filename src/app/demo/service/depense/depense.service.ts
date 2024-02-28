@@ -2,8 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CustomResponse } from '../../interfaces/customResponse';
-import { Observable } from 'rxjs';
-import { Depense } from '../../interfaces/depense';
+import { Observable, of } from 'rxjs';
+import { Depense, TypeDepense } from '../../interfaces/depense';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +18,11 @@ export class DepenseService {
   public addService(dep:Depense): Observable<CustomResponse> {
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
-    return this.http.post<CustomResponse>(`${this.apiServerUrl}/depense'`,dep, {headers: this.headers});
+    return this.http.post<CustomResponse>(`${this.apiServerUrl}/depense`,dep, {headers: this.headers});
     
   }
   
+  public listeDepense(): Observable<any> {
+    return of(Object.keys(TypeDepense).map(key => ({ label: TypeDepense[key], value: key })));
+  }
 }
