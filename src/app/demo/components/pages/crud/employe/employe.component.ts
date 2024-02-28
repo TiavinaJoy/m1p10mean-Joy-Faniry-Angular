@@ -352,7 +352,7 @@ export class EmployeComponent implements OnInit {
             queryParams,
             queryParamsHandling: 'merge',
         });*/
-
+console.log(employeSearch?employeSearch.value : null)
         this.utilisateurService.listePersonnel(employeSearch ? employeSearch.value : this.empSearch,pageP,perPageP).subscribe(
           
           (response:any) =>{

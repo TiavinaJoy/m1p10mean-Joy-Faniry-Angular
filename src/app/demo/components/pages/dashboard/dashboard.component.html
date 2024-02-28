@@ -1,103 +1,48 @@
 <div class="grid p-fluid">
-    <div class="col-12 lg:col-6">
+    <div class="col-12 lg:col-12">
         <div class="card">
-            <h5>Linear Chart</h5>
-            <p-chart type="line" [data]="lineData" [options]="lineOptions"></p-chart>
-        </div>
-
-        <div class="card flex flex-column align-items-center">
-            <div class="flex justify-content-between align-items-center mb-5">
-                <h5>Best Selling Products</h5>
-                <!--<div>
-                    <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
-                    <p-menu #menu [popup]="true" [model]="items"></p-menu>
-                </div>--> 
+            <div class="grid">
+                <div class="col-6">
+                    <h5>Rendez-vous par jour</h5>
+                    <p-chart type="bar" [data]="barRdvParJour" [options]="barOptions"></p-chart>
+                </div>
+                <div class="col-6">
+                    <h5>Rendez-vous par mois</h5>
+                    <div class="search">
+                        <form #rdvPerMonthSearch="ngForm" (ngSubmit) = "rdvPerMonths(rdvPerMonthSearch)">
+                            <div class="grid">
+                                <div class="field col-6">
+                                    <label for="dateRendezVousMin">Date debut Min:</label>
+                                    <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" #dateRendezVousMin ="ngModel" [(ngModel)] = "dateMin" name="dateRendezVousMin"  styleClass="w-full"  ></p-calendar>
+                                </div>
+                                <div class="field col-6">
+                                    <label for="dateRendezVousMax">Date debut Max:</label>
+                                    <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24"  #dateRendezVousMax="ngModel" [(ngModel)] = "dateMax" name="dateRendezVousMax"  styleClass="w-full"  ></p-calendar>
+                                </div>
+                            </div>
+                            <div class="grid">
+                                <div class="field col-4">
+                                    <label for="categorie"></label>
+                                    <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
+                                </div>
+                            </div>
+                        </form>
+                        <!--<p-paginator (onPageChange)="onPageChange($event,rdvPerMonthSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>-->
+                    </div>
+                    <p-chart type="bar" [data]="barRdvParMois" [options]="barOptions"></p-chart>
+                </div>
             </div>
-            <ul class="list-none p-0 m-0">
-                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                    <div>
-                        <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Space T-Shirt</span>
-                        <div class="mt-1 text-600">Clothing</div>
-                    </div>
-                    <div class="mt-2 md:mt-0 flex align-items-center">
-                        <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                            <div class="bg-orange-500 h-full" [ngStyle]="{width: '50%'}"></div>
-                        </div>
-                        <span class="text-orange-500 ml-3 font-medium">%50</span>
-                    </div>
-                </li>
-                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                    <div>
-                        <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Portal Sticker</span>
-                        <div class="mt-1 text-600">Accessories</div>
-                    </div>
-                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                        <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                            <div class="bg-cyan-500 h-full" [ngStyle]="{width: '16%'}"></div>
-                        </div>
-                        <span class="text-cyan-500 ml-3 font-medium">%16</span>
-                    </div>
-                </li>
-                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                    <div>
-                        <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Supernova Sticker</span>
-                        <div class="mt-1 text-600">Accessories</div>
-                    </div>
-                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                        <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                            <div class="bg-pink-500 h-full" [ngStyle]="{width: '67%'}"></div>
-                        </div>
-                        <span class="text-pink-500 ml-3 font-medium">%67</span>
-                    </div>
-                </li>
-                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                    <div>
-                        <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Wonders Notebook</span>
-                        <div class="mt-1 text-600">Office</div>
-                    </div>
-                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                        <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                            <div class="bg-green-500 h-full" [ngStyle]="{width: '35%'}"></div>
-                        </div>
-                        <span class="text-green-500 ml-3 font-medium">%35</span>
-                    </div>
-                </li>
-                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                    <div>
-                        <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Mat Black Case</span>
-                        <div class="mt-1 text-600">Accessories</div>
-                    </div>
-                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                        <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                            <div class="bg-purple-500 h-full" [ngStyle]="{width: '75%'}"></div>
-                        </div>
-                        <span class="text-purple-500 ml-3 font-medium">%75</span>
-                    </div>
-                </li>
-                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                    <div>
-                        <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Robots T-Shirt</span>
-                        <div class="mt-1 text-600">Clothing</div>
-                    </div>
-                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                        <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                            <div class="bg-teal-500 h-full" [ngStyle]="{width: '40%'}"></div>
-                        </div>
-                        <span class="text-teal-500 ml-3 font-medium">%40</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="col-12 lg:col-6">
-        <div class="card">
-            <h5>Bar Chart</h5>
-            <p-chart type="bar" [data]="barData" [options]="barOptions"></p-chart>
+            <div class="grid">
+                <div class="col-6">
+                    <h5>Chiffre d'affaire mensuel</h5>
+                    <p-chart type="bar" [data]="barCaMensuel" [options]="barOptions"></p-chart>
+                </div>
+                <div class="col-6">
+                    <h5>Temps moyen de travail de chaque employé</h5>
+                    <p-chart type="bar" [data]="barRdvTempsTravail" [options]="barOptions"></p-chart>
+                </div>
+            </div>
         </div>
 
-        <div class="card flex flex-column align-items-center">
-            <h5 class="text-left w-full">Doughnut Chart</h5>
-            <p-chart type="doughnut" [data]="pieData" [options]="pieOptions"></p-chart>
-        </div>
     </div>
 </div>

@@ -1,39 +1,72 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { Product } from '../../../interfaces/product';
-import { ProductService } from '../../../service/product.service';
-import { Subscription, debounceTime } from 'rxjs';
+import { NgForm } from '@angular/forms';
+import { MenuItem, MessageService } from 'primeng/api';
+import { Subscription, debounceTime, take } from 'rxjs';
+import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
+import { PageEvent } from 'src/app/demo/interfaces/pageEvent';
+import { RendezVousSpec } from 'src/app/demo/interfaces/rendezVousSpec';
+import { Utilisateur } from 'src/app/demo/interfaces/utilisateur';
+import { DashboardService } from 'src/app/demo/service/dashboard/dashboard.service';
+import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+    dateMin: Date;
+
+    dateMax: Date;
+
+    perPage: Number;
+
+    page:Number;
+
+    totalData:Number;
+
+    employes: string[] = [];
 
     items!: MenuItem[];
 
-    lineData: any;
+    caMensuelData: Number[] = [];
 
-    barData: any;
+    rdvParJour: Number[] = [];
 
-    pieData: any;
+    rdvParMois: Number[] = [];
 
-    polarData: any;
+    tempsMoyenDeTravail: Number[] = [];
 
-    radarData: any;
+    barCaMensuel: any;
 
-    lineOptions: any;
+    barRdvParJour: any;
+
+    barRdvTempsTravail: any;
+
+    barRdvParMois: any;
 
     barOptions: any;
 
-    pieOptions: any;
+    jours:string[] = [];
+   
+    personnel:string[] = [];
 
-    polarOptions: any;
-
-    radarOptions: any;
+    rdvSpec: RendezVousSpec = {
+        client: '',
+        dateRendezVousMin: '',
+        dateRendezVousMax: '',
+        personnal: '',
+        service: '',
+        statut: ''
+    }
 
     subscription: Subscription;
-    constructor(private layoutService: LayoutService) {
+    constructor(
+        private layoutService: LayoutService,
+        private dashService: DashboardService,
+        private messageService: MessageService,
+        private utilisateurService: UtilisateurService
+    ) {
         this.subscription = this.layoutService.configUpdate$
             .pipe(debounceTime(25))
             .subscribe((config) => {
@@ -42,34 +75,90 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        
         this.initCharts();
-
-        this.items = [
-            { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-            { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-        ];
     }
 
+    onPageChange(event: PageEvent,rdvParMoisFilter: NgForm) {
+        
+        this.rdvPerMonths(rdvParMoisFilter);
+    }
+
+    anneeEnCours = new Date().getFullYear();
+
+    listeMois: string[] = Array.from({length: 12}, (_,i) =>  {
+        const date = new Date(this.anneeEnCours,i,1);
+        return date.toLocaleDateString('fr-FR',{month:'long'})
+    })
+
+    
+    listeJour(): string[] {
+        const daty = new Date();
+        for(var i = 0; i<7 ; i++) {
+            daty.setDate(i+1);
+            this.jours.push(daty.toLocaleDateString('fr-FR',{ weekday :'long'}))
+        }
+        return this.jours;
+    } 
+
     initCharts() {
+
+        this.listeJour();
+        this.caMensuel();
+        this.rdvPerDays();
+        this.listeEmploye();
+        this.avgWorkTime();
+        this.rdvPerMonths(null);
+
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
         
-        this.barData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        this.barCaMensuel = {
+            labels: this.listeMois,
             datasets: [
                 {
-                    label: 'My First dataset',
+                    label: "Chiffre d'affaire",
                     backgroundColor: documentStyle.getPropertyValue('--primary-500'),
                     borderColor: documentStyle.getPropertyValue('--primary-500'),
-                    data: [65, 59, 80, 81, 56, 55, 40]
-                },
+                    data:this.caMensuelData
+                }
+            ]
+        };
+
+        this.barRdvParJour = {
+            labels: this.jours,
+            datasets: [
                 {
-                    label: 'My Second dataset',
-                    backgroundColor: documentStyle.getPropertyValue('--primary-200'),
-                    borderColor: documentStyle.getPropertyValue('--primary-200'),
-                    data: [28, 48, 40, 19, 86, 27, 90]
+                    label: "Rendez-vous par jour",
+                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
+                    borderColor: documentStyle.getPropertyValue('--primary-500'),
+                    data:this.rdvParJour
+                }
+            ]
+        }; 
+
+        this.barRdvTempsTravail = {
+            labels: this.employes,
+            datasets: [
+                {
+                    label: "Temps moyen de travail",
+                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
+                    borderColor: documentStyle.getPropertyValue('--primary-500'),
+                    data:this.tempsMoyenDeTravail
+                }
+            ]
+        }; 
+
+        this.barRdvParMois = {
+            labels: this.listeMois,
+            datasets: [
+                {
+                    label: "Rendez-vous par mois",
+                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
+                    borderColor: documentStyle.getPropertyValue('--primary-500'),
+                    data:this.rdvParMois
                 }
             ]
         };
@@ -106,169 +195,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 },
             }
         };
-
-        this.pieData = {
-            labels: ['A', 'B', 'C'],
-            datasets: [
-                {
-                    data: [540, 325, 702],
-                    backgroundColor: [
-                        documentStyle.getPropertyValue('--indigo-500'),
-                        documentStyle.getPropertyValue('--purple-500'),
-                        documentStyle.getPropertyValue('--teal-500')
-                    ],
-                    hoverBackgroundColor: [
-                        documentStyle.getPropertyValue('--indigo-400'),
-                        documentStyle.getPropertyValue('--purple-400'),
-                        documentStyle.getPropertyValue('--teal-400')
-                    ]
-                }]
-        };
-
-        this.pieOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        usePointStyle: true,
-                        color: textColor
-                    }
-                }
-            }
-        };
-
-        this.lineData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [
-                {
-                    label: 'First Dataset',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
-                    borderColor: documentStyle.getPropertyValue('--primary-500'),
-                    tension: .4
-                },
-                {
-                    label: 'Second Dataset',
-                    data: [28, 48, 40, 19, 86, 27, 90],
-                    fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--primary-200'),
-                    borderColor: documentStyle.getPropertyValue('--primary-200'),
-                    tension: .4
-                }
-            ]
-        };
-
-        this.lineOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        fontColor: textColor
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                },
-            }
-        };
-
-        this.polarData = {
-            datasets: [{
-                data: [
-                    11,
-                    16,
-                    7,
-                    3
-                ],
-                backgroundColor: [
-                    documentStyle.getPropertyValue('--indigo-500'),
-                    documentStyle.getPropertyValue('--purple-500'),
-                    documentStyle.getPropertyValue('--teal-500'),
-                    documentStyle.getPropertyValue('--orange-500')
-                ],
-                label: 'My dataset'
-            }],
-            labels: [
-                'Indigo',
-                'Purple',
-                'Teal',
-                'Orange'
-            ]
-        };
-
-        this.polarOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        color: textColor
-                    }
-                }
-            },
-            scales: {
-                r: {
-                    grid: {
-                        color: surfaceBorder
-                    }
-                }
-            }
-        };
-
-        this.radarData = {
-            labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding', 'Cycling', 'Running'],
-            datasets: [
-                {
-                    label: 'My First dataset',
-                    borderColor: documentStyle.getPropertyValue('--indigo-400'),
-                    pointBackgroundColor: documentStyle.getPropertyValue('--indigo-400'),
-                    pointBorderColor: documentStyle.getPropertyValue('--indigo-400'),
-                    pointHoverBackgroundColor: textColor,
-                    pointHoverBorderColor: documentStyle.getPropertyValue('--indigo-400'),
-                    data: [65, 59, 90, 81, 56, 55, 40]
-                },
-                {
-                    label: 'My Second dataset',
-                    borderColor: documentStyle.getPropertyValue('--purple-400'),
-                    pointBackgroundColor: documentStyle.getPropertyValue('--purple-400'),
-                    pointBorderColor: documentStyle.getPropertyValue('--purple-400'),
-                    pointHoverBackgroundColor: textColor,
-                    pointHoverBorderColor: documentStyle.getPropertyValue('--purple-400'),
-                    data: [28, 48, 40, 19, 96, 27, 100]
-                }
-            ]
-        };
-
-        this.radarOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        fontColor: textColor
-                    }
-                }
-            },
-            scales: {
-                r: {
-                    grid: {
-                        color: textColorSecondary
-                    }
-                }
-            }
-        };
     }
 
     ngOnDestroy() {
@@ -276,5 +202,77 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.subscription.unsubscribe();
         }
     }
+    private listeEmploye(): void {
+
+        this.utilisateurService.listeEmploye().subscribe(
+            (response:CustomResponse) => {
+                response.data.forEach(emp => {
+                    this.employes.push(emp.nom)
+                })
+                console.log(this.employes)
+            },
+            (error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        );
+    }
     
+    public caMensuel(): void {
+        
+        this.dashService.caMensuel().subscribe(
+            (response:CustomResponse) => {
+                response.data.data.forEach(element => {
+                    this.caMensuelData.push(element.totalAmount);
+                });
+            },(error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        )
+    }
+
+    public rdvPerDays(): void {
+        
+        this.dashService.rdvParJour().subscribe(
+            (response:CustomResponse) => {
+                response.data.data.forEach(element => {
+                    this.rdvParJour.push(element.count);
+                });
+                console.log(this.rdvParJour)
+            },(error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        )
+    }
+
+    public avgWorkTime(): void {
+        
+        this.dashService.tempsMoyenTravail().subscribe(
+            (response:CustomResponse) => {
+                response.data.data.forEach(element => {
+                    
+                    this.tempsMoyenDeTravail.push(element.averageHours);
+                });
+                console.log(this.tempsMoyenDeTravail)
+            },(error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        )
+    }
+
+    public rdvPerMonths(rdvPerMonthSearch: NgForm): void {
+        
+        console.log(rdvPerMonthSearch? rdvPerMonthSearch.value : null);
+        
+        console.log("filtre")
+        this.dashService.rdvParMois(rdvPerMonthSearch ? rdvPerMonthSearch.value : this.rdvSpec).subscribe(
+            (response:CustomResponse) => {
+                response.data.data.forEach(element => {
+                    this.rdvParMois.push(element.count);
+                });
+                console.log(this.rdvParMois)
+            },(error:HttpErrorResponse) => {
+                this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+            }
+        )
+    }
 }
