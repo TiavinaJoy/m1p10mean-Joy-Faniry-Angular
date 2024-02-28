@@ -59,6 +59,7 @@ export class PaymentComponent implements OnInit{
 				localStorage.removeItem('clientId');
 
 				this.messageService.add({severity:'success', summary:'Success', detail:response.message, life: 3000});
+				this.router.navigate(['pages/rendezVous/client']);
 			},
 			(error:HttpErrorResponse) => {
 				this.messageService.add({severity:'error', summary:'Error', detail:error.error.message, life: 3000});

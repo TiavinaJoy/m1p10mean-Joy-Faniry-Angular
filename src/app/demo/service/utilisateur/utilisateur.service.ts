@@ -136,4 +136,11 @@ export class UtilisateurService {
     return this.http.put<CustomResponse>(`${this.apiServerUrl}/personnel/infoEmploye/${personnelId}`,infoEmploye, {headers: this.headers});
 
   }
+
+  public getOnePers(personnelId: string): Observable<CustomResponse> {
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<CustomResponse>(`${this.apiServerUrl}/personnel/${personnelId}`, {headers: this.headers});
+
+  }
 }

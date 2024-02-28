@@ -77,6 +77,7 @@ export class ProfilComponent implements OnInit{
             (response:CustomResponse) => {
                 console.log(response);
                 modifierProfil.reset();
+                this.detailsEmploye(this.employeId);
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {
