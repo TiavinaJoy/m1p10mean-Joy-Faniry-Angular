@@ -108,7 +108,8 @@ export class GestionHoraireComponent implements OnInit {
             var data = response.data.docs;
             var horaires = [];
             data.forEach(daty => {
-              horaires.push({ start: daty.dateDebut, end: daty.dateFin }) 
+              //horaires.push({ start: daty.dateDebut, end: daty.dateFin })
+              horaires.push({start: this.datePipe.transform(daty.dateDebut,'yyyy-MM-dd HH:mm:ss','GMT'),end:this.datePipe.transform(daty.dateFin,'yyyy-MM-dd HH:mm:ss','GMT')}) 
             })
             this.calendarOptions.events = horaires;
             this.lesHorairesPers = response.data.docs;
@@ -137,6 +138,7 @@ console.log(this.horaireAdd)
           if(response.status == 200 || response.status == 201) {
             this.afficherAjoutModal = false;
             console.log(response.data);
+            this.listeHorairePersonnel(null,0,10);
             this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
           }
         },

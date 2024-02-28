@@ -1,0 +1,20 @@
+<div class="card col-6">
+    <p-toast></p-toast>
+    <h4>Ajouter les dépenses</h4>
+    <form #depenseForm="ngForm" (ngSubmit) = "addDepense(depenseForm)">
+        <div class="field">
+            <label for="intitule">Intitule:</label>
+            <input type="text" pInputText  class="w-full" name="intitule" #intitule = "ngModel" [(ngModel)] = "intituleDepense" />
+        </div>
+        <div class="field">
+            <label for="type">Type:</label>
+            <p-dropdown  [options]="types" #type="ngModel" name="type"  styleClass="w-full" [(ngModel)]="typeDepense"  optionLabel="label" optionValue="label">
+            </p-dropdown>
+        </div>
+        <div class="field">
+            <label for="montant">Montant:</label>
+            <p-inputNumber  #montant="ngModel" [(ngModel)] = "montantDepense" name="montant" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
+        </div>
+        <p-button type="submit" label="Ajouter" ></p-button>
+    </form>
+</div>

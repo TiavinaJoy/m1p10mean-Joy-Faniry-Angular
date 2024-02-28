@@ -55,6 +55,9 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DragDropModule } from 'primeng/dragdrop';
 import { AccessRoutingModule } from './demo/components/AuthPage/access/access-routing.module';
 import { AccessComponent } from './demo/components/AuthPage/access/access.component';
+import { CommissionComponent } from './demo/components/pages/crud/commission/commission/commission.component';
+import { MessageService } from 'primeng/api';
+import { DepenseComponent } from './demo/components/pages/depense/depense/depense.component';
 @NgModule({
     declarations: [
         AppComponent, 
@@ -69,7 +72,9 @@ import { AccessComponent } from './demo/components/AuthPage/access/access.compon
         VitrineComponent,
         RdvEmpComponent,
         ListeRdvClientComponent,
-        AccessComponent
+        AccessComponent,
+        CommissionComponent,
+        DepenseComponent
     ],
     imports: [
         CommonModule,
@@ -128,7 +133,8 @@ import { AccessComponent } from './demo/components/AuthPage/access/access.compon
         PhotoService,
         ProductService,
         LocalStorageService,
-        DatePipe
+        DatePipe,
+        MessageService
     ],
     bootstrap: [AppComponent],
 })

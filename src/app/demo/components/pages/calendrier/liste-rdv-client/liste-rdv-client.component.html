@@ -40,13 +40,6 @@
                 <div class="field">
                     <label for="service">Service: </label>
                     {{ fiche ? fiche.service.nom : '' }}
-                    <!--<p-listbox [options]="countries" [(ngModel)]="selectedCountry" optionLabel="name" [listStyle]="{ 'max-height': '250px' }" [style]="{ width: '15rem' }" [listStyle]="{'max-height': '220px'}">
-                        <ng-template let-country pTemplate="item">
-                            <div class="flex align-items-center gap-2">
-                                <div>{{ country.name }}</div>
-                            </div>
-                        </ng-template>
-                    </p-listbox>--> 
                 </div>
                 <div class="field">
                     <label for="service">Montant: </label>
@@ -60,11 +53,15 @@
                     <label for="dateRendezVous">Date début</label>
 					<p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" [(ngModel)]="dateRdv" name="dateRendezVous" #dateRendezVous="ngModel"></p-calendar>
                 </div>
-
+                <div class="field">
+                    <label for="pers">Personnel</label>
+                    <p-dropdown  [options]="employes" #statut="ngModel" name="statut"  styleClass="w-full" [(ngModel)]="emp"  optionLabel="nom" optionValue="_id">
+                    </p-dropdown>
+                </div>
             </ng-template>
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Annuler rendez-vous" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="annulerRdv(fiche)"></button>
-                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierLibre()"></button>
+                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="updateRdv(fiche)"></button>
             </ng-template>
             
         </p-dialog>

@@ -14,6 +14,8 @@ import { RdvEmpComponent } from './demo/components/pages/calendrier/liste_rdv/rd
 import { ListeRdvClientComponent } from './demo/components/pages/calendrier/liste-rdv-client/liste-rdv-client.component';
 import { AuthGuard } from './demo/guard/auth.guard';
 import { AccessComponent } from './demo/components/AuthPage/access/access.component';
+import { CommissionComponent } from './demo/components/pages/crud/commission/commission/commission.component';
+import { DepenseComponent } from './demo/components/pages/depense/depense/depense.component';
 
 @NgModule({ 
     imports: [
@@ -28,6 +30,7 @@ import { AccessComponent } from './demo/components/AuthPage/access/access.compon
                 path:'pages', component: AppLayoutComponent,
                 children: [
                     { path: 'dashboard',component: DashboardComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
+                    { path: 'depense',component: DepenseComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'services', component:ServiceComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'employes', component: EmployeComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard] },
                     { path: 'rdv/:servId', loadChildren: () => import('./demo/components/pages//prise_rdv/rdvClient.module').then(m => m.RdvClientModule), data: { requiredRole: 'client' } , canActivate: [AuthGuard]},
@@ -35,6 +38,7 @@ import { AccessComponent } from './demo/components/AuthPage/access/access.compon
                     { path: 'rendezVous/client',component: ListeRdvClientComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
                     { path: 'vitrine',  component: VitrineComponent, data: { requiredRole: 'client' }, canActivate: [AuthGuard]},
                     { path: 'horaire',  component: GestionHoraireComponent, data: { requiredRole: 'employe' } , canActivate: [AuthGuard]},
+                    { path: 'commission',  component: CommissionComponent, data: { requiredRole: 'employe' } , canActivate: [AuthGuard]},
                     { path: 'employe/rdv',  component: RdvEmpComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard] },
                 ]
             },

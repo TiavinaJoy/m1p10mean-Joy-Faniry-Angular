@@ -27,14 +27,15 @@ export class AppMenuComponent implements OnInit {
                 label: 'Employé',
                 role: 'employe',
                 items: [
-                    { label: 'Gestion des horaires de l\'employé', icon: 'pi pi-fw pi-clock', routerLink: ['horaire'], role: 'employe' },
-                    { label: 'Les rendez-vous de l\'employé', icon: 'pi pi-fw pi-calendar', routerLink: ['employe/rdv'], role: 'employe' },
                     {
-                        label: 'Gestion des profils',
+                        label: 'Profil',
                         icon: 'pi pi-fw pi-user-edit',
                         routerLink: ['profil'],
                         role: 'employe'
                     },
+                    { label: 'Mes commissions', icon: 'pi pi-fw pi-money-bill', routerLink: ['commission'], role: 'employe' },
+                    { label: 'Mes horaires', icon: 'pi pi-fw pi-clock', routerLink: ['horaire'], role: 'employe' },
+                    { label: 'Mes rendez-vous', icon: 'pi pi-fw pi-calendar', routerLink: ['employe/rdv'], role: 'employe' },                    
                 ]
             }, 
             {
@@ -44,15 +45,21 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: ['dashboard'], role: 'manager' },
                     {
-                        label: 'Gestion des services',
+                        label: 'Services',
                         icon: 'pi pi-fw pi-shopping-bag',
                         routerLink: ['services'],
                         role: 'manager'
                     },
                     {
-                        label: 'Gestion des employés',
+                        label: 'Employés',
                         icon: 'pi pi-fw pi-user',
                         routerLink: ['employes'],
+                        role: 'manager'
+                    },
+                    {
+                        label: 'Dépenses',
+                        icon: 'pi pi-fw pi-shopping-bag',
+                        routerLink: ['depense'],
                         role: 'manager'
                     },
                 ]
