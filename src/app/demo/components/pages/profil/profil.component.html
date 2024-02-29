@@ -23,9 +23,6 @@
 					<label for="prenom" class="block text-900 text-xl font-medium mb-2">Prenom</label>
 					<input  #prenom = "ngModel" name="prenom" [(ngModel)]="employeInfo.prenom" type="text" placeholder="" pInputText class="w-full md:w-30rem mb-5" >
 	
-					<label for="picture" class="block text-900 text-xl font-medium mb-2">Photo</label>
-					<p-fileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" [maxFileSize]="1000000" (onUpload)="onBasicUpload()" ></p-fileUpload>
-	
 					<button pButton pRipple label="Modifier" class="w-full p-12 mt-5 text-xl md:w-100rem" type="submit"></button>
 				</div>
 			</div>

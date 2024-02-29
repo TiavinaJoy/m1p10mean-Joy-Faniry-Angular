@@ -8,11 +8,6 @@
                         <button pButton pRipple label="Nouveau service" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
                     </div>
                 </ng-template>
-
-                <ng-template pTemplate="right">
-                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
-                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
-                </ng-template>
             </p-toolbar>
             
             <div class="search">
@@ -176,9 +171,7 @@
                         </div>
                     </div>
                     <div class="grid">
-                        <div class="col-6">
-                            <button pButton  icon="pi pi-times" label="Annuler" iconPos="left" class=" p-button-danger p-button-outlined" (click)="hideDialog()"></button>
-                        </div>
+                        <div class="col-6"></div>
                         <div class="col-6">
                             <button pButton type="submit" icon="pi pi-check" label="Enregistrer" iconPos="right" class="p-button-outlined p-button-success"></button>
                         </div>
@@ -245,9 +238,7 @@
                         </div>
                     </div>
                     <div class="grid">
-                        <div class="col-6">
-                            <button pButton  icon="pi pi-times" label="Annuler" iconPos="left" class=" p-button-danger p-button-outlined" (click)="hideDialog()"></button>
-                        </div>
+                        <div class="col-6"></div>
                         <div class="col-6">
                             <button pButton type="submit" icon="pi pi-check" label="Enregistrer" iconPos="right" class="p-button-outlined p-button-success"></button>
                         </div>

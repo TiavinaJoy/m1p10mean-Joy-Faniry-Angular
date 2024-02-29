@@ -57,20 +57,21 @@
                             <label for="nom">Nom:</label>
                             <input type="text" #nom="ngModel" [(ngModel)] = "lesServicesSearch.nom" name="nom" class="w-full" pInputText   required autofocus />
                         </div>
-                        <div class="field col-6">
-                            <label for="description">Description:</label>
-                            <textarea  #description="ngModel" [(ngModel)] = "lesServicesSearch.description" name="description" class ="w-full" pInputTextarea  required rows="3" cols="20"></textarea>
-                        </div>
-                    </div>
-                    <div class="grid">
-                        <div class="field col-4">
-                            <label for="statut">Statut:</label>
-                            <p-dropdown [options]="lesStatuts" #statut="ngModel" name="statut" [(ngModel)] = "lesServicesSearch.statut" styleClass="w-full" [(ngModel)]="selectedStatut"  optionLabel="intitule" optionValue="value"></p-dropdown>
-                        </div>
                         <div class="field col-4">
                             <label for="categorie">Catégorie:</label>
                             <p-dropdown [options]="categories" #categorie="ngModel" name="categorie" [(ngModel)] = "lesServicesSearch.categorie" styleClass="w-full" [(ngModel)]="selectedCategorie"  optionLabel="intitule" optionValue="_id"></p-dropdown>
                         </div>
+                        
+                    </div>
+                    <div class="grid">
+                        <!--<div class="field col-4">
+                            <label for="statut">Statut:</label>
+                            <p-dropdown [options]="lesStatuts" #statut="ngModel" name="statut" [(ngModel)] = "lesServicesSearch.statut" styleClass="w-full" [(ngModel)]="selectedStatut"  optionLabel="intitule" optionValue="value"></p-dropdown>
+                        </div>--> 
+                        <!--<div class="field col-6">
+                            <label for="description">Description:</label>
+                            <textarea  #description="ngModel" [(ngModel)] = "lesServicesSearch.description" name="description" class ="w-full" pInputTextarea  required rows="3" cols="20"></textarea>
+                        </div>--> 
                         <div class="field col-4">
                             <label for="categorie"></label>
                             <button pButton type="submit" class ="w-full" icon="pi pi-search" label="Rechercher" iconPos="right" ></button>
@@ -108,7 +109,7 @@
                             {{ service.duree }}mn
                         </div>
                         <div class="col-4 mb-4 ">
-                            <button pButton pRipple label="Programmer" class="p-button-success mr-2" (click)="prendreRdv(service)"></button>
+                            <button pButton  label="Programmer" class="p-button-success mr-2" (click)="prendreRdv(service)"></button>
                         </div>
                     </div>
                     <div class="grid formgrid">

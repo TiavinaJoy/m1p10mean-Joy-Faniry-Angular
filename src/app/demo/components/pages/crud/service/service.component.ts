@@ -164,16 +164,13 @@ export class ServiceComponent implements OnDestroy,OnInit {
         this.updateStatutService(service._id,this.statut);
     }
 
-    hideDialog() {
-        this.serviceDialog = false;
-    }
-
     onPageChange(event: PageEvent,serviceSearch: NgForm) {
         
         this.listeService(serviceSearch,event.page,10);
     }
 
     public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): Service[]{
+        console.log("Liste serv ", serviceSearch)
         if(pageP === undefined || perPageP === undefined){
             pageP = 0; 
             perPageP = 10;
@@ -220,8 +217,7 @@ export class ServiceComponent implements OnDestroy,OnInit {
           (response:any) =>{
             
             if(response.status === 200) {
-
-                console.log(response.data.docs);
+                
                 this.services = response.data.docs;
                 this.totalData = response.data.totalDocs;
                 this.perPage = response.data.limit;

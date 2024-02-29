@@ -19,8 +19,6 @@ export class ServiceService {
   public listeServices(service:ServiceSearch,page: Number, perPage: Number): Observable<Service[]> {
 
     let queryParams = new HttpParams();
-    console.log('SERVICE ', page);
-    console.log('SERVICE per page', perPage);
 
     if(service.prixMin || service.prixMax) {
       if(service.prixMin && service.prixMax) { 

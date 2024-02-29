@@ -6,11 +6,11 @@
             <form #filtreRdvPerso="ngForm" (ngSubmit) = "listeRdvPerso(filtreRdvPerso,page,perPage)">
                 <div class="grid">
                     <div class="field col-6">
-                        <label for="dateRendezVousMin">Date debut Min:</label>
+                        <label for="dateRendezVousMin">Date rendez-vous Min:</label>
                         <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" #dateRendezVousMin ="ngModel" [(ngModel)] = "filtreRdvPerso.dateRendezVousMin" name="dateRendezVousMin"  styleClass="w-full"  ></p-calendar>
                     </div>
                     <div class="field col-6">
-                        <label for="dateRendezVousMax">Date debut Max:</label>
+                        <label for="dateRendezVousMax">Date rendez-vous Max:</label>
                         <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24"  #dateRendezVousMax="ngModel" [(ngModel)] = "filtreRdvPerso.dateRendezVousMax" name="dateRendezVousMax"  styleClass="w-full"  ></p-calendar>
                     </div>
                 </div>

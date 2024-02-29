@@ -32,6 +32,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     caMensuelData: Number[] = [];
 
+    caJournalierData: Number[] = [];
+
+    beneficeData: Number[] = [];
+
     rdvParJour: Number[] = [];
 
     rdvParMois: Number[] = [];
@@ -40,11 +44,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     barCaMensuel: any;
 
+    barCaJournalier:any;
+
     barRdvParJour: any;
 
     barRdvTempsTravail: any;
 
     barRdvParMois: any;
+
+    barBenefice: any;
 
     barOptions: any;
 
@@ -55,6 +63,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     listeMois: string[] = [];
 
     listeMoisCA: string[] = [];
+
+    listeJourCA: string[] = [];
+
+    listeMoisBenefice: string[] = [];
 
     personnel:string[] = [];
 
@@ -108,24 +120,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return this.jours;
     } */
 
-    initCharts() {
+    async initCharts() {
 
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
         
-        this.caMensuel();
-        this.rdvPerDays();
-        this.listeEmploye();
-        this.avgWorkTime();
-        this.rdvPerMonths(null);
+        await this.caMensuel();
+        await this.caJournalier();
+        await this.rdvPerDays();
+        await this.listeEmploye();
+        await this.avgWorkTime();
+        await this.rdvPerMonths(null);
+        await this.benefice();
+
+        this.barBenefice = {
+            labels: this.listeMoisBenefice,
+            datasets: [
+                {
+                    label: "Bénéfice mensuel",
+                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
+                    borderColor: documentStyle.getPropertyValue('--primary-500'),
+                    data:this.beneficeData
+                }
+            ]
+        };
 
         this.barCaMensuel = {
             labels: this.listeMoisCA,
             datasets: [
                 {
-                    label: "Chiffre d'affaire",
+                    label: "Chiffre d'affaire mensuel",
                     backgroundColor: documentStyle.getPropertyValue('--primary-500'),
                     borderColor: documentStyle.getPropertyValue('--primary-500'),
                     data:this.caMensuelData
@@ -133,6 +159,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
             ]
         };
 
+        this.barCaJournalier = {
+            labels: this.listeJourCA,
+            datasets: [
+                {
+                    label: "Chiffre d'affaire journalier",
+                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
+                    borderColor: documentStyle.getPropertyValue('--primary-500'),
+                    data:this.caJournalierData
+                }
+            ]
+        };
+
+        
         this.barRdvParJour = {
             labels: this.jours,
             datasets: [
@@ -254,6 +293,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
     }
 
+    public async caJournalier() {
+        try{
+            const response = await this.dashService.caJournalier().toPromise();
+            response.data.data.forEach(element => {
+                console.log(element);
+                var dateLabel = new Date(element._id.year,element._id.month-1,element._id.day);
+                var setDateLabel = this.datePipe.transform(dateLabel,'yyyy-MM-dd','GMT');
+                this.listeJourCA.push(setDateLabel);
+                this.caJournalierData.push(element.totalAmount);
+            });
+        }catch(error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error, life: 3000 });
+        }
+    }
+
     /*public rdvPerDays(): void {
         
         this.dashService.rdvParJour().subscribe(
@@ -363,4 +417,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error, life: 3000 });
         }
     }
+
+    public async benefice() {
+        try {
+            const response: CustomResponse = await this.dashService.benefice().toPromise();
+            console.log(response.data)
+            response.data.forEach(element => {
+                var dateLabel = new Date(element.year,element.month-1);
+                this.listeMoisBenefice.push(dateLabel.toLocaleString('fr-FR',{month:'long'}));
+                this.beneficeData.push(element.profit);
+                console.log(element);
+            });
+
+        } catch (error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error, life: 3000 });
+        }
+    }ic 
 }
