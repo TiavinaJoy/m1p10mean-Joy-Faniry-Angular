@@ -124,7 +124,7 @@ export class RdvEmpComponent implements OnInit{
     
     /*Function appel API pour la gestion des horaires: ajout,fiche,modification,annularion */
 
-    public listeRdvPerso(filtreRdvPerso: NgForm,pageP:Number, perPageP: Number): RendezVous[] {
+    public listeRdvPerso(filtreRdvPerso: NgForm,pageP:Number, perPageP: Number):void {
 
       if(pageP === undefined || perPageP === undefined){
         pageP = 0; 
@@ -159,10 +159,10 @@ export class RdvEmpComponent implements OnInit{
           this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
         }
       )
-      return this.lesRdv;
+      //return this.lesRdv;
     }
     
-    public ficheRdv(rendezVousId: string): RendezVous {
+    public ficheRdv(rendezVousId: string): void {
 
       this.rdvService.detailsRdv(rendezVousId).subscribe(
         (response:CustomResponse) => {
@@ -179,7 +179,7 @@ export class RdvEmpComponent implements OnInit{
           this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
         }
       )
-      return this.fiche;
+      //return this.fiche;
     }
 
     public listeStatutRdv(): void {
@@ -227,7 +227,7 @@ export class RdvEmpComponent implements OnInit{
 
     }
 
-    public listeEmploye(): Utilisateur[] {
+    public listeEmploye(): void {
 
       this.utilisateurService.listeEmploye().subscribe(
           (response:CustomResponse) => {
@@ -237,7 +237,7 @@ export class RdvEmpComponent implements OnInit{
               this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
           }
       );
-      return this.employes;
+      //return this.employes;
   }
 
     ficheLibre(data) {

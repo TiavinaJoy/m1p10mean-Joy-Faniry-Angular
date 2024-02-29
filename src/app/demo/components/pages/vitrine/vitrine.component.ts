@@ -217,7 +217,7 @@ export class VitrineComponent implements OnInit {
         
     }
 
-    public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): Service[]{
+    public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): void{
 
         var queryParams = {};
         if(serviceSearch !== null) {
@@ -260,7 +260,7 @@ export class VitrineComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
           }
         )
-        return this.services;
+        //return this.services;
     }
 
     private async listeFavoris(): Promise<Preference[]> {
@@ -292,7 +292,7 @@ export class VitrineComponent implements OnInit {
         return this.preferences;
     }*/
 
-    private  listeEmploye(): Utilisateur[] {
+    private  listeEmploye(): void {
 
         this.utilisateurService.listeEmploye().subscribe(
              (response:CustomResponse) => {
@@ -302,10 +302,10 @@ export class VitrineComponent implements OnInit {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
-        return this.employes;
+       // return this.employes;
     }
 
-    private listeCategorie(): Categorie[] {
+    private listeCategorie(): void {
         this.categorieService.listeCategorie().subscribe(
           
             (response:CustomResponse) =>{
@@ -318,7 +318,7 @@ export class VitrineComponent implements OnInit {
               this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
           )
-        return this.categories;
+        //return this.categories;
     }
     
     public async listeOffresSpeciales(): Promise<Service[]> {
