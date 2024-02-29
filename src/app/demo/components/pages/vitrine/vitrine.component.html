@@ -19,7 +19,7 @@
                         </div>
                 </ng-template>
             </p-carousel>
-            <h5>Liste des offres spécials</h5>
+            <h5>Liste des offres spéciales</h5>
             <p-carousel [value]="offres" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
                 <ng-template let-offre pTemplate="item">
                     <div class="border-round m-2 text-center p-2" style="border: 1px solid var(--surface-d)" *ngIf="offre.statut == true && toDisplay(offre) "><!--&& offre.finOffre >= -->
@@ -98,9 +98,10 @@
                 </form>
             </div>
             
-            <div class="serviceCard">
+            <div class="serviceCard" >
                 <div *ngFor ="let service of services">
-                    <p-card  *ngIf="service.statut == true && service.isSpecial != true" class="col-12 mt-2 mr-2">
+                    <div *ngIf="service.statut == true && service.isSpecial != true">
+                    <p-card class="col-12 mt-2 mr-2" ><!---->
                         <div  class="flex  justify-content-between ">
                             <div class="col-4 mb-4"> 
                                 <h4>{{ service.nom }}</h4> 
@@ -148,7 +149,8 @@
                             </div>
                         </div>
                     </p-card> 
-                </div>    
+                    </div>
+                </div>
             </div>
             <div class="card flex justify-content-center">
                 <p-paginator (onPageChange)="onPageChange($event,serviceSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>

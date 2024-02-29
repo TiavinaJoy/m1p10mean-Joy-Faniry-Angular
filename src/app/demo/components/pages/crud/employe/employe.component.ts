@@ -150,13 +150,6 @@ export class EmployeComponent implements OnInit {
     hideDialog() {
         this.newEmploye = false;
     }
-    
-    supprimerServ(serv:Service) {
-        let servIndex = this.findIndexToRemove(serv);
-        this.services = this.services?.filter((val, i) => i != servIndex);
-        this.allSelectedServices = this.allSelectedServices?.filter((val, i) => i != servIndex);
-        serv = null;
-    }
 
     dragStart(serv: Service) {
         this.draggedservice = serv;
@@ -167,7 +160,7 @@ export class EmployeComponent implements OnInit {
     }
 
     findIndexToRemove(serv:Service){
-        let index = -1;
+        let index = 0;
         for(let i = 0; i< (this.services as Service[]).length; i++) {
             if(serv._id === (this.services as Service[])[i]._id) {
                 index = 1;
@@ -176,18 +169,36 @@ export class EmployeComponent implements OnInit {
         }
         return index;
     }
+
+    findIndex(serv: Service) {
+        let index = -1;
+        for (let i = 0; i < this.services.length; i++) {
+            if (serv._id === this.services[i]._id) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
     drop() {
         
         if(this.draggedservice){
             
         console.log(this.draggedservice)
-            let servIndex = this.findIndexToRemove(this.draggedservice);
+            let servIndex = this.findIndex(this.draggedservice);
         console.log(servIndex);
             this.allSelectedServices = [...(this.allSelectedServices as Service[]), this.draggedservice];
             this.services = this.services?.filter((val, i) => i != servIndex);
         console.log(this.services);
             this.draggedservice = null;
         }
+    }
+
+    supprimerServ(serv:Service) {
+        this.allSelectedServices = this.allSelectedServices?.filter((val) =>  val._id != serv._id);
+        this.services = [...this.services,serv];
+
     }
 
     deleteEmploye(employe: Utilisateur) {
@@ -226,7 +237,7 @@ export class EmployeComponent implements OnInit {
         );
     }
 
-    private lesServices(): Service[] {
+    private lesServices(): void {
 
         this.serviceService.tousLesServices().subscribe(
             (response:any) => {
@@ -240,10 +251,10 @@ export class EmployeComponent implements OnInit {
                 }
             }
         );
-        return this.services;
+        //return this.services;
     }
 
-    private lesRoles(): Role[] {
+    private lesRoles(): void {
 
         this.utilisateurService.listeRole().subscribe(
             (response:CustomResponse) => {
@@ -253,7 +264,7 @@ export class EmployeComponent implements OnInit {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
-        return this.roles;
+        //return this.roles;
     }
 
     public ajoutEmploye(addEmploye:NgForm): void{
@@ -314,44 +325,13 @@ export class EmployeComponent implements OnInit {
         )
     }
 
-    public listePersonnel(employeSearch: NgForm, pageP:Number,perPageP:Number): Utilisateur[]{
+    public listePersonnel(employeSearch: NgForm, pageP:Number,perPageP:Number): void{
 
         if(pageP === undefined || perPageP === undefined){
             pageP = 0; 
             perPageP = 10;
         } 
-        /*
-        var queryParams = {};
-        if(!this.utilisateurService.checkVide(employeSearch)) {
-
-            console.log("Non vide mais dans le lien et component")
-            if(pageP === undefined){
-                pageP = 0; 
-            } 
-
-            queryParams = {
-                page: pageP,
-                perPage: perPageP, 
-                nom: employeSearch ? employeSearch.value.nom : '',
-                prenom: employeSearch ? employeSearch.value.prenom : '',
-                mail: employeSearch ? employeSearch.value.mail : '',
-                statut: employeSearch ? employeSearch.value.statut : '',
-                role: employeSearch ? employeSearch.value.role : '',
-                salaireMin: employeSearch ? employeSearch.value.salaireMin : '',
-                salaireMax: employeSearch ? employeSearch.value.salaireMax : '',
-                dateEmbaucheMin: employeSearch ? employeSearch.value.dateEmbaucheMin : '',
-                dateEmbaucheMax: employeSearch ? employeSearch.value.dateEmbaucheMax : '',
-                finContratMax: employeSearch ? employeSearch.value.finContratMax : '',
-                finContratMin: employeSearch ? employeSearch.value.finContratMin : '',
-                service: employeSearch ? employeSearch.value.service : ''
-            };
-        }
         
-        this.route.navigate([], {
-            relativeTo: this.routes,
-            queryParams,
-            queryParamsHandling: 'merge',
-        });*/
 console.log(employeSearch?employeSearch.value : null)
         this.utilisateurService.listePersonnel(employeSearch ? employeSearch.value : this.empSearch,pageP,perPageP).subscribe(
           
@@ -369,7 +349,7 @@ console.log(employeSearch?employeSearch.value : null)
             this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
           }
         )
-        return this.lesEmpSearch;
+        //eturn this.lesEmpSearch;
     }
 
     public modificationEmploye(empUpdate: NgForm ,empId: string): void {

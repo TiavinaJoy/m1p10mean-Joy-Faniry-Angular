@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
@@ -13,6 +14,7 @@ import { DepenseService } from 'src/app/demo/service/depense/depense.service';
 })
 export class DepenseComponent implements OnInit{
 
+  defaultDate: Date=new Date();
   intituleDepense: string;
   montantDepense: string;
   typeDepense: string;
@@ -31,7 +33,8 @@ export class DepenseComponent implements OnInit{
 
   constructor(
     private depenseService: DepenseService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private datePipe:DatePipe
   ){}
 
   public async getTypes() {
@@ -45,9 +48,11 @@ export class DepenseComponent implements OnInit{
 
   public async addDepense(depenseForm: NgForm): Promise<void> {
     try{
+      console.log("befor ",depenseForm.value);
+      depenseForm.value.datePaiement = this.datePipe.transform(depenseForm.value.datePaiement,'yyyy-MM-dd HH:mm:ss','GMT+3');
+      console.log("BETWEE? ", this.datePipe.transform(depenseForm.value.datePaiement,'yyyy-MM-dd HH:mm:ss','GMT+3'))
+      console.log("after ",depenseForm.value)
       const response: CustomResponse = await this.depenseService.addService(depenseForm ? depenseForm.value : this.depense).toPromise();
-      console.log(response);
-      console.log(depenseForm)
       this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
     }catch(error) {
       this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });

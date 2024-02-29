@@ -50,7 +50,7 @@ export class ProfilComponent implements OnInit{
         this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
     }
 
-    public detailsEmploye(empId:string): Utilisateur {
+    public detailsEmploye(empId:string): void {
 
         this.utilisateurService.detailsEmploye(empId).subscribe(
             (response:CustomResponse) => {
@@ -61,7 +61,7 @@ export class ProfilComponent implements OnInit{
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
         );
-        return this.employeInfo;
+        //return this.employeInfo;
     }
 
     public updateProfil(modifierProfil:NgForm) {

@@ -158,48 +158,12 @@ export class ServiceComponent implements OnInit {
         this.listeService(serviceSearch,event.page,10);
     }
 
-    public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): Service[]{
+    public listeService(serviceSearch: NgForm, pageP:Number,perPageP:Number): void{
         console.log("Liste serv ", serviceSearch)
         if(pageP === undefined || perPageP === undefined){
             pageP = 0; 
             perPageP = 10;
         } 
-        /*var queryParams = {};
-
-        if(serviceSearch !== null) {
-            
-            if(pageP === undefined || perPageP === undefined){
-                pageP = 0; 
-                perPageP = 10;
-            } 
-            if(serviceSearch && serviceSearch.value.nom) queryParams['nom'] = serviceSearch.value.nom
-            if(serviceSearch && serviceSearch.value.description) queryParams['description'] = serviceSearch.value.description
-            if(serviceSearch && serviceSearch.value.statut) queryParams['statut'] = serviceSearch.value.statut
-            if(serviceSearch && serviceSearch.value.categorie) queryParams['categorie'] = serviceSearch.value.categorie
-            queryParams = {
-                page: pageP,
-                perPage: perPageP, 
-                nom: serviceSearch ? serviceSearch.value.nom : '',
-                prixMax: serviceSearch ? serviceSearch.value.prixMax : '',
-                prixMin: serviceSearch ? serviceSearch.value.prixMin : '',
-                comMin: serviceSearch ? serviceSearch.value.comMin : '',
-                comMax: serviceSearch ? serviceSearch.value.comMax : '',
-                dureeMin: serviceSearch ? serviceSearch.value.dureeMin : '',
-                dureeMax: serviceSearch ? serviceSearch.value.dureeMax : '',
-                statut: serviceSearch ? serviceSearch.value.statut : '',
-                description: serviceSearch ? serviceSearch.value.description : '',
-                categorie: serviceSearch ? serviceSearch.value.categorie : ''
-            };
-            
-        }   
-        queryParams['page'] = pageP;
-        queryParams['perPage'] = perPageP;
-
-        this.route.navigate([], {
-            relativeTo: this.routes,
-            queryParams,
-            queryParamsHandling: 'merge',
-        });*/
 
         this.serviceService.listeServices(serviceSearch ? serviceSearch.value : this.lesServicesSearch,pageP,perPageP).subscribe(
           
@@ -216,10 +180,10 @@ export class ServiceComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
           }
         )
-        return this.services;
+        //return this.services;
     }
 
-    private listeCategorie(): Categorie[] {
+    private listeCategorie():void {
         this.categorieService.listeCategorie().subscribe(
           
             (response:CustomResponse) =>{
@@ -232,7 +196,7 @@ export class ServiceComponent implements OnInit {
               this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
             }
           )
-        return this.categories;
+        //return this.categories;
     }
 
     private updateStatutService(id:string,statut:number): void{
