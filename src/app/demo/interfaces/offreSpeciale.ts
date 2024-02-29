@@ -1,6 +1,6 @@
 import { Categorie } from "./categorie";
 
-export interface Service {
+export interface OffreSpéciale {
     _id?: string;
 	nom:string;
 	prix:Number;

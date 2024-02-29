@@ -19,8 +19,6 @@ export class ServiceService {
   public listeServices(service:ServiceSearch,page: Number, perPage: Number): Observable<Service[]> {
 
     let queryParams = new HttpParams();
-    console.log('SERVICE ', page);
-    console.log('SERVICE per page', perPage);
 
     if(service.prixMin || service.prixMax) {
       if(service.prixMin && service.prixMax) { 
@@ -96,6 +94,94 @@ export class ServiceService {
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<any>(`${this.apiServerUrl}/services`, {headers: this.headers});
+
+  }
+//Offre spéciales
+  public listeOffresSpeciales(offre:ServiceSearch,page: Number, perPage: Number): Observable<CustomResponse> {
+
+    let queryParams = new HttpParams();
+
+    if(offre.prixMin || offre.prixMax) {
+      if(offre.prixMin && offre.prixMax) { 
+        queryParams= queryParams.append("prixMin",offre.prixMin.toString() ?? '');
+        queryParams= queryParams.append("prixMax",offre.prixMax.toString() ?? '');
+      }
+      else if (offre.prixMin && !offre.prixMax) queryParams= queryParams.append("prixMin",offre.prixMin.toString() ?? '');
+      else if (!offre.prixMin && offre.prixMax) queryParams= queryParams.append("prixMax",offre.prixMax.toString() ?? '');
+    }
+
+    if(offre.comMin || offre.comMax) {
+      if(offre.comMin && offre.comMax) { 
+        queryParams= queryParams.append("comMin",offre.comMin.toString() ?? '');
+        queryParams= queryParams.append("comMax",offre.comMax.toString() ?? '');
+      }
+      else if (offre.comMin && !offre.comMax) queryParams= queryParams.append("comMin",offre.comMin.toString() ?? '');
+      else if (!offre.comMin && offre.comMax) queryParams= queryParams.append("comMax",offre.comMax.toString() ?? '');
+    }
+
+    if(offre.dureeMin || offre.dureeMax) {
+      if(offre.dureeMin && offre.dureeMax) { 
+        queryParams= queryParams.append("dureeMin",offre.dureeMin.toString() ?? '');
+        queryParams= queryParams.append("dureeMax",offre.dureeMax.toString() ?? '');
+      }
+      else if (offre.dureeMin && !offre.dureeMax) queryParams= queryParams.append("dureeMin",offre.dureeMin.toString() ?? '');
+      else if (!offre.dureeMin && offre.dureeMax) queryParams= queryParams.append("dureeMax",offre.dureeMax.toString() ?? '');
+    }
+    
+    if(offre.nom) queryParams= queryParams.append("nom",offre.nom ?? '');
+    if(offre.description) queryParams= queryParams.append("description",offre.description ?? '');
+    if(offre.statut && (offre.statut == 0 || offre.statut == 1)) queryParams= queryParams.append("statut",offre.statut.toString());
+    if(offre.categorie) queryParams= queryParams.append("categorie",offre.categorie ?? '');
+
+    queryParams= queryParams.append("page", page.toString() ?? '0');
+    queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<CustomResponse>(`${this.apiServerUrl}/offre`,{
+      headers:this.headers,
+      params: queryParams
+    });
+
+  }
+
+  public updateStatutOffreSpeciale(serviceId:String, statut: number): Observable<CustomResponse> {
+    
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append("statut",statut);
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/offre/${serviceId}/statut`,null, {
+      headers: this.headers,
+      params: queryParams
+    });
+
+  }
+
+  public updateOffreSpeciale(offre:Service): Observable<CustomResponse> { 
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.put<CustomResponse>(`${this.apiServerUrl}/offre/${offre._id}`,offre, {headers: this.headers});
+
+  }
+
+  public addOffreSpeciale(offre:Service): Observable<CustomResponse> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.post<CustomResponse>(`${this.apiServerUrl}/offre`,offre, {headers: this.headers});
+
+  }
+
+  public allOffresSpeciales(offre:ServiceSearch,page: Number, perPage: Number): Observable<CustomResponse> {
+
+    let queryParams = new HttpParams();
+    queryParams= queryParams.append("page", page.toString() ?? '0');
+    queryParams= queryParams.append("perPage", perPage.toString() ?? '10');
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<CustomResponse>(`${this.apiServerUrl}/offre`,{
+      headers:this.headers,
+      params: queryParams
+    });
 
   }
 }

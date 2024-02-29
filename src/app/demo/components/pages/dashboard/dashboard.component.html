@@ -37,8 +37,18 @@
                     <p-chart type="bar" [data]="barCaMensuel" [options]="barOptions" id="caMensuel"></p-chart>
                 </div>
                 <div class="col-6">
+                    <h5>Chiffre d'affaire journalier</h5>
+                    <p-chart type="bar" [data]="barCaJournalier" [options]="barOptions" id="caJournalier"></p-chart>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="col-6">
                     <h5>Temps moyen de travail de chaque employé</h5>
                     <p-chart type="bar" [data]="barRdvTempsTravail" [options]="barOptions" id="avgTime"></p-chart>
+                </div>
+                <div class="col-6">
+                    <h5>Bénefice</h5>
+                    <p-chart type="bar" [data]="barBenefice" [options]="barOptions" id="benefice"></p-chart>
                 </div>
             </div>
         </div>
