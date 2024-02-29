@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { CustomResponse } from '../../interfaces/customResponse';
 import { Observable } from 'rxjs';
 import { RendezVousSpec } from '../../interfaces/rendezVousSpec';
-import { RendezVous } from '../../interfaces/rendezVous';
+import { Color, RendezVous } from '../../interfaces/rendezVous';
 import { DatePipe } from '@angular/common';
 import { Facture } from '../../interfaces/facture';
 
@@ -118,5 +118,25 @@ console.log(page," ",perPage)
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.put<CustomResponse>(`${this.apiServerUrl}/rendezVous/${rdv._id}`,data,{headers:this.headers});
 
+  }
+
+  public setRdvColor(statut:string): String {
+    var color = '';
+    if(statut == 'Nouveau') {
+      color = Color.Nouveau
+    }else if(statut == 'En cours'){
+      color = Color.EnCours
+    }
+    else if(statut == 'Reporté'){
+      color = Color.Reporté
+    }
+    else if(statut == 'Effectué'){
+      color = Color.Effectué
+    }
+    else if(statut == 'Annuler'){
+      color = Color.Annuler
+    }
+    else color = Color.Default
+    return color;
   }
 }

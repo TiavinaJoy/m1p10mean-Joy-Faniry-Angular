@@ -61,7 +61,7 @@
             </ng-template>
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Annuler rendez-vous" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="annulerRdv(fiche)"></button>
-                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="updateRdv(fiche)"></button>
+                <button *ngIf="fiche.statut.intitule == 'Nouveau' " pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="updateRdv(fiche)"></button>
             </ng-template>
             
         </p-dialog>
