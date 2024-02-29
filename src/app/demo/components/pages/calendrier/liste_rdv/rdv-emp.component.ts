@@ -248,7 +248,7 @@ export class RdvEmpComponent implements OnInit{
       console.log(rdv)
       const data = {
         personnelId: this.emp,
-        dateRendezVous: this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT+3')
+        dateRendezVous: this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT')
       }
       console.log(data)
       this.rdvService.updateRdv(rdv,data).subscribe(

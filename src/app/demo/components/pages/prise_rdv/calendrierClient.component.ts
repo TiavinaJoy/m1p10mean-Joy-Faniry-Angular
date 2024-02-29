@@ -59,7 +59,7 @@ export class CalendrierClientComponent implements OnInit {
         list:'Liste'
       },
       eventDrop:(info) => {
-        localStorage.setItem('dateRendezVous',this.datePipe.transform(info.event.start,'yyyy-MM-dd HH:mm:ss','GMT+3'))        
+        localStorage.setItem('dateRendezVous',this.datePipe.transform(info.event.start,'yyyy-MM-dd HH:mm:ss','GMT'))        
       },
       dateClick: this.modalJourLibre.bind(this),
       eventClick: this.modalFicheJourLibre.bind(this),
@@ -139,7 +139,7 @@ export class CalendrierClientComponent implements OnInit {
   
       ajoutLibre() {
         this.afficherAjoutModal = false;
-        const date = this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT+3');
+        const date = this.datePipe.transform(this.dateRdv,'yyyy-MM-dd HH:mm:ss','GMT');
         localStorage.setItem('dateRendezVous',date);
         this.calendarOptions.events = [{ start: date }];
       }
