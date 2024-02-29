@@ -1,7 +1,7 @@
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="">
+    <a class="layout-topbar-logo">
         <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo">
-        <span>SAKAI</span>
+        <span>ECLAT</span>
     </a>
 
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
@@ -13,7 +13,7 @@
     </button>
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <i class="pi pi-bell mr-4 p-text-secondary" pBadge style="font-size: 2.5rem" value="2"></i>
+        <!--<i class="pi pi-bell mr-4 p-text-secondary" pBadge style="font-size: 2.5rem" value="2"></i>-->
         <button pButton pRipple icon="pi pi-sign-out" class="p-button-rounded  mr-2" (click)="deconnexion()"></button>
         <!--<i class="pi pi-user" style="font-size: 1.5rem"></i>-->
         <!--<button class="p-link layout-topbar-button">

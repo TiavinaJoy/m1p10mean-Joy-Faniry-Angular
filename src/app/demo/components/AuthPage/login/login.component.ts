@@ -17,8 +17,8 @@ import { LoginService } from 'src/app/demo/service/login/login.service';
 })
 export class LoginComponent {
   loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.pattern('^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$')]]
+    email: ['zjoytiavina@gmail.com', [Validators.required, Validators.email]],
+    password: ['Mdpprom13.', [Validators.required, Validators.pattern('^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$')]]
   })
 
   loginError: string;
