@@ -34,8 +34,8 @@ export class ProfilComponent implements OnInit{
         private utilisateurService: UtilisateurService
     ) {}
 
-    ngOnInit(): void {
-        this.detailsEmploye(this.employeId);
+    async ngOnInit() {
+        await this.detailsEmploye(this.employeId);
     }
 
     onUpload(event: any) {

@@ -115,8 +115,8 @@ export class VitrineComponent implements OnInit {
     async ngOnInit() {
         this.lesStatuts.push({value:1,intitule:'Actif'},{value:0,intitule:'Inactif'});
         this.listeFavoris();
-        this.listeCategorie();
-        this.listeEmploye();
+        await this.listeCategorie();
+        await this.listeEmploye();
         await this.listeOffresSpeciales();
         this.listeService(null,0,10);
     }
@@ -266,15 +266,16 @@ export class VitrineComponent implements OnInit {
     private async listeFavoris(): Promise<Preference[]> {
         try {
             console.log(this.idClient);
-    
+            
             const response: CustomResponse = await this.preferenceService.listeFavoris(this.idClient).toPromise();
-            this.preferences = response.data;
-    
-            return this.preferences;
+            if(response.status == 200 || response.status == 201){
+                this.preferences = response.data;
+            }
+
         } catch (error) {
             this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
-            throw error; // rethrow the error to propagate it to the caller
         }
+        return this.preferences;
     }
    /* private listeFavoris(): Preference[]{
         console.log(this.idClient);
@@ -291,11 +292,11 @@ export class VitrineComponent implements OnInit {
         return this.preferences;
     }*/
 
-    private listeEmploye(): Utilisateur[] {
+    private  listeEmploye(): Utilisateur[] {
 
         this.utilisateurService.listeEmploye().subscribe(
-            (response:CustomResponse) => {
-                this.employes = response.data;
+             (response:CustomResponse) => {
+                this.employes =  response.data;
             },
             (error:HttpErrorResponse) => {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });

@@ -3,6 +3,7 @@ import { StatutRendezVous } from "./statutRendezVous";
 import { Utilisateur } from "./utilisateur";
 
 export enum Color{
+    Default = 'blue',
     Nouveau = 'blue',
     EnCours = 'yellow',
     Effectué = 'green',

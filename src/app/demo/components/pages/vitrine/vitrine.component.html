@@ -22,19 +22,19 @@
             <h5>Liste des offres spécials</h5>
             <p-carousel [value]="offres" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
                 <ng-template let-offre pTemplate="item">
-                        <div class="border-round m-2 text-center p-2" style="border: 1px solid var(--surface-d)" *ngIf="offre.statut == true && toDisplay(offre) "><!--&& offre.finOffre >= -->
-                            <div>
-                                <h5 class="mb-1">{{offre.nom}}</h5>
-                                <h6 class="mt-0 mb-3">MGA {{ offre.prix | number: '1.2-2' }}</h6>
-                                <span>{{offre.categorie.intitule}}</span>
-                                <br>
-                                <span>Du {{offre.debutOffre  | date:'dd.MM.yyyy' }} au {{offre.debutOffre  | date:'dd.MM.yyyy' }} </span>
-                                <div class="my-5">
-                                    <button pButton pRipple icon="pi pi-star-fill" class="mr-2 p-button-rounded p-button-success" (click)="addFavoris(offre)"></button>
-                                    <button pButton pRipple icon="pi pi-calendar" class="p-button-rounded p-button-info" (click)="prendreRdv(offre)"></button>
-                                </div>
+                    <div class="border-round m-2 text-center p-2" style="border: 1px solid var(--surface-d)" *ngIf="offre.statut == true && toDisplay(offre) "><!--&& offre.finOffre >= -->
+                        <div>
+                            <h5 class="mb-1">{{offre.nom}}</h5>
+                            <h6 class="mt-0 mb-3">MGA {{ offre.prix | number: '1.2-2' }}</h6>
+                            <span>{{offre.categorie.intitule}}</span>
+                            <br>
+                            <span>Du {{offre.debutOffre  | date:'dd.MM.yyyy' }} au {{offre.debutOffre  | date:'dd.MM.yyyy' }} </span>
+                            <div class="my-5">
+                                <button pButton pRipple icon="pi pi-star-fill" class="mr-2 p-button-rounded p-button-success" (click)="addFavoris(offre)"></button>
+                                <button pButton pRipple icon="pi pi-calendar" class="p-button-rounded p-button-info" (click)="prendreRdv(offre)"></button>
                             </div>
                         </div>
+                    </div>
                 </ng-template>
             </p-carousel>
             <h5>Liste des services</h5>

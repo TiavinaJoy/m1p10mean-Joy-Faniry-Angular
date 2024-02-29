@@ -139,7 +139,12 @@ export class RdvEmpComponent implements OnInit{
             var rdv = [];
             data.forEach(daty => {
               //rdv.push({ start: daty.dateRendezVous, end: daty.dateFin, id:daty._id }) 
-              rdv.push({start:this.datePipe.transform(daty.dateRendezVous,'yyyy-MM-dd HH:mm:ss','GMT'),end:this.datePipe.transform(daty.dateFin,'yyyy-MM-dd HH:mm:ss','GMT'),id:daty._id})
+              rdv.push({
+                start:this.datePipe.transform(daty.dateRendezVous,'yyyy-MM-dd HH:mm:ss','GMT'),
+                end:this.datePipe.transform(daty.dateFin,'yyyy-MM-dd HH:mm:ss','GMT'),
+                id:daty._id,
+                color: this.rdvService.setRdvColor(daty.statut.intitule)
+              })
             })
             console.log(data);
             this.calendarOptions.events = rdv;
