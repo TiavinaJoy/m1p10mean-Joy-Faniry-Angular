@@ -34,8 +34,8 @@ export class ProfilComponent implements OnInit{
         private utilisateurService: UtilisateurService
     ) {}
 
-    ngOnInit(): void {
-        this.detailsEmploye(this.employeId);
+    async ngOnInit() {
+        await this.detailsEmploye(this.employeId);
     }
 
     onUpload(event: any) {
@@ -77,6 +77,7 @@ export class ProfilComponent implements OnInit{
             (response:CustomResponse) => {
                 console.log(response);
                 modifierProfil.reset();
+                this.detailsEmploye(this.employeId);
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {

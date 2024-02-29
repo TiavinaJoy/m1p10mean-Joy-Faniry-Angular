@@ -151,18 +151,7 @@ export class CalendrierClientComponent implements OnInit {
         localStorage.setItem('dateRendezVous',date);
         this.calendarOptions.events = [{ start: date }];
       }
-  
-      ficheLibre(data) {
-        this.afficherFicheModal = false;
-      }
-  
-      modifierLibre(data) {
-        alert("Modification du jour libre");
-      }
-  
-      annulerLibre(data) {
-        alert("Annulation du jour libre");
-      }
+
       
       nextPage() {
         /*if (this.personalInformation.firstname && this.personalInformation.lastname && this.personalInformation.age) {

@@ -17,6 +17,7 @@ import { PreferenceSpec } from 'src/app/demo/interfaces/preferenceSpec';
 import { UtilisateurService } from 'src/app/demo/service/utilisateur/utilisateur.service';
 import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
 import { TokenService } from 'src/app/demo/service/token/token.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
     templateUrl: './vitrine.component.html',
@@ -24,6 +25,8 @@ import { TokenService } from 'src/app/demo/service/token/token.service';
 })
 export class VitrineComponent implements OnInit {
     idClient: string = this.tokenService.decodeToken(localStorage.getItem('token')).sub;
+
+    offres:Service[];
 
     employes:Utilisateur[];
 
@@ -104,18 +107,30 @@ export class VitrineComponent implements OnInit {
         private categorieService: CategorieService,
         private utilisateurService:UtilisateurService,
         private tokenService: TokenService,
+        private datePipe: DatePipe,
         private route:Router,
         private routes:ActivatedRoute
     ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.lesStatuts.push({value:1,intitule:'Actif'},{value:0,intitule:'Inactif'});
         this.listeFavoris();
-        this.listeCategorie();
-        this.listeEmploye();
+        await this.listeCategorie();
+        await this.listeEmploye();
+        await this.listeOffresSpeciales();
         this.listeService(null,0,10);
     }
 
+    public toDisplay(offre:Service){
+        var today = new Date();
+        today.setHours(0,0,0);
+        const dateString = this.datePipe.transform(offre.finOffre,'yyyy-MM-dd','GMT')
+        const finOffre = this.datePipe.transform(offre.finOffre,'yyyy-MM-dd','GMT')
+
+        if(new Date(finOffre) >= new Date(dateString) ) return true
+        else  return false
+        
+    }
     prendreRdv(serv: Service) {
         localStorage.setItem("service",serv.nom);
         this.route.navigate(['pages/rdv',serv._id]);
@@ -149,7 +164,7 @@ export class VitrineComponent implements OnInit {
 
         this.preferenceService.updateStatutFavoris(this.oneFav._id,statut).subscribe(
             (response:CustomResponse) => {
-                
+                this.listeFavoris();
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
                 this.updateStatutFavDialog = false;
 
@@ -171,6 +186,7 @@ export class VitrineComponent implements OnInit {
             (response:CustomResponse) => {
                 updateFavorisForm.reset();
                 this.favorisUpdateDialog = false;
+                this.listeFavoris();
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
             (error:HttpErrorResponse) => {
@@ -190,6 +206,7 @@ export class VitrineComponent implements OnInit {
         this.preferenceService.ajoutFavoris(this.preferenceAdd).subscribe(
             (response:CustomResponse) => {
                 favorisForm.reset();
+                this.listeFavoris();
                 this.favorisDialog = false;
                 this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
             },
@@ -246,7 +263,21 @@ export class VitrineComponent implements OnInit {
         return this.services;
     }
 
-    private listeFavoris(): Preference[]{
+    private async listeFavoris(): Promise<Preference[]> {
+        try {
+            console.log(this.idClient);
+            
+            const response: CustomResponse = await this.preferenceService.listeFavoris(this.idClient).toPromise();
+            if(response.status == 200 || response.status == 201){
+                this.preferences = response.data;
+            }
+
+        } catch (error) {
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
+        }
+        return this.preferences;
+    }
+   /* private listeFavoris(): Preference[]{
         console.log(this.idClient);
         this.preferenceService.listeFavoris(this.idClient).subscribe(
             (response:CustomResponse) => {
@@ -259,13 +290,13 @@ export class VitrineComponent implements OnInit {
             }
         );
         return this.preferences;
-    }
+    }*/
 
-    private listeEmploye(): Utilisateur[] {
+    private  listeEmploye(): Utilisateur[] {
 
         this.utilisateurService.listeEmploye().subscribe(
-            (response:CustomResponse) => {
-                this.employes = response.data;
+             (response:CustomResponse) => {
+                this.employes =  response.data;
             },
             (error:HttpErrorResponse) => {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
@@ -290,4 +321,11 @@ export class VitrineComponent implements OnInit {
         return this.categories;
     }
     
+    public async listeOffresSpeciales(): Promise<Service[]> {
+        const data = (await this.serviceService.allOffresSpeciales(null,0,10).toPromise()).data;
+        console.log(data);
+        const totalData = data.totalDocs;
+        this.offres = (await this.serviceService.allOffresSpeciales(null,0,3).toPromise()).data.docs;
+        return this.offres;
+    }
 }
