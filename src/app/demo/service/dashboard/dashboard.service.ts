@@ -22,6 +22,13 @@ export class DashboardService {
     
   }
 
+  public caJournalier(): Observable<CustomResponse> {
+    
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<CustomResponse>(`${this.apiServerUrl}/dash/caJournalier`,{headers:this.headers});
+    
+  }
+
   public rdvParJour(): Observable<CustomResponse> {
     
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
@@ -33,6 +40,13 @@ export class DashboardService {
 
     this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
     return this.http.get<CustomResponse>(`${this.apiServerUrl}/dash/avgWorkTime`,{headers:this.headers});
+    
+  }
+
+  public benefice(): Observable<CustomResponse> {
+
+    this.headers = new HttpHeaders().set("Authorization","Bearer "+localStorage.getItem("token"));
+    return this.http.get<CustomResponse>(`${this.apiServerUrl}/dash/profitMensuel`,{headers:this.headers});
     
   }
 

@@ -16,6 +16,7 @@ import { AuthGuard } from './demo/guard/auth.guard';
 import { AccessComponent } from './demo/components/AuthPage/access/access.component';
 import { CommissionComponent } from './demo/components/pages/crud/commission/commission/commission.component';
 import { DepenseComponent } from './demo/components/pages/depense/depense/depense.component';
+import { OffreSpecialeComponent } from './demo/components/pages/crud/offre/offre-speciale/offre-speciale.component';
 
 @NgModule({ 
     imports: [
@@ -32,6 +33,7 @@ import { DepenseComponent } from './demo/components/pages/depense/depense/depens
                     { path: 'dashboard',component: DashboardComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'depense',component: DepenseComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'services', component:ServiceComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
+                    { path: 'offres', component:OffreSpecialeComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard]},
                     { path: 'employes', component: EmployeComponent, data: { requiredRole: 'manager' }, canActivate: [AuthGuard] },
                     { path: 'rdv/:servId', loadChildren: () => import('./demo/components/pages//prise_rdv/rdvClient.module').then(m => m.RdvClientModule), data: { requiredRole: 'client' } , canActivate: [AuthGuard]},
                     { path: 'profil',component: ProfilComponent, data: { requiredRole: 'employe' }, canActivate: [AuthGuard]},
