@@ -19,6 +19,24 @@
                         </div>
                 </ng-template>
             </p-carousel>
+            <h5>Liste des offres spécials</h5>
+            <p-carousel [value]="offres" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
+                <ng-template let-offre pTemplate="item">
+                        <div class="border-round m-2 text-center p-2" style="border: 1px solid var(--surface-d)" *ngIf="offre.statut == true && toDisplay(offre) "><!--&& offre.finOffre >= -->
+                            <div>
+                                <h5 class="mb-1">{{offre.nom}}</h5>
+                                <h6 class="mt-0 mb-3">MGA {{ offre.prix | number: '1.2-2' }}</h6>
+                                <span>{{offre.categorie.intitule}}</span>
+                                <br>
+                                <span>Du {{offre.debutOffre  | date:'dd.MM.yyyy' }} au {{offre.debutOffre  | date:'dd.MM.yyyy' }} </span>
+                                <div class="my-5">
+                                    <button pButton pRipple icon="pi pi-star-fill" class="mr-2 p-button-rounded p-button-success" (click)="addFavoris(offre)"></button>
+                                    <button pButton pRipple icon="pi pi-calendar" class="p-button-rounded p-button-info" (click)="prendreRdv(offre)"></button>
+                                </div>
+                            </div>
+                        </div>
+                </ng-template>
+            </p-carousel>
             <h5>Liste des services</h5>
             <div class="search">
                 <form #serviceSearch="ngForm" (ngSubmit) = "listeService(serviceSearch,page,perPage)">
@@ -81,54 +99,56 @@
             </div>
             
             <div class="serviceCard">
-                <p-card *ngFor ="let service of services" class="col-12 mt-2 mr-2">
-                    <div class="flex  justify-content-between ">
-                        <div class="col-4 mb-4"> 
-                            <h4>{{ service.nom }}</h4> 
+                <div *ngFor ="let service of services">
+                    <p-card  *ngIf="service.statut == true && service.isSpecial != true" class="col-12 mt-2 mr-2">
+                        <div  class="flex  justify-content-between ">
+                            <div class="col-4 mb-4"> 
+                                <h4>{{ service.nom }}</h4> 
+                            </div>
+                            <div class="col-4 mb-4">
+                                <p-badge  [severity] ="service.statut ? 'success' : 'danger'"></p-badge>
+                            </div>
+                            <div class="col-2 mb-3">
+                                <button pButton pRipple icon="pi pi-star-fill" class="p-button-rounded p-button-danger mr-2" (click)="addFavoris(service)"></button>
+                            </div>
                         </div>
-                        <div class="col-4 mb-4">
-                            <p-badge  [severity] ="service.statut ? 'success' : 'danger'"></p-badge>
+                        <div class="grid">
+                            <div class="col-4 mb-4">
+                                {{ service.categorie.intitule }}
+                            </div>
+                            <div class="col-4 mb-4 ">
+                                {{ service.prix | currency: "MGA" }}
+                            </div>
                         </div>
-                        <div class="col-2 mb-3">
-                            <button pButton pRipple icon="pi pi-star-fill" class="p-button-rounded p-button-danger mr-2" (click)="addFavoris(service)"></button>
+                        <div class="grid">
+                            <div class="col-4 mb-4 ">
+                                    <b>Durée:</b>
+                            </div>
+                            <div class="col-4 mb-4 ">
+                                {{ service.duree }}mn
+                            </div>
+                            <div class="col-4 mb-4 ">
+                                <button pButton  label="Programmer" class="p-button-success mr-2" (click)="prendreRdv(service)"></button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="grid">
-                        <div class="col-4 mb-4">
-                            {{ service.categorie.intitule }}
+                        <div class="grid formgrid">
+                            <div class="col-4 mb-4 ">
+                                    <b>Commission:</b>
+                            </div>
+                            <div class="col-4 mb-4 ">
+                                {{ service.commission }}%
+                            </div>
                         </div>
-                        <div class="col-4 mb-4 ">
-                            {{ service.prix | currency: "MGA" }}
+                        <div class="grid">
+                            <div class="col-12 mb-4 mt-4">
+                                    <b>Description:</b>
+                            </div>
+                            <div class="descriptionCard col-6 mb-4" > 
+                                {{ service.description }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="grid">
-                        <div class="col-4 mb-4 ">
-                                <b>Durée:</b>
-                        </div>
-                        <div class="col-4 mb-4 ">
-                            {{ service.duree }}mn
-                        </div>
-                        <div class="col-4 mb-4 ">
-                            <button pButton  label="Programmer" class="p-button-success mr-2" (click)="prendreRdv(service)"></button>
-                        </div>
-                    </div>
-                    <div class="grid formgrid">
-                        <div class="col-4 mb-4 ">
-                                <b>Commission:</b>
-                        </div>
-                        <div class="col-4 mb-4 ">
-                            {{ service.commission }}%
-                        </div>
-                    </div>
-                    <div class="grid">
-                        <div class="col-12 mb-4 mt-4">
-                                <b>Description:</b>
-                        </div>
-                        <div class="descriptionCard col-6 mb-4" > 
-                            {{ service.description }}
-                        </div>
-                    </div>
-                </p-card>        
+                    </p-card> 
+                </div>    
             </div>
             <div class="card flex justify-content-center">
                 <p-paginator (onPageChange)="onPageChange($event,serviceSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>

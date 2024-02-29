@@ -255,7 +255,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 response.data.forEach(emp => {
                     this.employes.push(emp.nom)
                 })
-                console.log(this.employes)
             },
             (error:HttpErrorResponse) => {
                 this.messageService.add({ severity: 'error', summary: 'Erreur', detail: error.error.message, life: 3000 });
@@ -297,7 +296,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         try{
             const response = await this.dashService.caJournalier().toPromise();
             response.data.data.forEach(element => {
-                console.log(element);
                 var dateLabel = new Date(element._id.year,element._id.month-1,element._id.day);
                 var setDateLabel = this.datePipe.transform(dateLabel,'yyyy-MM-dd','GMT');
                 this.listeJourCA.push(setDateLabel);
@@ -421,12 +419,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public async benefice() {
         try {
             const response: CustomResponse = await this.dashService.benefice().toPromise();
-            console.log(response.data)
             response.data.forEach(element => {
                 var dateLabel = new Date(element.year,element.month-1);
                 this.listeMoisBenefice.push(dateLabel.toLocaleString('fr-FR',{month:'long'}));
                 this.beneficeData.push(element.profit);
-                console.log(element);
             });
 
         } catch (error) {

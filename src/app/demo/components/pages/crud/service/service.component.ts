@@ -1,4 +1,4 @@
-import { Component,  OnDestroy,  OnInit, afterNextRender } from '@angular/core';
+import { Component,   OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { ServiceService } from 'src/app/demo/service/service/service.service';
 import { ActivatedRoute,  Router } from '@angular/router';
@@ -18,15 +18,11 @@ import { CustomResponse } from 'src/app/demo/interfaces/customResponse';
     providers: [MessageService],
     styleUrl:'./service.component.scss'
 })
-export class ServiceComponent implements OnDestroy,OnInit {
+export class ServiceComponent implements OnInit {
     
     selectedStatut:Statut;
 
     lesStatuts:Statut[] = [];
-
-    lesServices$: Observable<Service[]>;
-
-    refreshServices$ = new BehaviorSubject<void>(null);
 
     perPage:Number;
     
@@ -113,8 +109,6 @@ export class ServiceComponent implements OnDestroy,OnInit {
         return this.serviceForm.controls['categorie'];
     }
 
-    private serviceSubject= new Subject<Service[]>();
-
     constructor(
         private messageService: MessageService,
         private serviceService: ServiceService,
@@ -124,18 +118,9 @@ export class ServiceComponent implements OnDestroy,OnInit {
         private routes: ActivatedRoute
     ) { }
 
-    ngOnDestroy(): void {
-        this.refreshServices$.complete();
-    }
-
     ngOnInit() {
         this.lesStatuts.push({value:1,intitule:'Actif'},{value:0,intitule:'Inactif'});
         this.listeService(null,0,10);
-        /*this.lesServices$ = this.refreshServices$.pipe(
-            distinctUntilChanged(),
-            //startWith(undefined),
-            switchMap(() => this.listeService(null,0,10))
-        );*/
         this.listeCategorie();
     }
 
@@ -157,11 +142,15 @@ export class ServiceComponent implements OnDestroy,OnInit {
         this.service = service;
     }
 
-    confirmDelete(service) {
+    async confirmDelete(service) {
         this.deleteServiceDialog = false;
-        if(service.statut == true) this.statut = 0
-        else this.statut = 1
-        this.updateStatutService(service._id,this.statut);
+        if(service.statut == true) {
+            this.statut = 0; 
+        }
+        else {
+            this.statut = 1
+        } 
+        await this.updateStatutService(service._id,this.statut);
     }
 
     onPageChange(event: PageEvent,serviceSearch: NgForm) {

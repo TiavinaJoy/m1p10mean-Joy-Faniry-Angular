@@ -58,6 +58,8 @@ import { AccessComponent } from './demo/components/AuthPage/access/access.compon
 import { CommissionComponent } from './demo/components/pages/crud/commission/commission/commission.component';
 import { MessageService } from 'primeng/api';
 import { DepenseComponent } from './demo/components/pages/depense/depense/depense.component';
+import { OffreSpecialeComponent } from './demo/components/pages/crud/offre/offre-speciale/offre-speciale.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
 @NgModule({
     declarations: [
         AppComponent, 
@@ -74,7 +76,8 @@ import { DepenseComponent } from './demo/components/pages/depense/depense/depens
         ListeRdvClientComponent,
         AccessComponent,
         CommissionComponent,
-        DepenseComponent
+        DepenseComponent,
+        OffreSpecialeComponent
     ],
     imports: [
         CommonModule,
@@ -106,6 +109,7 @@ import { DepenseComponent } from './demo/components/pages/depense/depense/depens
         BadgeModule,
         MultiSelectModule,
         DragDropModule,
+        InputSwitchModule,
         /*Dashboard */
         ChartModule,
         MenuModule,

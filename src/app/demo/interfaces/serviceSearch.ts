@@ -12,4 +12,8 @@ export interface ServiceSearch {
     statut:Number;
     description:string;
     categorie:string;
+    isSpecial?:string;
+    oldPrice?:string;
+    debutOffre?:string;
+    finOffre?:string
 }
