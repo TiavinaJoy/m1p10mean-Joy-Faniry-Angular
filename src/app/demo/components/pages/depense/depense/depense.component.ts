@@ -49,8 +49,8 @@ export class DepenseComponent implements OnInit{
   public async addDepense(depenseForm: NgForm): Promise<void> {
     try{
       console.log("befor ",depenseForm.value);
-      depenseForm.value.datePaiement = this.datePipe.transform(depenseForm.value.datePaiement,'yyyy-MM-dd HH:mm:ss','GMT+3');
-      console.log("BETWEE? ", this.datePipe.transform(depenseForm.value.datePaiement,'yyyy-MM-dd HH:mm:ss','GMT+3'))
+      depenseForm.value.datePaiement = this.datePipe.transform(depenseForm.value.datePaiement,'yyyy-MM-dd HH:mm:ss','GMT');
+      console.log("BETWEE? ", this.datePipe.transform(depenseForm.value.datePaiement,'yyyy-MM-dd HH:mm:ss','GMT'))
       console.log("after ",depenseForm.value)
       const response: CustomResponse = await this.depenseService.addService(depenseForm ? depenseForm.value : this.depense).toPromise();
       this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message, life: 3000 });
