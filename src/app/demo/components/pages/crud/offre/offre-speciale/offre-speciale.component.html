@@ -120,7 +120,7 @@
                 <p-paginator (onPageChange)="onPageChange($event,offreSpecialSearch)"  [rows]="perPage" [totalRecords]="totalData" ></p-paginator>
             </div>
             <!--Ajout d'un service--> 
-            <p-dialog [(visible)]="serviceDialog" [style]="{width: '450px'}" header="Ajout d'un service" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}">
+            <p-dialog [(visible)]="serviceDialog" [style]="{width: '450px'}" header="Ajout d'une offre spéciale" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}" [styleClass]="'dialog'">
                 <form #ajoutOffreForm="ngForm" (ngSubmit) = "addOffreSpecial(ajoutOffreForm)">
                     <div class="field">
                         <label for="nom">Nom</label>

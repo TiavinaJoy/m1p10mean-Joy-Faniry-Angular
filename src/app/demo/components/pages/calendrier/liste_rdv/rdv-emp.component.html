@@ -60,8 +60,8 @@
             </ng-template>
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-outlined p-button-danger" (click)="fermerFicheModal()"></button>
-                <button pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierRdv(fiche)"></button>
-            </ng-template>
+                <button *ngIf="statutRdvClicked == 'Nouveau'" pButton pRipple label="Modifier" icon="pi pi-check" class="p-button-outlined p-button-success" (click)="modifierRdv(fiche)"></button>
+            </ng-template> 
             
         </p-dialog>
         <!--Fin affichage fiche rdv-->

@@ -56,6 +56,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     barOptions: any;
 
+    chartOptions: any;
+
     jours:string[] = [];
 
     anneeEnCours = new Date().getFullYear();
@@ -140,9 +142,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
             datasets: [
                 {
                     label: "Bénéfice mensuel",
+                    fill: false,    
                     backgroundColor: documentStyle.getPropertyValue('--primary-500'),
                     borderColor: documentStyle.getPropertyValue('--primary-500'),
-                    data:this.beneficeData
+                    data:this.beneficeData,
+                    tension: .4
                 }
             ]
         };
@@ -239,6 +243,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
                         drawBorder: false
                     }
                 },
+            }
+        };
+
+        this.chartOptions = {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder,
+                        drawBorder: false
+                    }
+                }
             }
         };
     }
