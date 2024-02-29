@@ -72,6 +72,12 @@ body {
     display: grid;  
     grid-template-columns: repeat( 2,1fr); 
     justify-content: space-between;
+    width: 100%;
+}
+
+.serviceCard > div {
+    flex: 0 1 calc(50% - 10px); /* Two columns with a gap of 10px */
+    margin-bottom: 10px; /* Adjust as needed */
 }
 
 .descriptionCard{
@@ -92,3 +98,9 @@ p-dialog .ui-dialog {
 .dialog {
     overflow-y: auto;
 }
+
+/*@media (max-width: 768px) {
+    .serviceCard {
+        grid-template-columns: 1fr; 
+    }
+}*/

@@ -150,13 +150,6 @@ export class EmployeComponent implements OnInit {
     hideDialog() {
         this.newEmploye = false;
     }
-    
-    supprimerServ(serv:Service) {
-        let servIndex = this.findIndexToRemove(serv);
-        this.services = this.services?.filter((val, i) => i != servIndex);
-        this.allSelectedServices = this.allSelectedServices?.filter((val, i) => i != servIndex);
-        serv = null;
-    }
 
     dragStart(serv: Service) {
         this.draggedservice = serv;
@@ -167,7 +160,7 @@ export class EmployeComponent implements OnInit {
     }
 
     findIndexToRemove(serv:Service){
-        let index = -1;
+        let index = 0;
         for(let i = 0; i< (this.services as Service[]).length; i++) {
             if(serv._id === (this.services as Service[])[i]._id) {
                 index = 1;
@@ -176,18 +169,36 @@ export class EmployeComponent implements OnInit {
         }
         return index;
     }
+
+    findIndex(serv: Service) {
+        let index = -1;
+        for (let i = 0; i < this.services.length; i++) {
+            if (serv._id === this.services[i]._id) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
     drop() {
         
         if(this.draggedservice){
             
         console.log(this.draggedservice)
-            let servIndex = this.findIndexToRemove(this.draggedservice);
+            let servIndex = this.findIndex(this.draggedservice);
         console.log(servIndex);
             this.allSelectedServices = [...(this.allSelectedServices as Service[]), this.draggedservice];
             this.services = this.services?.filter((val, i) => i != servIndex);
         console.log(this.services);
             this.draggedservice = null;
         }
+    }
+
+    supprimerServ(serv:Service) {
+        this.allSelectedServices = this.allSelectedServices?.filter((val) =>  val._id != serv._id);
+        this.services = [...this.services,serv];
+
     }
 
     deleteEmploye(employe: Utilisateur) {
