@@ -12,6 +12,10 @@
             </p-dropdown>
         </div>
         <div class="field">
+            <label for="datePaiement">Date de paiement:</label>
+            <p-calendar dateFormat="dd.mm.y" showTime="true" [hourFormat]="24" #datePaiement ="ngModel" [(ngModel)] = "defaultDate" name="datePaiement"  styleClass="w-full"  ></p-calendar>
+        </div>
+        <div class="field">
             <label for="montant">Montant:</label>
             <p-inputNumber  #montant="ngModel" [(ngModel)] = "montantDepense" name="montant" [showButtons]="true" class="w-full"   [min]="1" ></p-inputNumber>
         </div>

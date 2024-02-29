@@ -127,7 +127,7 @@
             </div>
         </div>
         <!--Ajout d'un employe-->
-        <p-dialog blockScroll="true" [(visible)]="newEmploye" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}" [styleClass]="'dialog'">
+        <p-dialog blockScroll="true" [(visible)]="newEmploye" [style]="{width: '450px'}" header="Ajout d'un employé" [modal]="true" class="p-fluid" [contentStyle]="{'overflow': 'visible'}" >
             <form #addEmploye="ngForm" (ngSubmit) = "ajoutEmploye(addEmploye)">
                 <div class="field"> 
                     <label for="nom">Nom</label>
@@ -154,7 +154,7 @@
                     <div *ngIf="roleError" class="bloc p-error justify-content-center align-item-center">{{ roleError }}</div>
                 </div>
                 <div class="field">
-                    <label for="serv">Service dragged</label>
+                    <label for="serv">Services</label>
                     <div class="flex p-2 border-1 surface-border border-round w-full" >
                         <div class="p-2 border-1 surface-border border-round w-15rem" style="height:200px; overflow-y: scroll;">
                             <ul class="list-none flex flex-column gap-2 p-0 m-0">

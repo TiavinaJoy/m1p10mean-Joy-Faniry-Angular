@@ -31,37 +31,41 @@ export class CalendrierClientComponent implements OnInit {
     dateFin: Date;
     rdv: any;
 
-    calendarOptions: CalendarOptions = {
-        initialView: 'timeGridWeek', 
-        plugins: [dayGridPlugin,timeGridPlugin,listPlugin,interaction ],
-        locale: 'fr',
-        headerToolbar:{
-            left:'prev,next today',
-            center:'title',
-            right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-        },
-        editable:true,
-        nowIndicator:true,
-        buttonText: {
-          today: "Aujourd'hui",
-          day: 'Jour',
-          week:'Semaine',
-          month:'Mois',
-          list:'Liste'
-      },
-      dateClick: this.modalJourLibre.bind(this),
-      eventClick: this.modalFicheJourLibre.bind(this),
-      handleWindowResize: true
-
-    }
       
     constructor(
       private router: Router,
       private serviceService: ServiceService,
       private messageService: MessageService,
       private datePipe: DatePipe,
-      private rdvService: RendezVousService
+      private rdvService: RendezVousService,
     ) { }
+
+    calendarOptions: CalendarOptions = {
+      initialView: 'timeGridWeek', 
+      plugins: [dayGridPlugin,timeGridPlugin,listPlugin,interaction ],
+      locale: 'fr',
+      headerToolbar:{
+          left:'prev,next today',
+          center:'title',
+          right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+      },
+      editable:true,
+      nowIndicator:true,
+      buttonText: {
+        today: "Aujourd'hui",
+        day: 'Jour',
+        week:'Semaine',
+        month:'Mois',
+        list:'Liste'
+      },
+      eventDrop:(info) => {
+        localStorage.setItem('dateRendezVous',this.datePipe.transform(info.event.start,'yyyy-MM-dd HH:mm:ss','GMT+3'))        
+      },
+      dateClick: this.modalJourLibre.bind(this),
+      eventClick: this.modalFicheJourLibre.bind(this),
+      handleWindowResize: true
+
+    }
 
     ngOnInit() {
       this.rdvId = this.router.url.split('/')[3];
@@ -69,18 +73,6 @@ export class CalendrierClientComponent implements OnInit {
         this.calendarOptions.events = [ {start: localStorage.getItem("dateRendezVous") } ];
       }
       this.lesServices();
-        this.countries = [
-            { name: 'Australia', code: 'AU' },
-            { name: 'Brazil', code: 'BR' },
-            { name: 'China', code: 'CN' },
-            { name: 'Egypt', code: 'EG' },
-            { name: 'France', code: 'FR' },
-            { name: 'Germany', code: 'DE' },
-            { name: 'India', code: 'IN' },
-            { name: 'Japan', code: 'JP' },
-            { name: 'Spain', code: 'ES' },
-            { name: 'United States', code: 'US' }
-        ];
     }
 
     private lesServices(): Service[] {

@@ -125,7 +125,7 @@ export class GestionHoraireComponent implements OnInit {
     }
 
     public addHoraire(horaireEmp: NgForm): void {
-
+console.log("Before ",horaireEmp.value)
       const deb = this.datePipe.transform(horaireEmp ? horaireEmp.value.datyDebut : '','yyyy-MM-dd HH:mm:ss','GMT+3')
       const fin = this.datePipe.transform(horaireEmp ? horaireEmp.value.datyFin : '','yyyy-MM-dd HH:mm:ss','GMT+3')
       this.horaireAdd.personnel= this.personnelId;
